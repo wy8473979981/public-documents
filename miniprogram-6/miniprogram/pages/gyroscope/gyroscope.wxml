@@ -1,0 +1,5 @@
+<!--pages/gyroscope/gyroscope.wxml-->
+<view class="gyroscope-wrapper">
+
+  <view class="box">111</view>
+</view>

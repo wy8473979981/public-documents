@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/gyroscope/gyroscope"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "style": "v2",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "disableABTest": true,
+      "sdkVersionBegin": "3.0.0",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "requiredBackgroundModes": [
+    "audio"
+  ],
+  "permissions": {
+    "vibrate": {
+      "desc": "您的小程序需要使用振动功能"
+    },
+    "scope.camera": {
+      "desc": "您的小程序需要使用摄像头功能"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "您的小程序需要保存图片到相册"
+    }
+  }
+}
