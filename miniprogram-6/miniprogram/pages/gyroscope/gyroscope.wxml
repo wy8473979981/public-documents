@@ -1,5 +1,6 @@
 <!--pages/gyroscope/gyroscope.wxml-->
 <view class="gyroscope-wrapper">
-
-  <view class="box">111</view>
+  <view class="box" style="transform: translate3d({{x * 100}}px, {{y * 100}}px, 0);">
+    111
+  </view>
 </view>

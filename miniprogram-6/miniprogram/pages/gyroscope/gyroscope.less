@@ -1,8 +1,21 @@
 /* pages/gyroscope/gyroscope.wxss */
-.gyroscope-wrapper{
-  .box{
-    width: 50rpx;
-    height: 50prx;
+.gyroscope-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  .box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
     background-color: red;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    border-radius: 50%;
   }
 }
