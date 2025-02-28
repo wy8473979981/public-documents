@@ -8,11 +8,11 @@ App<IAppOption>({
     platform: ''
   },
   onLaunch() {
-    this.checkForUpdates();
-    this.checkWeChatVersion("3.7.3");
-    this.onLoadFont();
-    this.getEnvironmentVersion();
-    printVersion();
+    // this.checkForUpdates();
+    // this.checkWeChatVersion("3.7.3");
+    // this.onLoadFont();
+    // this.getEnvironmentVersion();
+    // printVersion();
   },
   onLoadFont: function () {
     // 加载字体

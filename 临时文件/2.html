@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>JS Bin</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        display: grid;
+        grid-template-columns: 100px 100px 100px;
+        grid-template-rows: 100px 100px 100px;
+        grid-auto-flow: row dense;
+        /* grid-auto-flow: column dense */
+      }
+
+      .item {
+        font-size: 4em;
+        text-align: center;
+        border: 1px solid #e5e4e9;
+      }
+
+      .item-1 {
+        background-color: #ef342a;
+        grid-column-start: 1;
+        grid-column-end: 3;
+      }
+
+      .item-2 {
+        background-color: #f68f26;
+        grid-column-start: 1;
+        grid-column-end: 3;
+      }
+
+      .item-3 {
+        background-color: #4ba946;
+      }
+
+      .item-4 {
+        background-color: #0376c2;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="item item-1">1</div>
+      <div class="item item-2">2</div>
+      <div class="item item-3">3</div>
+      <div class="item item-4">4</div>
+    </div>
+  </body>
+</html>

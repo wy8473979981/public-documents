@@ -1,21 +1,98 @@
 /* pages/gyroscope/gyroscope.wxss */
+.loding-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 9999;
+  overflow: hidden;
+  background-color: #fff;
+
+  .loader {
+    width: 260rpx;
+  }
+}
+
 .gyroscope-wrapper {
   position: relative;
   width: 100%;
   height: 100vh;
+  background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/swiper-bg.png) no-repeat;
+  background-size: cover;
   overflow: hidden;
+  position: relative;
 
-  .box {
+  .guide-title {
+    width: 476rpx;
+    height: 150rpx;
     position: absolute;
-    top: 50%;
+    top: 254rpx;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    background-color: red;
-    text-align: center;
-    line-height: 50px;
-    color: white;
-    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  .swiper-wrapper {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .swiper-item {
+    height: 100%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+
+    .pharmacist-all {
+      width: 609rpx;
+      height: 648rpx;
+      margin: 0 auto;
+      margin-top: 553rpx;
+    }
+  }
+
+  .swiper-item-1 {
+    width: 610rpx;
+    height: 648rpx;
+    margin: 0 auto;
+    margin-top: 553rpx;
+    position: relative;
+    .shop-girl {
+      width: 300rpx;
+      height: 648rpx;
+      position: absolute;
+      top: 0%;
+      right: 0rpx;
+      transform: scale(0);
+      transform-origin: bottom left;
+      // transform: translateY(100rpx);
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
+      background-size: cover;
+    }
+  }
+
+  .custom-indicator {
+    position: absolute;
+    bottom: 192rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+
+    .indicator-dot {
+      width: 12rpx;
+      height: 12rpx;
+      background-color: #f6c1d0;
+      border-radius: 50%;
+      margin: 0 4px;
+      transition: background-color 0.3s;
+    }
+
+    .indicator-dot.active {
+      background-color: #d01145;
+    }
   }
 }

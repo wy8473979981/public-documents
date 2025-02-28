@@ -1,6 +1,32 @@
 <!--pages/gyroscope/gyroscope.wxml-->
+<view wx:if="{{ loading }}" class="loding-wrapper">
+  <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
+</view>
 <view class="gyroscope-wrapper">
-  <view class="box" style="transform: translate3d({{x * 100}}px, {{y * 100}}px, 0);">
-    111
+  <image class="guide-title" src="{{guideTitle}}" mode="aspectFit"></image>
+  <view class="swiper-wrapper">
+    <swiper vertical="{{false}}" indicator-dots="{{false}}" style="height: 100%;" bindchange="onSwiperChange" current="{{current}}">
+      <swiper-item>
+        <view class="swiper-item">
+          <div class="swiper-item-1">
+            <view id="shop-girl" class="shop-girl" class="shop-girl"></view>
+          </div>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="swiper-item">
+          <image class="pharmacist-all" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-all.png" mode="aspectFit"></image>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="swiper-item">
+        </view>
+      </swiper-item>
+    </swiper>
+    <view class="custom-indicator">
+      <view class="indicator-dot {{current === 0 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="0"></view>
+      <view class="indicator-dot {{current === 1 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="1"></view>
+      <view class="indicator-dot {{current === 2 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="2"></view>
+    </view>
   </view>
 </view>
