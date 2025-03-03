@@ -68,13 +68,13 @@ Page({
     //   console.log(rect)
     // });
 
-    this.animate('#shop-girl', [
-      { offset: 0, scale: [0], ease: 'ease-in' },
-      { offset: 1, scale: [1], top: '0%', ease: 'ease-in' },
-    ], 2000, async () => {
-      const rect: any = await getElementPosition('shop-girl');
-      console.log(rect)
-    });
+    // this.animate('#shop-girl', [
+    //   { offset: 0, scale: [0], ease: 'ease-in' },
+    //   { offset: 1, scale: [1], top: '0%', ease: 'ease-in' },
+    // ], 2000, async () => {
+    //   const rect: any = await getElementPosition('shop-girl');
+    //   console.log(rect)
+    // });
 
     // this.animate(
     //   '#shop-girl',

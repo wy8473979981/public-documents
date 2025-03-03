@@ -60,17 +60,182 @@
     margin: 0 auto;
     margin-top: 553rpx;
     position: relative;
-    .shop-girl {
-      width: 300rpx;
-      height: 648rpx;
+
+    // background-color: #ccc;
+    .shop-man {
+      width: 350rpx;
+      height: 638rpx;
       position: absolute;
-      top: 0%;
+      bottom: -65rpx;
+      left: 115rpx;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png) no-repeat;
+      background-size: contain;
+
+      transform-origin: 0 0;
+      transform: translateY(648rpx) scale(0);
+      animation: shop-man-appear 2s ease-in-out 1s forwards, bounce 4s ease-in-out 3s infinite;
+    }
+
+    .shop-girl {
+      width: 290rpx;
+      height: 608rpx;
+      position: absolute;
+      bottom: -40rpx;
       right: 0rpx;
-      transform: scale(0);
-      transform-origin: bottom left;
-      // transform: translateY(100rpx);
       background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
-      background-size: cover;
+      background-size: contain;
+
+      transform-origin: 0 0;
+      transform: translateY(648rpx) scale(0);
+      animation: shop-girl-appear 2s ease-in-out 0.5s forwards, bounce 4s ease-in-out 2.5s infinite;
+    }
+
+    /* 定义元素的出现动画 */
+    @keyframes shop-man-appear {
+      0% {
+        bottom: -65rpx;
+        transform: translateY(648rpx) scale(0);
+      }
+
+      60% {
+        transform: translateY(648rpx) scale(0.03);
+      }
+
+      100% {
+        bottom: 15rpx;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes shop-girl-appear {
+      0% {
+        bottom: -40rpx;
+        transform: translateY(648rpx) scale(0);
+      }
+
+      60% {
+        transform: translateY(648rpx) scale(0.03);
+      }
+
+      100% {
+        bottom: 0rpx;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* 定义回弹动画 */
+    @keyframes bounce {
+      0% {
+        transform: translateY(0px);
+      }
+
+      12.5% {
+        transform: translateY(14px);
+      }
+
+      25% {
+        transform: translateY(0px);
+      }
+
+      37.5% {
+        transform: translateY(10px);
+      }
+
+      50% {
+        transform: translateY(0px);
+      }
+
+      62.5% {
+        transform: translateY(6px);
+      }
+
+      75% {
+        transform: translateY(0px);
+      }
+
+      87.5% {
+        transform: translateY(2px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .goods {
+      width: 210rpx;
+      height: 220rpx;
+      position: absolute;
+      top: 323rpx;
+      left: 0rpx;
+      transform-origin: bottom left;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png) no-repeat;
+      background-size: contain;
+
+      transform-origin: right bottom;
+      transform: scale(0);
+      animation: shop-goods 1s ease-in-out 3s forwards;
+    }
+
+    @keyframes shop-goods {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .cart {
+      width: 380rpx;
+      height: 340rpx;
+      position: absolute;
+      top: 298rpx;
+      left: -8rpx;
+      transform-origin: bottom left;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png) no-repeat;
+      background-size: contain;
+
+      transform-origin: right bottom;
+      transform: scale(0);
+      animation: shop-cart 1s ease-in-out 3.5s forwards;
+    }
+
+    @keyframes shop-cart {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .cart-bottom {
+      width: 650rpx;
+      height: 50rpx;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -20rpx;
+      left: 50%;
+      z-index: -1;
+      transform: translateX(-50%);
+      transform-origin: bottom left;
+      background: rgb(204 202 233);
+      transform-origin: center;
+      transform: scale(0);
+      animation: shop-cart-bottom 2s ease-in-out forwards;
+    }
+
+    @keyframes shop-cart-bottom {
+      0% {
+        transform: translateX(-50%) scale(0);
+      }
+
+      100% {
+        transform: translateX(-50%) scale(1);
+      }
     }
   }
 
