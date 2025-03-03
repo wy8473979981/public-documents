@@ -79,15 +79,16 @@
     .shop-girl {
       width: 290rpx;
       height: 608rpx;
+      transform-origin: 0 0;
+      transform: scale(0);
       position: absolute;
-      bottom: -40rpx;
+      bottom: -648rpx;
       right: 0rpx;
       background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
       background-size: contain;
 
-      transform-origin: 0 0;
-      transform: translateY(648rpx) scale(0);
-      animation: shop-girl-appear 2s ease-in-out 0.5s forwards, bounce 4s ease-in-out 2.5s infinite;
+      
+      // animation: shop-girl-appear 2s ease-in-out 0.5s forwards, bounce 4s ease-in-out 2.5s infinite;
     }
 
     /* 定义元素的出现动画 */
@@ -109,7 +110,7 @@
 
     @keyframes shop-girl-appear {
       0% {
-        bottom: -40rpx;
+        // bottom: -40rpx;
         transform: translateY(648rpx) scale(0);
       }
 

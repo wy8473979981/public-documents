@@ -59,38 +59,25 @@ Page({
     });
   },
   shopGirlAnimation: async function () {
-    // this.animate('#shop-girl', [
-    //   { offset: 0, scale: [0], translateY: '0rpx', ease: 'ease-in' },
-    //   { offset: 0.2, scale: [0.2], translateY: '-200rpx', ease: 'ease-in' },
-    //   { opacity: 1, scale: [1], translateY: '-300rpx', ease: 'ease-in' },
-    // ], 2000, async () => {
-    //   const rect: any = await getElementPosition('shop-girl');
-    //   console.log(rect)
-    // });
-
-    // this.animate('#shop-girl', [
-    //   { offset: 0, scale: [0], ease: 'ease-in' },
-    //   { offset: 1, scale: [1], top: '0%', ease: 'ease-in' },
-    // ], 2000, async () => {
-    //   const rect: any = await getElementPosition('shop-girl');
-    //   console.log(rect)
-    // });
-
-    // this.animate(
-    //   '#shop-girl',
-    //   [
-    //     { transform: 'scale(0)' },
-    //     { transform: 'scale(1)' },
-    //     { transform: 'scale(1) translateY(50rpx)' }
-    //   ],
-    //   1000,
-    //   () => {
-    //     console.log('动画完成');
-    //   }
-    // );
-
-
-
+    this.animate('#shop-girl', [
+      { transformOrigin: '0, 0', scale: [0], offset: 0 },
+      { transformOrigin: '0, 0', scale: [0.03], offset: 0.6 },
+      { transformOrigin: '0, 0', bottom: '0rpx', scale: [1], offset: 1 }
+    ], 2000, () => {
+      console.log('shop-girl-appear 动画完成');
+      // 回弹动画
+      this.animate('#shop-girl', [
+        { translateY: '0rpx', },
+        { translateY: '14rpx', offset: 0.125 },
+        { translateY: '0rpx', offset: 0.25 },
+        { translateY: '10rpx', offset: 0.375 },
+        { translateY: '0rpx', offset: 0.5 },
+        { translateY: '6rpx', offset: 0.625 },
+        { translateY: '0rpx', offset: 0.75 },
+        { translateY: '2rpx', offset: 0.875 },
+        { translateY: '0rpx', }
+      ], 4000);
+    });
   },
 
   /**
