@@ -40,8 +40,8 @@ Page({
     // })
     // return;
     this.animate('.shop-girl', [
-      { opacity: 0, transformOrigin: 'left bottom', bottom: '-120rpx', scale: [0], ease: 'ease-out', offset: 0 },
-      { opacity: 1, transformOrigin: 'left bottom', bottom: '0rpx', scale: [0.2], ease: 'ease-in', offset: 0.5 },
+      { opacity: 0, transformOrigin: 'left bottom', bottom: '-280rpx', scale: [0], ease: 'ease-out', offset: 0 },
+      { opacity: 1, transformOrigin: 'left bottom', bottom: '0rpx', scale: [0.1], ease: 'ease-in', offset: 0.6 },
       { opacity: 1, transformOrigin: 'left bottom', bottom: '0rpx', scale: [1], offset: 1 },
     ], 1500, () => {
       this.animate('.shop-girl', [
