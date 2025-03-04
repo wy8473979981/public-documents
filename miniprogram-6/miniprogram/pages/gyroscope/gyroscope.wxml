@@ -8,13 +8,13 @@
     <swiper vertical="{{false}}" indicator-dots="{{false}}" style="height: 100%;" bindchange="onSwiperChange" current="{{current}}">
       <swiper-item>
         <view class="swiper-item">
-          <div class="swiper-item-1">
+          <view class="swiper-item-1" wx:if="{{ current === 0 }}">
             <view id="shop-man" class="shop-man"></view>
             <view id="goods" class="goods"></view>
             <view id="cart" class="cart"></view>
             <view id="shop-girl" class="shop-girl"></view>
             <view id="cart-bottom" class="cart-bottom"></view>
-          </div>
+          </view>
         </view>
       </swiper-item>
       <swiper-item>
@@ -24,6 +24,16 @@
       </swiper-item>
       <swiper-item>
         <view class="swiper-item">
+          <view class="swiper-item-3" wx:if="{{ current === 2 }}">
+            <view id="discuss-bg-2" class="discuss-bg-2"></view>
+            <view id="discuss-bg-1" class="discuss-bg-1"></view>
+            <view id="discuss-bg-3" class="discuss-bg-3"></view>
+            <view id="discuss-bg-4" class="discuss-bg-4"></view>
+            <view id="discuss-man" class="discuss-man"></view>
+            <view id="discuss-girl-1" class="discuss-girl-1"></view>
+            <view id="discuss-girl-2" class="discuss-girl-2"></view>
+            <view class="start-btn">开始任务</view>
+          </view>
         </view>
       </swiper-item>
     </swiper>

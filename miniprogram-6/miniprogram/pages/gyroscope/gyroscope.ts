@@ -7,7 +7,7 @@
  */
 // pages/gyroscope/gyroscope.ts
 
-import { getElementPosition } from '../../utils/index';
+import { getElementPosition, delayFn } from '../../utils/index';
 
 Page({
   /**
@@ -32,16 +32,14 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
-    this.loaderTimerFn();
+    this.loaderFn();
   },
-  loaderTimerFn() {
-    const loaderTimer = setTimeout(() => {
-      this.setData({
-        loading: false
-      })
-      this.shopGirlAnimation();
-      clearTimeout(loaderTimer);
-    }, 500);
+  async loaderFn() {
+    await delayFn(1000);
+    this.setData({
+      loading: false
+    })
+    this.shopGirlAnimation();
   },
   // 自定义指示点点击事件
   onIndicatorTap(e: any) {
@@ -59,25 +57,25 @@ Page({
     });
   },
   shopGirlAnimation: async function () {
-    this.animate('#shop-girl', [
-      { transformOrigin: '0, 0', scale: [0], offset: 0 },
-      { transformOrigin: '0, 0', scale: [0.03], offset: 0.6 },
-      { transformOrigin: '0, 0', bottom: '0rpx', scale: [1], offset: 1 }
-    ], 2000, () => {
-      console.log('shop-girl-appear 动画完成');
-      // 回弹动画
-      this.animate('#shop-girl', [
-        { translateY: '0rpx', },
-        { translateY: '14rpx', offset: 0.125 },
-        { translateY: '0rpx', offset: 0.25 },
-        { translateY: '10rpx', offset: 0.375 },
-        { translateY: '0rpx', offset: 0.5 },
-        { translateY: '6rpx', offset: 0.625 },
-        { translateY: '0rpx', offset: 0.75 },
-        { translateY: '2rpx', offset: 0.875 },
-        { translateY: '0rpx', }
-      ], 4000);
-    });
+    // this.animate('#shop-girl', [
+    //   { transformOrigin: '0, 0', scale: [0], offset: 0 },
+    //   { transformOrigin: '0, 0', scale: [0.03], offset: 0.6 },
+    //   { transformOrigin: '0, 0', bottom: '0rpx', scale: [1], offset: 1 }
+    // ], 2000, () => {
+    //   console.log('shop-girl-appear 动画完成');
+    //   // 回弹动画
+    //   this.animate('#shop-girl', [
+    //     { translateY: '0rpx', },
+    //     { translateY: '14rpx', offset: 0.125 },
+    //     { translateY: '0rpx', offset: 0.25 },
+    //     { translateY: '10rpx', offset: 0.375 },
+    //     { translateY: '0rpx', offset: 0.5 },
+    //     { translateY: '6rpx', offset: 0.625 },
+    //     { translateY: '0rpx', offset: 0.75 },
+    //     { translateY: '2rpx', offset: 0.875 },
+    //     { translateY: '0rpx', }
+    //   ], 4000);
+    // });
   },
 
   /**

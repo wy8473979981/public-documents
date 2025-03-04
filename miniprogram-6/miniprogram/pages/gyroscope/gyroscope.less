@@ -65,30 +65,29 @@
     .shop-man {
       width: 350rpx;
       height: 638rpx;
-      position: absolute;
-      bottom: -65rpx;
-      left: 115rpx;
       background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png) no-repeat;
       background-size: contain;
 
+      position: absolute;
+      bottom: -65rpx;
+      left: 115rpx;
       transform-origin: 0 0;
       transform: translateY(648rpx) scale(0);
-      animation: shop-man-appear 2s ease-in-out 1s forwards, bounce 4s ease-in-out 3s infinite;
+      animation: shop-man-appear 2s ease-out 1s forwards, bounce 4s ease-out 3s;
     }
 
     .shop-girl {
       width: 290rpx;
       height: 608rpx;
-      transform-origin: 0 0;
-      transform: scale(0);
       position: absolute;
-      bottom: -648rpx;
+      bottom: -40rpx;
       right: 0rpx;
       background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
       background-size: contain;
 
-      
-      // animation: shop-girl-appear 2s ease-in-out 0.5s forwards, bounce 4s ease-in-out 2.5s infinite;
+      transform-origin: 0 0;
+      transform: translateY(648rpx) scale(0);
+      animation: shop-girl-appear 2s ease-out 0.5s forwards, bounce 4s ease-out 2.5s;
     }
 
     /* 定义元素的出现动画 */
@@ -110,7 +109,7 @@
 
     @keyframes shop-girl-appear {
       0% {
-        // bottom: -40rpx;
+        bottom: -40rpx;
         transform: translateY(648rpx) scale(0);
       }
 
@@ -175,7 +174,7 @@
 
       transform-origin: right bottom;
       transform: scale(0);
-      animation: shop-goods 1s ease-in-out 3s forwards;
+      animation: shop-goods 1s ease-out 3s forwards;
     }
 
     @keyframes shop-goods {
@@ -200,7 +199,7 @@
 
       transform-origin: right bottom;
       transform: scale(0);
-      animation: shop-cart 1s ease-in-out 3.5s forwards;
+      animation: shop-cart 1s ease-out 3.5s forwards;
     }
 
     @keyframes shop-cart {
@@ -222,11 +221,10 @@
       left: 50%;
       z-index: -1;
       transform: translateX(-50%);
-      transform-origin: bottom left;
       background: rgb(204 202 233);
       transform-origin: center;
       transform: scale(0);
-      animation: shop-cart-bottom 2s ease-in-out forwards;
+      animation: shop-cart-bottom 2s ease-out forwards;
     }
 
     @keyframes shop-cart-bottom {
@@ -238,6 +236,235 @@
         transform: translateX(-50%) scale(1);
       }
     }
+  }
+  .swiper-item-3 {
+    width: 100%;
+    height: 438.61rpx;
+    margin-top: 443rpx;
+    position: relative;
+
+    .discuss-bg-2 {
+      width: 100%;
+      height: 100%;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-2.png) no-repeat;
+      background-size: contain;
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-bg-2 1s ease-out forwards, discuss-bounce-1 2s ease-out 1s;
+    }
+
+    @keyframes discuss-bg-2 {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* 定义回弹动画 */
+    @keyframes discuss-bounce-1 {
+      0% {
+        transform: scale(1);
+      }
+
+      25% {
+        transform: scale(1.1);
+      }
+
+      50% {
+        transform: scale(1);
+      }
+
+      75% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-bg-1 {
+      width: 80%;
+      height: 50%;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-1.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: 0px;
+      left: 70rpx;
+
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-bg-1 1s ease-out 1s forwards, discuss-bounce-1 2s ease-out 2s;
+    }
+
+    @keyframes discuss-bg-1 {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-bg-3 {
+      width: 86%;
+      height: 36%;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-3.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: 0px;
+      right: 40rpx;
+      z-index: 10;
+
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-bg-3 1s ease-out 2s forwards, discuss-bounce-1 2s ease-out 3s;
+    }
+
+    @keyframes discuss-bg-3 {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-bg-4 {
+      width: 100%;
+      height: 105rpx;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-4.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: -81rpx;
+      left: 0rpx;
+      z-index: 20;
+
+      transform-origin: center top;
+      transform: scale(0);
+      animation: discuss-bg-4 1s ease-out 3s forwards, discuss-bounce-1 2s ease-out 4s;
+    }
+
+    @keyframes discuss-bg-4 {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-man {
+      width: 200rpx;
+      height: 300rpx;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-man.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: 0rpx;
+      left: 110rpx;
+      z-index: 5;
+
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-man 1s ease-out 4s forwards, discuss-bounce-1 2s ease-out 5s;
+    }
+
+    @keyframes discuss-man {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-girl-1 {
+      width: 200rpx;
+      height: 300rpx;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-girl-1.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: 0rpx;
+      right: 120rpx;
+      z-index: 5;
+
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-girl-1 1s ease-out 5s forwards, discuss-bounce-1 2s ease-out 6s;
+    }
+
+    @keyframes discuss-girl-1 {
+      0% {
+        transform: scale(0);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .discuss-girl-2 {
+      width: 180rpx;
+      height: 320rpx;
+      background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-girl-2.png) no-repeat;
+      background-size: contain;
+      position: absolute;
+      bottom: 0rpx;
+      right: 320rpx;
+      z-index: 4;
+
+      transform-origin: center bottom;
+      transform: scale(0);
+      animation: discuss-girl-2 1s ease-out 6s forwards, discuss-bounce-1 2s ease-out 7s;
+    }
+
+    @keyframes discuss-girl-2 {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .start-btn{
+      width: 630rpx;
+      height: 97rpx;
+      border-radius: 62rpx;
+      border:2rpx solid #d01145;
+      font-family: PingFang-SC;
+      font-weight: 500;
+      font-size: 36rpx;
+      color: #d01145;
+      font-style: normal;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 718.61rpx;
+      transform: translateX(-50%);
+
+      opacity: 0;
+      animation: start-btn 1s ease-out 7s forwards;
+    }
+
+    @keyframes start-btn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
   }
 
   .custom-indicator {
