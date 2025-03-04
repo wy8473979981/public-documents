@@ -1,0 +1,8 @@
+<!--pages/demo/demo.wxml-->
+<view class="demo">
+  <!-- <view class="container" id="container"></view> -->
+  <!-- <view class="block"></view> -->
+  <view class="wrapper">
+    <view id="shop-girl" class="shop-girl"></view>
+  </view>
+</view>
