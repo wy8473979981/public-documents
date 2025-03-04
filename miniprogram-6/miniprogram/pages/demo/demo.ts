@@ -40,18 +40,23 @@ Page({
     // })
     // return;
     this.animate('.shop-girl', [
-      { opacity: 0, transformOrigin: 'bottom', bottom: '-160rpx', scale: [0], ease: 'ease-out', offset: 0 },
-      { opacity: 1, transformOrigin: 'bottom', bottom: '0rpx', scale: [0.2], ease: 'ease-in', offset: 0.6 },
-      { opacity: 1, transformOrigin: 'bottom', bottom: '0rpx', scale: [1], offset: 1 },
-    ], 1000, () => {
+      { opacity: 0, transformOrigin: 'left bottom', bottom: '-120rpx', scale: [0], ease: 'ease-out', offset: 0 },
+      { opacity: 1, transformOrigin: 'left bottom', bottom: '0rpx', scale: [0.2], ease: 'ease-in', offset: 0.5 },
+      { opacity: 1, transformOrigin: 'left bottom', bottom: '0rpx', scale: [1], offset: 1 },
+    ], 1500, () => {
       this.animate('.shop-girl', [
-        { transformOrigin: 'center', bottom: '20rpx', ease: 'linear', offset: 0 },
-        { transformOrigin: 'center', bottom: '0rpx', ease: 'linear', offset: 0.2 },
-        { transformOrigin: 'center', bottom: '20rpx', ease: 'linear', offset: 0.4 },
-        { transformOrigin: 'center', bottom: '0rpx', ease: 'linear', offset: 0.6 },
-        { transformOrigin: 'center', bottom: '20rpx', ease: 'linear', offset: 0.8 },
-        { transformOrigin: 'center', bottom: '0rpx', ease: 'linear', offset: 1 },
-      ], 1000, () => {
+        { transformOrigin: 'center', bottom: '40rpx', ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center', bottom: '-40rpx', ease: 'ease-in-out', offset: 0.1 },
+        { transformOrigin: 'center', bottom: '20rpx', ease: 'ease-in-out', offset: 0.2 },
+        { transformOrigin: 'center', bottom: '-20rpx', ease: 'ease-in-out', offset: 0.3 },
+        { transformOrigin: 'center', bottom: '10rpx', ease: 'ease-in-out', offset: 0.4 },
+        { transformOrigin: 'center', bottom: '-10rpx', ease: 'ease-in-out', offset: 0.5 },
+        { transformOrigin: 'center', bottom: '5rpx', ease: 'ease-in-out', offset: 0.6 },
+        { transformOrigin: 'center', bottom: '-5rpx', ease: 'ease-in-out', offset: 0.7 },
+        { transformOrigin: 'center', bottom: '3rpx', ease: 'ease-in-out', offset: 0.8 },
+        { transformOrigin: 'center', bottom: '-3rpx', ease: 'ease-in-out', offset: 0.9 },
+        { transformOrigin: 'center', bottom: '0rpx', ease: 'ease-in-out', offset: 1 },
+      ], 3000, () => {
 
       })
     })
