@@ -1,8 +1,51 @@
 <!--pages/demo/demo.wxml-->
-<view class="demo">
-  <!-- <view class="container" id="container"></view> -->
-  <!-- <view class="block"></view> -->
+<!-- <view class="demo">
   <view class="wrapper">
     <view id="shop-girl" class="shop-girl"></view>
+  </view>
+</view> -->
+<view wx:if="{{ loading }}" class="loding-wrapper">
+  <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
+</view>
+<view class="gyroscope-wrapper">
+  <image class="guide-title" src="{{guideTitle}}" mode="aspectFit"></image>
+  <view class="swiper-wrapper">
+    <swiper vertical="{{false}}" indicator-dots="{{false}}" style="height: 100%;" bindchange="onSwiperChange" current="{{current}}">
+      <swiper-item>
+        <view class="swiper-item">
+          <view class="swiper-item-1" >
+            <view id="shop-man" class="shop-man"></view>
+            <view id="goods" class="goods"></view>
+            <view id="cart" class="cart"></view>
+            <view id="shop-girl" class="shop-girl"></view>
+            <view id="cart-bottom" class="cart-bottom"></view>
+          </view>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="swiper-item">
+          <image class="pharmacist-all" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-all.png" mode="aspectFit"></image>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="swiper-item">
+          <view class="swiper-item-3">
+            <view id="discuss-bg-2" class="discuss-bg-2"></view>
+            <view id="discuss-bg-1" class="discuss-bg-1"></view>
+            <view id="discuss-bg-3" class="discuss-bg-3"></view>
+            <view id="discuss-bg-4" class="discuss-bg-4"></view>
+            <view id="discuss-man" class="discuss-man"></view>
+            <view id="discuss-girl-1" class="discuss-girl-1"></view>
+            <view id="discuss-girl-2" class="discuss-girl-2"></view>
+            <view class="start-btn">开始任务</view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+    <view class="custom-indicator">
+      <view class="indicator-dot {{current === 0 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="0"></view>
+      <view class="indicator-dot {{current === 1 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="1"></view>
+      <view class="indicator-dot {{current === 2 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="2"></view>
+    </view>
   </view>
 </view>
