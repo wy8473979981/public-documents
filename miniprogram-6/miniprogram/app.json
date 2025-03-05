@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/demo/demo",
-    "pages/gyroscope/gyroscope"
+    "pages/gyroscope/gyroscope",
+    "pages/demo/demo"
   ],
   "window": {
     "navigationBarTextStyle": "black",
