@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/gyroscope/gyroscope",
+    "pages/guidance/guidance",
     "pages/demo/demo"
   ],
   "window": {

@@ -1,94 +1,36 @@
-/*
- * @Description: Description
- * @Author: wangyang
- * @Date: 2025-02-27 15:01:26
- * @LastEditors: wangyang
- * @LastEditTime: 2025-02-28 16:41:09
- */
-// pages/gyroscope/gyroscope.ts
-
-import { getElementPosition, delayFn } from '../../utils/index';
-
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    infinite: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/infinite.gif',
-    guideTitle: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/guide-title.png',
-    loading: true,
-    red: '#ff0000', // 定义 red 变量
-    current: 0, // 当前 swiper 的索引
+    left: 150, // 初始位置
+    top: 300,
+    speed: 10 // 速度系数
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-    this.loaderFn();
-  },
-  async loaderFn() {
-    await delayFn(1000);
-    this.setData({
-      loading: false
-    })
-    this.shopGirlAnimation();
-  },
-  // 自定义指示点点击事件
-  onIndicatorTap(e: any) {
-    const index = e.currentTarget.dataset.index;
-    console.log('onIndicatorTap', index);
-    this.setData({
-      current: index,
-    }, () => {
-      console.log('Swiper current updated to', this.data.current);
-    });
-  },
-  onSwiperChange(e: any) {
-    this.setData({
-      current: e.detail.current,
-    });
-  },
-  shopGirlAnimation: async function () {
+  onLoad() {
+    const that = this;
     
+    wx.startGyroscope({
+      interval: 'game', // 监听频率，可选 'game'（最快）, 'normal', 'ui'
+      success() {
+        console.log('陀螺仪监听开启');
+      }
+    });
+
+    wx.onGyroscopeChange((res) => {
+      let newLeft = that.data.left + res.y * that.data.speed;
+      let newTop = that.data.top - res.x * that.data.speed;
+
+      // 限制范围，防止超出视图
+      newLeft = Math.max(0, Math.min(wx.getSystemInfoSync().windowWidth - 50, newLeft));
+      newTop = Math.max(0, Math.min(wx.getSystemInfoSync().windowHeight - 50, newTop));
+
+      that.setData({
+        left: newLeft,
+        top: newTop
+      });
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() { },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() { },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () { },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() { },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() { },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() { },
-
-
+  onUnload() {
+    wx.stopGyroscope(); // 页面卸载时停止监听
+  }
 });
