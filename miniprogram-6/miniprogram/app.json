@@ -1,12 +1,17 @@
 {
   "pages": [
+    "pages/shuidi/shuidi",
+    "pages/sd3/sd3",
+    "pages/sd1/sd1",
+    "pages/sd2/sd2",
     "pages/gyroscope/gyroscope",
     "pages/guidance/guidance",
     "pages/demo/demo"
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationStyle": "custom"
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "液体波动效果"
   },
   "style": "v2",
   "rendererOptions": {
@@ -21,7 +26,8 @@
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "requiredBackgroundModes": [
-    "audio"
+    "audio",
+    "accelerometer"
   ],
   "permissions": {
     "vibrate": {
@@ -32,6 +38,9 @@
     },
     "scope.writePhotosAlbum": {
       "desc": "您的小程序需要保存图片到相册"
+    },
+    "scope.userLocation": {
+      "desc": "获取您的地理位置用于检测倾斜"
     }
   }
 }
