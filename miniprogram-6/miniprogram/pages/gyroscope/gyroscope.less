@@ -1,16 +1,28 @@
+/* 清除默认样式 */
+page {
+  margin: 0;
+  padding: 0;
+  background-color: rgba(40, 134, 241, 0.925);
+}
+
+/* 容器 */
 .container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background-color: #f5f5f5;
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.square {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background-color: red;
-  border-radius: 5px;
-  transition: top 0.1s linear, left 0.1s linear;
+/* 水滴样式 */
+.shui {
+  width: 100px;
+  height: 100px;
+  background-color: #00aaff;
+  position: relative;
+  transition: border-radius 0.1s ease-out;
+  box-shadow: inset 5px 10px 15px rgba(0, 0, 0, 0.5),
+    5px 5px 10px rgba(0, 0, 0, 0.3), 7px 7px 15px rgba(0, 0, 0, 0.05),
+    inset -5px -5px 10px rgba(255, 255, 254, 0.83);
 }
