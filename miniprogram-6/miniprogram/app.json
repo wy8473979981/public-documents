@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/sensor/sensor",
     "pages/shuidi/shuidi",
     "pages/sd3/sd3",
     "pages/sd1/sd1",
