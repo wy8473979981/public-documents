@@ -1,12 +1,12 @@
 {
   "pages": [
+    "pages/shuibei/shuibei",
     "pages/index/index"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Three.js Demo",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "液体波动效果"
   },
   "rendererOptions": {
     "skyline": {
@@ -20,8 +20,6 @@
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "usingComponents": {
-    "van-image": "@vant/weapp/image/index",
-    "van-button": "@vant/weapp/button/index"
   },
   "permission": {
     "scope.userLocation": {

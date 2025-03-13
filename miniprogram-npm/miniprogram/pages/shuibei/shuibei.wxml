@@ -1,0 +1,3 @@
+<view class="container">
+  <canvas type="webgl" id="webgl" class="webgl-canvas"></canvas>
+</view>
