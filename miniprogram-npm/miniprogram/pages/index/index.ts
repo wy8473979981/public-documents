@@ -1,54 +1,56 @@
-// index.ts
-// 获取应用实例
-const app = getApp<IAppOption>()
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+import { createScopedThreejs } from 'threejs-miniprogram';
 
-Component({
-  data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
-  },
-  methods: {
-    // 事件处理函数
-    bindViewTap() {
-      wx.navigateTo({
-        url: '../logs/logs',
-      })
-    },
-    onChooseAvatar(e: any) {
-      const { avatarUrl } = e.detail
-      const { nickName } = this.data.userInfo
-      this.setData({
-        "userInfo.avatarUrl": avatarUrl,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
-    },
-    onInputChange(e: any) {
-      const nickName = e.detail.value
-      const { avatarUrl } = this.data.userInfo
-      this.setData({
-        "userInfo.nickName": nickName,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
-    },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
-    },
-  },
-})
+Page({
+  onReady() {
+    wx.createSelectorQuery()
+      .select('#webgl')
+      .node()
+      .exec((res) => {
+        const canvas = res[0].node;
+        const THREE = createScopedThreejs(canvas);
+        
+        // 1. 初始化基础Three.js组件
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          canvas.width / canvas.height,
+          0.1,
+          1000
+        );
+        
+        // 2. 创建WebGL渲染器
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true
+        });
+        renderer.setSize(canvas.width, canvas.height);
+
+        // 3. 创建立方体
+        const geometry = new THREE.BoxGeometry(2, 2, 2); // 边长为2的立方体
+        const material = new THREE.MeshNormalMaterial(); // 使用法向材质
+        const cube = new THREE.Mesh(geometry, material);
+        
+        // 4. 设置相机位置
+        camera.position.z = 5;
+
+        // 5. 将立方体加入场景
+        scene.add(cube);
+
+        // 6. 动画循环
+        const animate = () => {
+          // 使用小程序canvas请求动画帧
+          canvas.requestAnimationFrame(animate);
+
+          // 立方体旋转动画
+          cube.rotation.x += 0.01;
+          cube.rotation.y += 0.01;
+
+          // 渲染场景
+          renderer.render(scene, camera);
+        };
+
+        // 启动动画
+        animate();
+      });
+  }
+});

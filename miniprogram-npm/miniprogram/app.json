@@ -3,8 +3,10 @@
     "pages/index/index"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationStyle": "custom"
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Three.js Demo",
+    "navigationBarTextStyle": "black"
   },
   "rendererOptions": {
     "skyline": {
@@ -20,5 +22,10 @@
   "usingComponents": {
     "van-image": "@vant/weapp/image/index",
     "van-button": "@vant/weapp/button/index"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于展示用户位置"
+    }
   }
 }

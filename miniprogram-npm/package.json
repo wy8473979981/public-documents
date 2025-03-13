@@ -6,7 +6,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@vant/weapp": "^1.11.7"
+    "@vant/weapp": "^1.11.7",
+    "threejs-miniprogram": "0.0.8"
   },
   "devDependencies": {
     "miniprogram-api-typings": "^2.8.3-1"
