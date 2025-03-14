@@ -41,12 +41,12 @@ Page({
     this.setData({
       rotateX: this.smoothValue(y * 0.6 + this.data.rotateX * 0.4),
       rotateY: this.smoothValue(x * 0.6 + this.data.rotateY * 0.4),
-      liquidRotation: isGyro ? x * 60 : x * 1.8,
-      lastUpdate: now
-    })
+      liquidRotation: this.smoothValue(isGyro ? x * 60 : x * 1.8),
+      lastUpdate: now,
+    });
   },
 
-  smoothValue: function(value) {
+  smoothValue: function(value: any) {
     // 限制最大旋转角度
     return Math.min(45, Math.max(-45, value))
   },
