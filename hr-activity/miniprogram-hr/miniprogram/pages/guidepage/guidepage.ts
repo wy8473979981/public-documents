@@ -1,5 +1,5 @@
 // pages/guidance/guidance.ts
-import { getElementPosition, delayFn } from '../../utils/index';
+import { delayFn } from '../../utils/index';
 
 Page({
   /**
@@ -28,14 +28,11 @@ Page({
   },
   async loaderFn() {
     await delayFn(1000);
-    this.setData({
-      loading: false
-    })
+    this.setData({ loading: false });
   },
   // 自定义指示点点击事件
   onIndicatorTap(e: any) {
     const index = e.currentTarget.dataset.index;
-    console.log('onIndicatorTap', index);
     this.setData({
       current: index,
     }, () => {

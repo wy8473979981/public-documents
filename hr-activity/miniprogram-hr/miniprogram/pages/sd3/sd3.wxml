@@ -1,0 +1,5 @@
+<!-- 杯子容器 -->
+<view class="cup">
+  <!-- 水面 -->
+  <view class="water" animation="{{waterAnimation}}"></view>
+</view>
