@@ -78,7 +78,7 @@ Page({
     });
   },
   async loaderFn() {
-    await delayFn(1000);
+    await delayFn(2000);
     this.setData({ loading: false });
   },
   // 自定义指示点点击事件

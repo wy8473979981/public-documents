@@ -1,8 +1,8 @@
 <!--pages/guidepage/guidepage.wxml-->
-<!-- <view wx:if="{{ loading }}" class="loding-wrapper">
+<view wx:if="{{ loading }}" class="loding-wrapper">
   <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
-</view> -->
-<view class="guidance-wrapper">
+</view>
+<view wx:else class="guidance-wrapper">
   <image class="guide-title" src="{{guideTitle}}" mode="aspectFit"></image>
   <view class="swiper-wrapper">
     <swiper vertical="{{false}}" indicator-dots="{{false}}" style="height: 100%;" bindchange="onSwiperChange" current="{{current}}">
