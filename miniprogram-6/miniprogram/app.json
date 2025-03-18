@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/demo/demo",
     "pages/guidance/guidance",
+    "pages/demo/demo",
     "pages/sensor/sensor",
     "pages/shuidi/shuidi",
     "pages/sd3/sd3",

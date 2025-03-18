@@ -1,3 +1,10 @@
+/*
+ * @Description: Description
+ * @Author: wangyang
+ * @Date: 2025-03-18 13:50:19
+ * @LastEditors: wangyang
+ * @LastEditTime: 2025-03-18 15:34:28
+ */
 // pages/guidance/guidance.ts
 import { delayFn } from '../../utils/index';
 
@@ -25,6 +32,50 @@ Page({
    */
   onReady() {
     this.loaderFn();
+    this.getWxCode();
+  },
+  getWxCode(){
+    wx.login({
+      success (res) {
+        console.log(res);
+        if (res.code) {
+          //发起网络请求
+          // wx.request({
+          //   url: 'https://example.com/onLogin',
+          //   data: {
+          //     code: res.code
+          //   }
+          // })
+        } else {
+          console.log('登录失败！' + res.errMsg)
+        }
+      }
+    })
+  },
+  getUserInfo() {
+    console.log(111);
+    wx.getUserInfo({
+      desc: '用于完善会员资料', // 必须填写
+      success: (res) => {
+        console.log('用户信息:', res, res.userInfo);
+        this.setData({
+          userInfo: res.userInfo,
+        });
+      },
+      fail: (err) => {
+        console.log('用户拒绝授权:', err);
+        wx.showModal({
+          title: '提示',
+          content:
+            '您拒绝了授权，部分功能可能无法正常使用，请前往设置页开启授权。',
+          success(res) {
+            if (res.confirm) {
+              wx.openSetting();
+            }
+          },
+        });
+      },
+    });
   },
   async loaderFn() {
     await delayFn(1000);

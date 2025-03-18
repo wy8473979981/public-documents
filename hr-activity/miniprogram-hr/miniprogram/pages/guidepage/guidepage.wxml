@@ -11,9 +11,9 @@
           <view class="swiper-item-1" wx:if="{{ current === 0 }}">
             <view id="cart-bottom" class="cart-bottom"></view>
             <view id="shop-girl" class="shop-girl"></view>
-            <!-- <view id="shop-man" class="shop-man"></view>
+            <view id="shop-man" class="shop-man"></view>
             <view id="goods" class="goods"></view>
-            <view id="cart" class="cart"></view> -->
+            <view id="cart" class="cart"></view>
           </view>
         </view>
       </swiper-item>

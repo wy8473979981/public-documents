@@ -30,9 +30,23 @@
     width: 476rpx;
     height: 150rpx;
     position: absolute;
-    top: 254rpx;
     left: 50%;
-    transform: translateX(-50%);
+    opacity: 0;
+    transform: translate(-50%, -150rpx);
+    animation: guide-title 0.8s ease-in-out forwards;
+  }
+  @keyframes guide-title {
+    0% {
+      opacity: 0;
+      top: -150rpx;
+      transform: translate(-50%, -150rpx);
+      transform-origin: center;
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, 254rpx);
+      transform-origin: center;
+    }
   }
 
   .swiper-wrapper {
@@ -52,13 +66,18 @@
         margin-top: 553rpx;
       }
     }
+
     .swiper-item-1 {
       width: 610rpx;
       height: 648rpx;
       margin: 0 auto;
       margin-top: 553rpx;
       position: relative;
-      // background-color: #ccc;
+      .btn{
+        position: absolute;
+        top: -20rpx;
+        left: 50%;
+      }
 
       .cart-bottom {
         width: 650rpx;
@@ -74,202 +93,137 @@
         transform: scale(0);
         animation: shop-cart-bottom 1s ease-in-out forwards;
       }
-  
       @keyframes shop-cart-bottom {
         0% {
           transform: translateX(-50%) scale(0);
         }
-  
+
         100% {
           transform: translateX(-50%) scale(1);
         }
       }
-
       .shop-girl {
         width: 290rpx;
         height: 608rpx;
         position: absolute;
-        // bottom: -40rpx;
         right: 0rpx;
+        z-index: 10;
         background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
         background-size: contain;
-  
-        // transform-origin: 0 0;
-        // transform: translateY(648rpx) scale(0);
-        // animation: shop-girl-appear 2s ease-out 0.5s forwards, bounce 4s ease-out 2.5s;
-
-        opacity: 0;
         transform-origin: bottom left;
-        transform: translateY(60px) scale(0);
-        // animation: appear 1.5s ease-in-out forwards;
-        animation: appear 1.5s ease-in-out forwards, bounce1 5s ease-in-out 1.5s forwards;
+        transform: translateY(140rpx) scale(0);
+        animation: shop-girl-appear 1s ease-in-out 1s forwards, shop-girl-bounce 3.5s ease-in-out 2s forwards;
       }
-
-      /* 定义元素的出现动画 */
-      @keyframes appear {
+      @keyframes shop-girl-appear {
         0% {
-          opacity: 0;
-          transform: translateY(60px) scale(0);
+          transform: translateY(140rpx) scale(0);
         }
-        70% {
-          opacity: 1;
-          transform: translateY(60px) scale(0.1);
+        50% {
+          transform: translateY(140rpx) scale(0.02);
         }
         100% {
-          opacity: 1;
-          transform: translateY(-50px) scale(1);
+          transform: translateY(10rpx) scale(1);
         }
       }
-
-      @keyframes bounce1 {
+      @keyframes shop-girl-bounce {
         0% {
           transform-origin: center;
-          transform: translateY(-50px) rotateZ(0deg);
+          transform: translateY(10rpx) rotateZ(0deg);
         }
-        10% {
+        12.5% {
           transform-origin: center;
-          transform: translateY(0) rotateZ(0.8deg);
+          transform: translateY(60rpx) rotateZ(0.8deg);
         }
-        20% {
+        25% {
           transform-origin: center;
-          transform: translateY(-30px) rotateZ(-0.6deg);
+          transform: translateY(17.5rpx) rotateZ(-0.6deg);
         }
-        30% {
+        37.5% {
           transform-origin: center;
-          transform: translateY(0) rotateZ(0.6deg);
-        }
-        40% {
-          transform-origin: center;
-          transform: translateY(-20px) rotateZ(-0.4deg);
+          transform: translateY(56.67rpx) rotateZ(0.6deg);
         }
         50% {
           transform-origin: center;
-          transform: translateY(0) rotateZ(0.4deg);
+          transform: translateY(25rpx) rotateZ(-0.4deg);
         }
-        60% {
+        62.5% {
           transform-origin: center;
-          transform: translateY(-10px) rotateZ(-0.2deg);
+          transform: translateY(53.34rpx) rotateZ(0.4deg);
         }
-        70% {
+        75% {
           transform-origin: center;
-          transform: translateY(0) rotateZ(0.2deg);
+          transform: translateY(32.5rpx) rotateZ(-0.2deg);
         }
-        80% {
+        87.5% {
           transform-origin: center;
-          transform: translateY(-5px) rotateZ(-0.1deg);
-        }
-        90% {
-          transform-origin: center;
-          transform: translateY(0px) rotateZ(0.1deg);
+          transform: translateY(50rpx) rotateZ(0.2deg);
         }
         100% {
           transform-origin: center;
-          transform: translateY(0px) rotateZ(0deg);
+          transform: translateY(40rpx) rotateZ(0deg);
         }
       }
-  
       .shop-man {
         width: 350rpx;
         height: 638rpx;
         background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png) no-repeat;
         background-size: contain;
-  
         position: absolute;
-        bottom: -65rpx;
         left: 115rpx;
-        transform-origin: 0 0;
-        transform: translateY(648rpx) scale(0);
-        animation: shop-man-appear 2s ease-out 1s forwards, bounce 4s ease-out 3s;
+        transform-origin: bottom left;
+        transform: translateY(120rpx) scale(0);
+        animation: shop-man-appear 1s ease-in-out 2s forwards, shop-man-bounce 3.5s ease-in-out 3s forwards;
       }
-  
       @keyframes shop-man-appear {
         0% {
-          bottom: -65rpx;
-          transform: translateY(648rpx) scale(0);
+          transform: translateY(120rpx) scale(0);
         }
-  
-        60% {
-          transform: translateY(648rpx) scale(0.03);
-        }
-  
-        100% {
-          bottom: 15rpx;
-          transform: translateY(0) scale(1);
-        }
-      }
-  
-  
-      // .shop-girl {
-      //   width: 290rpx;
-      //   height: 608rpx;
-      //   position: absolute;
-      //   bottom: -40rpx;
-      //   right: 0rpx;
-      //   background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png) no-repeat;
-      //   background-size: contain;
-  
-      //   transform-origin: 0 0;
-      //   transform: translateY(648rpx) scale(0);
-      //   animation: shop-girl-appear 2s ease-out 0.5s forwards, bounce 4s ease-out 2.5s;
-      // }
-  
-      /* 定义元素的出现动画 */
-  
-      @keyframes shop-girl-appear {
-        0% {
-          bottom: -40rpx;
-          transform: translateY(648rpx) scale(0);
-        }
-  
-        60% {
-          transform: translateY(648rpx) scale(0.03);
-        }
-  
-        100% {
-          bottom: 0rpx;
-          transform: translateY(0) scale(1);
-        }
-      }
-  
-      /* 定义回弹动画 */
-      @keyframes bounce {
-        0% {
-          transform: translateY(0px);
-        }
-  
-        12.5% {
-          transform: translateY(14px);
-        }
-  
-        25% {
-          transform: translateY(0px);
-        }
-  
-        37.5% {
-          transform: translateY(10px);
-        }
-  
         50% {
-          transform: translateY(0px);
+          transform: translateY(120rpx) scale(0.02);
         }
-  
-        62.5% {
-          transform: translateY(6px);
-        }
-  
-        75% {
-          transform: translateY(0px);
-        }
-  
-        87.5% {
-          transform: translateY(2px);
-        }
-  
         100% {
-          transform: translateY(0px);
+          transform: translateY(-20rpx) scale(1);
         }
       }
-  
+      @keyframes shop-man-bounce {
+        0% {
+          transform-origin: center;
+          transform: translateY(-20rpx) rotateZ(0deg);
+        }
+        12.5% {
+          transform-origin: center;
+          transform: translateY(20rpx) rotateZ(0.8deg);
+        }
+        25% {
+          transform-origin: center;
+          transform: translateY(0rpx) rotateZ(-0.6deg);
+        }
+        37.5% {
+          transform-origin: center;
+          transform: translateY(12rpx) rotateZ(0.6deg);
+        }
+        50% {
+          transform-origin: center;
+          transform: translateY(0rpx) rotateZ(-0.4deg);
+        }
+        62.5% {
+          transform-origin: center;
+          transform: translateY(8rpx) rotateZ(0.4deg);
+        }
+        75% {
+          transform-origin: center;
+          transform: translateY(0rpx) rotateZ(-0.2deg);
+        }
+        87.5% {
+          transform-origin: center;
+          transform: translateY(4rpx) rotateZ(0.2deg);
+        }
+        100% {
+          transform-origin: center;
+          transform: translateY(0rpx) rotateZ(0deg);
+        }
+      }
+
       .goods {
         width: 210rpx;
         height: 220rpx;
@@ -279,22 +233,20 @@
         transform-origin: bottom left;
         background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png) no-repeat;
         background-size: contain;
-  
+
         transform-origin: right bottom;
         transform: scale(0);
-        animation: shop-goods 1s ease-out 3s forwards;
+        animation: shop-goods 0.5s ease-out 3s forwards;
       }
-  
       @keyframes shop-goods {
         0% {
           transform: scale(0);
         }
-  
         100% {
           transform: scale(1);
         }
       }
-  
+
       .cart {
         width: 380rpx;
         height: 340rpx;
@@ -304,29 +256,22 @@
         transform-origin: bottom left;
         background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png) no-repeat;
         background-size: contain;
-  
+
         transform-origin: right bottom;
         transform: scale(0);
-        animation: shop-cart 1s ease-out 3.5s forwards;
+        animation: shop-cart 0.5s ease-out 3.5s forwards;
       }
-  
       @keyframes shop-cart {
         0% {
           transform: scale(0);
         }
-  
         100% {
           transform: scale(1);
         }
       }
-  
-      
     }
+
   }
-
-
-
-  
 
   .swiper-item-3 {
     width: 100%;
