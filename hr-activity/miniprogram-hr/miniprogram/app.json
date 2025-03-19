@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/guidepage/guidepage"
+    "pages/guidePage/guidePage",
+    "pages/loginPage/loginPage"
   ],
   "window": {
     "navigationBarTextStyle": "black",

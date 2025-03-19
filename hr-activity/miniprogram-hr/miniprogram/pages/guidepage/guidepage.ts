@@ -1,11 +1,4 @@
-/*
- * @Description: Description
- * @Author: wangyang
- * @Date: 2025-03-18 13:50:19
- * @LastEditors: wangyang
- * @LastEditTime: 2025-03-18 15:34:28
- */
-// pages/guidance/guidance.ts
+// pages/guidePage/guidePage.ts
 import { delayFn } from '../../utils/index';
 
 Page({
@@ -34,9 +27,9 @@ Page({
     this.loaderFn();
     this.getWxCode();
   },
-  getWxCode(){
+  getWxCode() {
     wx.login({
-      success (res) {
+      success(res) {
         console.log(res);
         if (res.code) {
           //发起网络请求
@@ -94,6 +87,9 @@ Page({
     this.setData({
       current: e.detail.current,
     });
+  },
+  goLogin() {
+    wx.redirectTo({ url: '/pages/loginPage/loginPage' });
   },
   /**
    * 生命周期函数--监听页面显示

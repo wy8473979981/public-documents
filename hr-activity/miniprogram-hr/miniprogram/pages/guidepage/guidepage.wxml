@@ -1,4 +1,4 @@
-<!--pages/guidepage/guidepage.wxml-->
+<!--pages/guidePage/guidePage.wxml-->
 <view class="wrapper">
   <view wx:if="{{ loading }}" class="loding-wrapper">
     <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
@@ -35,7 +35,7 @@
               <view id="discuss-man" class="discuss-man"></view>
               <view id="discuss-girl-1" class="discuss-girl-1"></view>
               <view id="discuss-girl-2" class="discuss-girl-2"></view>
-              <view class="start-btn">开始任务</view>
+              <view class="start-btn" bindtap="goLogin">开始任务</view>
             </view>
           </view>
         </swiper-item>
