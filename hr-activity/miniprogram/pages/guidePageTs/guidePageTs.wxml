@@ -14,25 +14,25 @@
               <image class="shop-man" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png" mode="aspectFit"></image>
               <image class="goods" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png" mode="aspectFit"></image>
               <image class="cart" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png" mode="aspectFit"></image>
-              <image class="swiper-label label-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-1.png" mode="aspectFit"></image>
-              <image class="swiper-label label-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-2.png" mode="aspectFit"></image>
-              <image class="swiper-label label-3" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-3.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-1 label-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-1.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-1 label-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-2.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-1 label-3" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-3.png" mode="aspectFit"></image>
             </view>
             <view class="swiper-text">品类丰富 依心而选TS</view>
           </view>
         </swiper-item>
         <swiper-item>
-          <view class="swiper-item" wx:if="{{ current === 1 }}">
+          <view class="swiper-item">
             <view class="swiper-item-2">
-              <view class="pharmacist-man"></view>
-              <view class="pharmacist-girl"></view>
-              <view class="pharmacist-pot"></view>
-              <view class="pill-2"></view>
-              <view class="pill-1"></view>
-              <view class="swiper-label label-4"></view>
-              <view class="swiper-label label-5"></view>
-              <view class="swiper-label label-6"></view>
-              <view class="swiper-label label-7"></view>
+              <image class="pharmacist-man" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-man.png" mode="aspectFit"></image>
+              <image class="pharmacist-girl" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-girl.png" mode="aspectFit"></image>
+              <image class="pharmacist-pot" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-pot.png" mode="aspectFit"></image>
+              <image class="pill-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-2.png" mode="aspectFit"></image>
+              <image class="pill-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-1.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-2 label-5" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-5.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-2 label-6" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-6.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-2 label-7" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-7.png" mode="aspectFit"></image>
+              <image class="swiper-label  swiper-label-2 label-8" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-8.png" mode="aspectFit"></image>
             </view>
             <view class="swiper-text">个性需求 一站满足</view>
           </view>

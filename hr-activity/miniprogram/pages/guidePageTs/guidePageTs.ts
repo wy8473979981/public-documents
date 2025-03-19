@@ -11,6 +11,7 @@ Page({
     loading: true,
     red: '#ff0000', // 定义 red 变量
     current: 0, // 当前 swiper 的索引
+    animateMap: [false, false, false],
   },
 
   /**
@@ -36,9 +37,21 @@ Page({
     });
   },
   onSwiperChange(e: any) {
-    this.setData({
-      current: e.detail.current,
-    });
+    const { animateMap } = this.data;
+    const { current } = e.detail;
+    if (typeof current === 'number' && current in animateMap) {
+      this.setData({
+        current: e.detail.current,
+      });
+
+      if (current === 0 && !animateMap[current]) {
+        this.shopGirlAnimate();
+      } else if (current === 1 && !animateMap[current]) {
+        this.pharmacistManAnimate();
+      } else if (current === 2 && !animateMap[current]) {
+
+      }
+    }
   },
   async loaderFn() {
     await delayFn(2000);
@@ -46,6 +59,9 @@ Page({
     this.shopGirlAnimate();
   },
   shopGirlAnimate() {
+    this.setData({
+      animateMap: [true, false, false]
+    });
     this.guideTitleAnmate();
     this.swiperTextAnimate();
     this.animate('.shop-girl', [
@@ -104,7 +120,7 @@ Page({
       { transformOrigin: 'center', opacity: 0, translate: ['-50%', '-150rpx'], scale: [0], ease: 'ease-in-out', offset: 0 },
       { transformOrigin: 'center', opacity: 1, translate: ['-50%', '254rpx'], scale: [1], ease: 'ease-in-out', offset: 1 },
     ], 500, () => {
-      
+
     });
   },
   shopCartAnimate() {
@@ -112,15 +128,59 @@ Page({
       { transformOrigin: 'right bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
       { transformOrigin: 'right bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
     ], 500, () => {
-      this.swiperLabelAnimate();
+      this.swiperLabelAnimate('swiper-label-1');
     });
   },
-  swiperLabelAnimate() {
-    this.animate('.swiper-label', [
+  pharmacistManAnimate() {
+    this.setData({
+      animateMap: [true, true, false]
+    });
+    this.swiperTextAnimate();
+    this.animate('.pharmacist-man', [
+      { opacity: 0, translateY: '-100%', ease: 'ease-in-out', offset: 0 },
+      { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
+    ], 1000, () => {
+      this.pharmacistGirlAnimate();
+    });
+  },
+  pharmacistGirlAnimate() {
+    this.animate('.pharmacist-girl', [
+      { opacity: 0, translateX: '100%', ease: 'ease-in-out', offset: 0 },
+      { opacity: 1, translateX: '0%', ease: 'ease-in-out', offset: 1 },
+    ], 1000, () => {
+      this.pharmacistPotAnimate();
+    });
+  },
+  pharmacistPotAnimate() {
+    this.animate('.pharmacist-pot', [
+      { opacity: 0, translateY: '100%', ease: 'ease-in-out', offset: 0 },
+      { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
+    ], 1000, () => {
+      this.pill2Animate();
+    });
+  },
+  pill2Animate() {
+    this.animate('.pill-2', [
+      { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+      { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
+    ], 500, () => {
+      this.pill1Animate();
+    });
+  },
+  pill1Animate() {
+    this.animate('.pill-1', [
+      { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+      { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
+    ], 1000, () => {
+      this.swiperLabelAnimate('swiper-label-2');
+    });
+  },
+  swiperLabelAnimate(className: string) {
+    this.animate(`.${className}`, [
       { transformOrigin: 'bottom right', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
       { transformOrigin: 'bottom right', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
     ], 1000, () => {
-      this.animate('.swiper-label', [
+      this.animate(`.${className}`, [
         { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
         { transformOrigin: 'bottom right', rotateZ: 0.8, ease: 'ease-in-out' },
         { transformOrigin: 'bottom right', rotateZ: -0.6, ease: 'ease-in-out', },
