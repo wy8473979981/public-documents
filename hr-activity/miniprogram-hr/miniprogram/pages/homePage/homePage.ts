@@ -1,15 +1,11 @@
-// pages/loginPage/loginPage.ts
-import { convertToUpperCase } from '../../utils/index';
+// pages/homePage/homePage.ts
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    userInfo: {
-      userId: '',
-      username: '',
-    },
+
   },
 
   /**
@@ -25,25 +21,14 @@ Page({
   onReady() {
 
   },
-  loginInput: function (e: any) {
-    const value = convertToUpperCase(e.detail.value);
-    const userInfo = {
-      username: value.length ? value : '',
-      userId: value.length ? value : '',
-    };
-    this.setData({ userInfo: userInfo });
+  flow1() {
+    wx.redirectTo({ url: '/pages/flow1Page/flow1Page' });
   },
-  login() {
-    let { userInfo } = this.data;
-    if (userInfo.userId) {
-      wx.redirectTo({ url: '/pages/homePage/homePage' });
-    } else {
-      wx.showToast({
-        title: '请输入账号',
-        icon: 'error',
-        duration: 1000,
-      });
-    }
+  flow2() {
+    wx.redirectTo({ url: '/pages/flow2Page/flow2Page' });
+  },
+  flow3() {
+    wx.redirectTo({ url: '/pages/flow3Page/flow3Page' });
   },
 
   /**

@@ -1,7 +1,11 @@
 {
   "pages": [
     "pages/guidePage/guidePage",
-    "pages/loginPage/loginPage"
+    "pages/loginPage/loginPage",
+    "pages/homePage/homePage",
+    "pages/flow1Page/flow1Page",
+    "pages/flow2Page/flow2Page",
+    "pages/flow3Page/flow3Page"
   ],
   "window": {
     "navigationBarTextStyle": "black",

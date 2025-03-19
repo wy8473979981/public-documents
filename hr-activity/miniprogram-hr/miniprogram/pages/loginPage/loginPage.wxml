@@ -1,2 +1,8 @@
 <!--pages/loginPage/loginPage.wxml-->
-<text>pages/loginPage/loginPage.wxml</text>
+<view class="login-wrapper">
+  <view class="title">欢迎</view>
+  <view class="input-wrapper">
+    <input class="login-input" bindinput="loginInput" type="text" placeholder="请输入登录名" />
+  </view>
+  <view class="login-btn" bindtap="login">登陆</view>
+</view>
