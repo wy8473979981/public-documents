@@ -333,3 +333,18 @@ export function getServerUrl(envVersion: string) {
 export function printVersion() {
   console.log(`当前应用版本号: ${config.version}`);
 }
+
+export function getBaseUrl(envVersion: string) {
+  type urlMapType = {
+    [key: string]: string
+  };
+  const urlMap: urlMapType = {
+    develop: 'https://tdauat.aia.com.cn/uat/fan-sail',
+    trial: 'https://tdauat.aia.com.cn/uat/fan-sail',
+    release: 'https://tda.aia.com.cn/p/fan-sail',
+  }
+  return urlMap[envVersion];
+}
+
+
+

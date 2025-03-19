@@ -1,4 +1,8 @@
 // pages/flow2Page/flow2Page.ts
+import { getBaseUrl } from '../../utils/index';
+const app = getApp<IAppOption>(); // 获取应用实例
+const { envVersion } = app.globalData;
+
 Page({
 
   /**
@@ -19,7 +23,11 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    this.p();
+  },
 
+  p() {
+    console.log(getBaseUrl(envVersion));
   },
 
   /**

@@ -11,7 +11,7 @@ App<IAppOption>({
     // this.checkForUpdates();
     // this.checkWeChatVersion("3.7.3");
     // this.onLoadFont();
-    // this.getEnvironmentVersion();
+    this.getEnvironmentVersion();
     // printVersion();
   },
   onLoadFont: function () {
