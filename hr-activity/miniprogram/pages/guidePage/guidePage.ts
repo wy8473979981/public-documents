@@ -10,7 +10,7 @@ Page({
     guideTitle: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/guide-title.png',
     loading: true,
     red: '#ff0000', // 定义 red 变量
-    current: 2, // 当前 swiper 的索引
+    current: 0, // 当前 swiper 的索引
   },
 
   /**
@@ -87,6 +87,9 @@ Page({
     this.setData({
       current: e.detail.current,
     });
+  },
+  onAnimationEnd() {
+    console.log("CSS 动画结束了！");
   },
   goLogin() {
     wx.redirectTo({ url: '/pages/loginPage/loginPage' });

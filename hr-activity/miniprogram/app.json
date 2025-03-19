@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/guidePageTs/guidePageTs",
     "pages/guidePage/guidePage",
     "pages/loginPage/loginPage",
     "pages/homePage/homePage",
