@@ -59,7 +59,92 @@
         height: 100%;
         position: relative;
         display: flex;
+        flex-direction: column;
         margin: 0 auto;
+
+        .swiper-text {
+          width: 100%;
+          height: 50rpx;
+          position: absolute;
+          left: 0rpx;
+          top: 1314rpx;
+          font-family: PingFang-SC;
+          font-weight: 500;
+          font-size: 36rpx;
+          color: #E88AA3;
+          line-height: 50rpx;
+          font-style: normal;
+          text-align: center;
+          transform-origin: center;
+          transform: scale(0);
+          animation: swiper-text 1s ease-in-out 0s forwards;
+        }
+
+        @keyframes swiper-text {
+          0% {
+            transform: scale(0);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        .swiper-label {
+          width: 184rpx;
+          height: 83rpx;
+          transform-origin: bottom right;
+          transform: scale(0);
+          animation: swiper-label 1s ease-in-out 2.5s forwards, swiper-label-bounce 1s ease-in-out 3.5s forwards;
+        }
+
+        @keyframes swiper-label {
+          0% {
+            transform: scale(0);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes swiper-label-bounce {
+          0% {
+            transform: rotateZ(0deg);
+          }
+
+          12.5% {
+            transform: rotateZ(0.8deg);
+          }
+
+          25% {
+            transform: rotateZ(-0.6deg);
+          }
+
+          37.5% {
+            transform: rotateZ(0.6deg);
+          }
+
+          50% {
+            transform: rotateZ(-0.4deg);
+          }
+
+          62.5% {
+            transform: rotateZ(0.4deg);
+          }
+
+          75% {
+            transform: rotateZ(-0.2deg);
+          }
+
+          87.5% {
+            transform: rotateZ(0.2deg);
+          }
+
+          100% {
+            transform: rotateZ(0deg);
+          }
+        }
       }
 
       .swiper-item-1 {
@@ -69,31 +154,28 @@
         margin-top: 553rpx;
         position: relative;
 
-        .cart-bottom {
-          width: 650rpx;
-          height: 50rpx;
-          border-radius: 50%;
-          position: absolute;
-          bottom: -20rpx;
-          left: 50%;
-          z-index: -1;
-          transform: translateX(-50%);
-          background: rgb(204 202 233);
-          transform-origin: center;
-          transform: scale(0);
-          animation: shop-cart-bottom 1s ease-in-out forwards;
-        }
-
-        @keyframes shop-cart-bottom {
-          0% {
-            transform: translateX(-50%) scale(0);
-          }
-
-          100% {
-            transform: translateX(-50%) scale(1);
-          }
-        }
-
+        // .cart-bottom {
+        //   width: 650rpx;
+        //   height: 50rpx;
+        //   border-radius: 50%;
+        //   position: absolute;
+        //   bottom: -20rpx;
+        //   left: 50%;
+        //   z-index: -1;
+        //   transform: translateX(-50%);
+        //   background: rgb(204 202 233);
+        //   transform-origin: center;
+        //   transform: scale(0);
+        //   animation: shop-cart-bottom 1s ease-in-out forwards;
+        // }
+        // @keyframes shop-cart-bottom {
+        //   0% {
+        //     transform: translateX(-50%) scale(0);
+        //   }
+        //   100% {
+        //     transform: translateX(-50%) scale(1);
+        //   }
+        // }
         .shop-girl {
           width: 290rpx;
           height: 608rpx;
@@ -250,7 +332,6 @@
           transform-origin: bottom left;
           background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png) no-repeat;
           background-size: contain;
-
           transform-origin: right bottom;
           transform: scale(0);
           animation: shop-goods 0.5s ease-out 2s forwards;
@@ -275,7 +356,6 @@
           transform-origin: bottom left;
           background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png) no-repeat;
           background-size: contain;
-
           transform-origin: right bottom;
           transform: scale(0);
           animation: shop-cart 0.5s ease-out 2.5s forwards;
@@ -290,25 +370,203 @@
             transform: scale(1);
           }
         }
+
+        .label-1 {
+          position: absolute;
+          left: -39rpx;
+          top: 39rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-1.png) no-repeat;
+          background-size: contain;
+        }
+
+        .label-2 {
+          position: absolute;
+          right: 18rpx;
+          top: -54rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-2.png) no-repeat;
+          background-size: contain;
+        }
+
+        .label-3 {
+          position: absolute;
+          right: -54rpx;
+          top: 340rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-3.png) no-repeat;
+          background-size: contain;
+        }
       }
 
       .swiper-item-2 {
-        width: 609rpx;
-        height: 648rpx;
+        width: 680rpx;
+        height: 678rpx;
         margin: 0 auto;
-        margin-top: 553rpx;
+        margin-top: 582rpx;
         position: relative;
+        // background-color: #ccc;
 
-        .pharmacist-all {
-          width: 609rpx;
-          height: 648rpx;
+        .pharmacist-man {
+          width: 310rpx;
+          height: 669rpx;
+          position: absolute;
+          left: 20rpx;
+          top: 0rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-man.png) no-repeat;
+          background-size: contain;
+          opacity: 0;
+          transform: translateY(-100%);
+          animation: pharmacist-man 1s ease-out 0.5s forwards;
+        }
+        @keyframes pharmacist-man {
+          0% {
+            opacity: 0;
+            transform: translateY(-100%);
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateY(0%);
+          }
+        }
+
+        .pharmacist-girl {
+          width: 310rpx;
+          height: 649rpx;
+          position: absolute;
+          right: 15rpx;
+          bottom: 0rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-girl.png) no-repeat;
+          background-size: contain;
+          opacity: 0;
+          transform: translateX(100%);
+          animation: pharmacist-girl 1s ease-out 1.5s forwards;
+        }
+
+        @keyframes pharmacist-girl {
+          0% {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateX(0%);
+          }
+        }
+
+        .pharmacist-pot {
+          width: 308rpx;
+          height: 284rpx;
+          position: absolute;
+          left: 239rpx;
+          bottom: 0rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-pot.png) no-repeat;
+          background-size: contain;
+          opacity: 0;
+          transform: translateY(100%);
+          animation: pharmacist-pot 1s ease-out 2.5s forwards;
+        }
+
+        @keyframes pharmacist-pot {
+          0% {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateX(0%);
+          }
+        }
+
+        .pill-2 {
+          width: 104rpx;
+          height: 103rpx;
+          position: absolute;
+          right: 192rpx;
+          top: -60rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-2.png) no-repeat;
+          background-size: contain;
+          transform: scale(0);
+          animation: pill-2 0.5s ease-out 3.5s forwards;
+        }
+        @keyframes pill-2 {
+          0% {
+            transform: scale(0);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        .pill-1 {
+          width: 40rpx;
+          height: 91rpx;
+          position: absolute;
+          left: 272rpx;
+          top: -60rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-1.png) no-repeat;
+          background-size: contain;
+          transform: scale(0);
+          animation: pill-2 0.5s ease-out 4s forwards;
+        }
+        @keyframes pill-1 {
+          0% {
+            transform: scale(0);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+        .swiper-label {
+          animation: swiper-label 1s ease-in-out 4.5s forwards, swiper-label-bounce 1s ease-in-out 5.5s forwards;
+        }
+
+        .label-4 {
+          position: absolute;
+          left: 50rpx;
+          top: -90rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-4.png) no-repeat;
+          background-size: contain;
+        }
+
+        .label-5 {
+          position: absolute;
+          left: 30rpx;
+          top: 170rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-5.png) no-repeat;
+          background-size: contain;
+        }
+
+        .label-6 {
+          position: absolute;
+          right: -10rpx;
+          top: -40rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-6.png) no-repeat;
+          background-size: contain;
+        }
+
+        .label-7 {
+          position: absolute;
+          right: 0rpx;
+          top: 390rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-7.png) no-repeat;
+          background-size: contain;
         }
       }
 
       .swiper-item-3 {
         width: 100%;
         height: 438.61rpx;
-        margin-top: 443rpx;
+        margin-top: 460rpx;
         position: relative;
 
         .discuss-bg-2 {
@@ -464,11 +722,11 @@
 
         .discuss-bg-4 {
           width: 100%;
-          height: 105rpx;
+          height: 193rpx;
           background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-4.png) no-repeat;
           background-size: contain;
           position: absolute;
-          bottom: -80rpx;
+          bottom: -176rpx;
           left: 0rpx;
           z-index: 20;
 
@@ -669,6 +927,41 @@
             transform: scaleY(1);
           }
         }
+        .label-8 {
+          position: absolute;
+          left: 41rpx;
+          top: -21rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-8.png) no-repeat;
+          background-size: contain;
+        }
+        .label-9 {
+          position: absolute;
+          left: 133rpx;
+          top: 74rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-9.png) no-repeat;
+          background-size: contain;
+        }
+        .label-10 {
+          position: absolute;
+          left: 355rpx;
+          top: 5rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-10.png) no-repeat;
+          background-size: contain;
+        }
+        .label-11 {
+          position: absolute;
+          right: 17rpx;
+          top: 89rpx;
+          z-index: 11;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-11.png) no-repeat;
+          background-size: contain;
+        }
+        .swiper-label {
+          animation: swiper-label 1s ease-in-out 4s forwards, swiper-label-bounce 1s ease-in-out 5s forwards;
+        }
 
         .start-btn {
           width: 630rpx;
@@ -687,9 +980,8 @@
           left: 50%;
           top: 718.61rpx;
           transform: translateX(-50%);
-
           opacity: 0;
-          animation: start-btn 1s ease-out 4s forwards;
+          animation: start-btn 1s ease-out 5s forwards;
         }
 
         @keyframes start-btn {
