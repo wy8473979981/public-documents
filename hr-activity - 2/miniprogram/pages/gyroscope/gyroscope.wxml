@@ -1,0 +1,3 @@
+<view class="container">
+  <view class="shui" style="border-radius: {{borderRadius}}"></view>
+</view>

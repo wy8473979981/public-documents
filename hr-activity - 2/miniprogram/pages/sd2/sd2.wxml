@@ -1,0 +1,3 @@
+<view class="container">
+  <view class="square" style="top: {{top}}px; left: {{left}}px;"></view>
+</view>

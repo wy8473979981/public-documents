@@ -1,0 +1,19 @@
+<!--pages/homePage/homePage.wxml-->
+<view class="home-wrapper">
+  <view class="header-wrapper">
+    <view class="text-1">完成任务</view>
+    <view class="text-2">领大奖</view>
+  </view>
+  <view class="rule-flow"></view>
+  <view class="flow-wrapper">
+    <view class="flow flow-1" bindtap="flow1">
+      登陆弹福平台
+    </view>
+    <view class="flow flow-2" bindtap="flow2">
+      知识问答
+    </view>
+    <view class="flow flow-3" bindtap="flow3">
+      与XX合影
+    </view>
+  </view>
+</view>
