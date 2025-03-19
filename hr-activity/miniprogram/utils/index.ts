@@ -345,6 +345,3 @@ export function getBaseUrl(envVersion: string) {
   }
   return urlMap[envVersion];
 }
-
-
-
