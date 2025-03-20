@@ -5,4 +5,29 @@
     <view class="text-2">初探弹福星</view>
   </view>
   <view class="game-title"></view>
+
+  <view class="upload-wrapper">
+    <view class="upload-contaniner" wx:if="{{!uploadStatus}}">
+      <view class="upload-content">
+        <van-loading wx:if="{{loading}}" color="#d72555" />
+        <image wx:else class="game-1-img" bindtap="chooseImage" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-img.png" mode="aspectFit"></image>
+      </view>
+      <view class="examlpe-title" bindtap="onClickShow">查看示例图></view>
+      <view class="upload-btn" bindtap="onUpload">上传</view>
+    </view>
+
+    <view class="upload-contaniner-success" wx:else>
+      <image class="upload-success" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/upload-success.png" mode="aspectFit"></image>
+      <view class="success-title">上传成功</view>
+      <view class="go-home-btn" bindtap="goHome">继续闯关</view>
+    </view>
+
+    <van-overlay show="{{ show }}">
+      <view class="overlay-wrapper">
+        <view class="overlay-container">
+        </view>
+        <van-icon name="cross" custom-class="my-cross" bind:click="onClickHide" />
+      </view>
+    </van-overlay>
+  </view>
 </view>

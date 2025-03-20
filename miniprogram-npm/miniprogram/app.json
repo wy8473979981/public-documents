@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/shuibei/shuibei",
-    "pages/index/index"
+    "pages/index/index",
+    "pages/shuibei/shuibei"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -1,5 +1,5 @@
 /* pages/game1Page/game1Page.wxss */
-.game-1-wrapper{
+.game-1-wrapper {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -7,6 +7,7 @@
   background-size: cover;
   overflow: hidden;
   position: relative;
+
   .header-wrapper {
     font-family: PingFangSC;
     font-weight: 600;
@@ -25,7 +26,8 @@
       color: #d01145;
     }
   }
-  .game-title{
+
+  .game-title {
     width: 693rpx;
     height: 50rpx;
     position: absolute;
@@ -33,5 +35,108 @@
     top: 335rpx;
     background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-title.png) no-repeat;
     background-size: cover;
+  }
+
+  .upload-wrapper {
+    width: 100vw;
+    height: 100vh;
+    margin-top: 508rpx;
+    .upload-contaniner {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      .upload-content {
+        width: 422rpx;
+        height: 423rpx;
+        background-color: #fff6f8;
+        border-radius: 20rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .game-1-img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .examlpe-title {
+        margin-top: 17rpx;
+        font-family: PingFangSC;
+        font-weight: 500;
+        font-size: 26rpx;
+        color: #a3a3a3;
+        line-height: 37rpx;
+        font-style: normal;
+      }
+      .upload-btn {
+        width: 318rpx;
+        height: 83rpx;
+        margin-top: 104rpx;
+        border-radius: 42rpx;
+        border: 2rpx solid #e02c5d;
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 36rpx;
+        color: #e02c5d;
+        font-style: normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .upload-contaniner-success{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      .upload-success{
+        width: 299rpx;
+        height: 315rpx;
+      }
+      .success-title{
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 36rpx;
+        color: #e02c5d;
+        line-height: 50rpx;
+        font-style: normal;
+        margin-top: 51rpx;
+      }
+      .go-home-btn{
+        width: 318rpx;
+        height: 83rpx;
+        margin-top: 104rpx;
+        border-radius: 42rpx;
+        border: 2rpx solid #e02c5d;
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 36rpx;
+        color: #e02c5d;
+        font-style: normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .overlay-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      .overlay-container {
+        width: 578rpx;
+        height: 843.63rpx;
+        margin: 359rpx auto 0;
+        background-color: #ffffff;
+      }
+
+      .my-cross {
+        color: #ffffff;
+        font-size: 42rpx;
+        margin-top: 40rpx;
+      }
+    }
   }
 }

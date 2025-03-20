@@ -2,6 +2,7 @@
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar",
     "van-image": "@vant/weapp/image/index",
-    "van-button": "@vant/weapp/button/index"
+    "van-button": "@vant/weapp/button/index",
+    "van-overlay": "@vant/weapp/overlay/index"
   }
 }
