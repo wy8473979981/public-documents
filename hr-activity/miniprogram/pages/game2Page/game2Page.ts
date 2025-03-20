@@ -174,6 +174,13 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    wx.getStorage({
+      key: 'wxCode',
+      success(res) {
+        console.log(1, res.data)
+      }
+    })
+
     this.init();
     // this.pp();
     // this.pp1();

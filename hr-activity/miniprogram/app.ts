@@ -1,5 +1,6 @@
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
+import {getOpenId} from './utils/request'
 
 App<IAppOption>({
   globalData: {
@@ -13,7 +14,8 @@ App<IAppOption>({
     // this.onLoadFont();
     this.getEnvironmentVersion();
     // printVersion();
-    this.getOpenId();
+    // this.getOpenId();
+    getOpenId();
   },
   onLoadFont: function () {
     // 加载字体

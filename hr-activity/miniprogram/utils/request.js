@@ -54,3 +54,25 @@ export async function postRequest(url, options = {}) {
     });
   });
 }
+
+export function getOpenId() {
+  wx.login({
+    success: async (res) => {
+      if (res.code) {
+        wx.setStorage({
+          key: "wxCode",
+          data: res.code
+        })
+        const result = await getRequest('/fan-sail/wx/user/login', {
+          data: {
+            code: res.code
+          }
+        })
+        console.log('result', result);
+
+      } else {
+        console.log('登录失败！' + res.errMsg)
+      }
+    }
+  })
+}
