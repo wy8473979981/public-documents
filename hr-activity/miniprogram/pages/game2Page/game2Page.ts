@@ -10,7 +10,7 @@ Page({
       {
         num: 1,
         isAnswered: false,
-        isAnswerWrong: false,
+        isAnswerWrong: false, // true:表示回答错误
         rightAnswers: 'D.800',
         question: '1.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
         answerList: [
@@ -66,6 +66,96 @@ Page({
             correct: true
           }
         ]
+      },
+      {
+        num: 3,
+        isAnswered: false,
+        isAnswerWrong: false,
+        rightAnswers: 'C.700',
+        question: '3.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
+        answerList: [
+          {
+            id: 1,
+            text: 'A.500',
+            icon: 0,
+            correct: false
+          }, {
+            id: 2,
+            text: 'B.600',
+            icon: 0,
+            correct: false
+          }, {
+            id: 3,
+            text: 'C.700',
+            icon: 0,
+            correct: true
+          }, {
+            id: 4,
+            text: 'D.800',
+            icon: 0,
+            correct: false
+          }
+        ]
+      },
+      {
+        num: 4,
+        isAnswered: false,
+        isAnswerWrong: false,
+        rightAnswers: 'B.600',
+        question: '4.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
+        answerList: [
+          {
+            id: 1,
+            text: 'A.500',
+            icon: 0,
+            correct: false
+          }, {
+            id: 2,
+            text: 'B.600',
+            icon: 0,
+            correct: true
+          }, {
+            id: 3,
+            text: 'C.700',
+            icon: 0,
+            correct: false
+          }, {
+            id: 4,
+            text: 'D.800',
+            icon: 0,
+            correct: false
+          }
+        ]
+      },
+      {
+        num: 5,
+        isAnswered: false,
+        isAnswerWrong: false,
+        rightAnswers: 'A.500',
+        question: '5.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
+        answerList: [
+          {
+            id: 1,
+            text: 'A.500',
+            icon: 0,
+            correct: true
+          }, {
+            id: 2,
+            text: 'B.600',
+            icon: 0,
+            correct: false
+          }, {
+            id: 3,
+            text: 'C.700',
+            icon: 0,
+            correct: false
+          }, {
+            id: 4,
+            text: 'D.800',
+            icon: 0,
+            correct: false
+          }
+        ]
       }
     ],
     currentQuestion: {},
@@ -115,6 +205,38 @@ Page({
       }
       this.setData({ currentQuestion: allQuestionList[currentIndex] })
     }
+  },
+  onPrevious() {
+    const { currentIndex } = this.data;
+    if (currentIndex > 0) {
+      this.setData({ currentIndex: currentIndex - 1 });
+      this.setData({ currentQuestion: this.data.allQuestionList[currentIndex - 1] });
+    }
+  },
+  onNext() {
+    const { currentIndex, allQuestionList } = this.data;
+    const currentQuestion = allQuestionList[currentIndex];
+    if (!currentQuestion.isAnswered) {
+      // 提示请回答问题
+      wx.showToast({
+        title: '请回答问题',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    if (currentIndex < allQuestionList.length - 1) {
+      this.setData({ currentIndex: currentIndex + 1 });
+      this.setData({ currentQuestion: this.data.allQuestionList[currentIndex + 1] });
+    }
+  },
+  onSubmit() {
+    const { allQuestionList } = this.data;
+    const totalQuestions = allQuestionList.length;
+    const correctQuestions = allQuestionList.filter(question => !question.isAnswerWrong).length;
+    const accuracyRate = (correctQuestions / totalQuestions) * 100;
+
+    console.log(`回答正确率: ${accuracyRate.toFixed(0)}%`);
   },
 
   /**

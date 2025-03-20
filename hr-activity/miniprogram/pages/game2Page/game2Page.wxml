@@ -25,8 +25,9 @@
       </view>
     </view>
     <view class="previous-next-content">
-      <view class="previous" wx:if="{{currentIndex > 0}}">上一题</view>
-      <view class="next" wx:if="{{currentIndex < 4}}">下一题</view>
+      <view class="previous" wx:if="{{currentIndex > 0}}" bindtap="onPrevious">上一题</view>
+      <view class="next" wx:if="{{currentIndex < 4}}" bindtap="onNext">下一题</view>
+      <view class="next" wx:if="{{currentIndex === 4}}" bindtap="onSubmit">提交</view>
     </view>
     <view class="right-answers-content" wx:if="{{currentQuestion.isAnswerWrong}}">
       <!-- 当前问题选择错误显示 -->
