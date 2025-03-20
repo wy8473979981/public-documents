@@ -18,7 +18,7 @@
               <image class="swiper-label swiper-label-1 label-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-2.png" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-1 label-3" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-3.png" mode="aspectFit"></image>
             </view>
-            <view class="swiper-text">品类丰富 依心而选TS</view>
+            <view class="swiper-text swiper-text-1">品类丰富 依心而选</view>
           </view>
         </swiper-item>
         <swiper-item>
@@ -34,29 +34,30 @@
               <image class="swiper-label swiper-label-2 label-7" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-7.png" mode="aspectFit"></image>
               <image class="swiper-label  swiper-label-2 label-8" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-8.png" mode="aspectFit"></image>
             </view>
-            <view class="swiper-text">个性需求 一站满足</view>
+            <view class="swiper-text swiper-text-2">个性需求 一站满足</view>
           </view>
         </swiper-item>
         <swiper-item>
-          <view class="swiper-item" wx:if="{{ current === 2 }}">
+          <view class="swiper-item">
             <view class="swiper-item-3">
-              <view class="discuss-bg-2"></view>
-              <view class="discuss-bg-1"></view>
-              <view class="discuss-bg-3"></view>
-              <view class="discuss-bg-4"></view>
-              <view class="discuss-man"></view>
-              <view class="discuss-girl-1"></view>
-              <view class="discuss-girl-2"></view>
-              <view class="swiper-label label-8"></view>
-              <view class="swiper-label label-9"></view>
-              <view class="swiper-label label-10"></view>
-              <view class="swiper-label label-11"></view>
-              <view class="start-btn" bindtap="goLogin">开始探索</view>
+              <image class="discuss-bg-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-2.png" mode="aspectFit"></image>
+              <image class="discuss-bg-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-1.png" mode="aspectFit"></image>
+              <image class="discuss-bg-3" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-3.png" mode="aspectFit"></image>
+              <image class="discuss-bg-4" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-bg-4.png" mode="aspectFit"></image>
+              <image class="discuss-man" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-man.png" mode="aspectFit"></image>
+              <image class="discuss-girl-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-girl-1.png" mode="aspectFit"></image>
+              <image class="discuss-girl-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/discuss-girl-2.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-3 label-8" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-8.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-3 label-9" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-9.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-3 label-10" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-10.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-3 label-11" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-11.png" mode="aspectFit"></image>
             </view>
-            <view class="swiper-text">福利全景 一手掌握</view>
+            <view class="swiper-text swiper-text-3">福利全景 一手掌握</view>
           </view>
         </swiper-item>
       </swiper>
+      <view class="{{noSliding ? '' : 'no-sliding'}}"></view>
+      <view class="start-btn" bindtap="goLogin">开始探索</view>
       <view class="custom-indicator">
         <view class="indicator-dot {{current === 0 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="0"></view>
         <view class="indicator-dot {{current === 1 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="1"></view>
