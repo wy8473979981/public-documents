@@ -1,4 +1,6 @@
 // pages/game2Page/game2Page.ts
+import { getRequest, postRequest } from '../../utils/request.js';
+
 Page({
 
   /**
@@ -173,11 +175,24 @@ Page({
    */
   onReady() {
     this.init();
+    // this.pp();
+    // this.pp1();
+
   },
   init() {
     const { allQuestionList, currentIndex } = this.data;
     this.setData({ currentQuestion: allQuestionList[currentIndex] });
     console.log(allQuestionList[currentIndex]);
+  },
+  async pp() {
+    const res = await getRequest('/fan-sail/wx/user/login', { data: { code: 111 } })
+    console.log(res);
+
+  },
+  async pp1() {
+    const res = await postRequest('/fan-sail/wx/user/login', { data: { code: 111 } })
+    console.log(res);
+
   },
   onClickAnswer(e: { currentTarget: { dataset: { answer: { id: number; correct: boolean } } } }) {
     const { answer } = e.currentTarget.dataset;
