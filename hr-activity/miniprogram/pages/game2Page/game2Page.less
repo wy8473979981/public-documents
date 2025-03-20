@@ -1,5 +1,5 @@
 /* pages/game2Page/game2Page.wxss */
-.game-2-wrapper{
+.game-2-wrapper {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -7,6 +7,7 @@
   background-size: cover;
   overflow: hidden;
   position: relative;
+
   .header-wrapper {
     font-family: PingFangSC;
     font-weight: 600;
@@ -25,7 +26,8 @@
       color: #d01145;
     }
   }
-  .game-title{
+
+  .game-title {
     width: 406rpx;
     height: 50rpx;
     position: absolute;
@@ -33,5 +35,154 @@
     top: 335rpx;
     background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2-title.png) no-repeat;
     background-size: cover;
+  }
+
+  .qa-wrapper {
+    margin-top: 466rpx;
+    padding: 0rpx 61rpx;
+    box-sizing: border-box;
+
+    .header-content {
+      font-family: PingFang-SC;
+      font-weight: 500;
+      font-size: 36rpx;
+      line-height: 73rpx;
+      letter-spacing: 1px;
+      color: #b2b2b2;
+      font-style: normal;
+      margin-bottom: 47rpx;
+
+      .cur-num {
+        font-size: 52rpx;
+        font-weight: 600;
+        color: #d72555;
+      }
+    }
+
+    .question-content {
+      font-family: PingFang-SC;
+      font-weight: 600;
+      font-size: 36rpx;
+      color: #470013;
+      line-height: 45rpx;
+      font-style: normal;
+      margin-bottom: 62rpx;
+    }
+
+    .answer-content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 54rpx;
+
+      .answer {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40rpx;
+
+        .circle-out {
+          width: 36rpx;
+          height: 36rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1rpx solid #b1b1b1;
+          border-radius: 50%;
+          margin-right: 30rpx;
+
+          .circle-inner {
+            width: 28rpx;
+            height: 28rpx;
+          }
+        }
+
+        .circle-out-1 {
+          border: 1rpx solid #d72555;
+
+          .circle-inner {
+            background-color: #d72555;
+            border-radius: 50%;
+          }
+        }
+
+        .circle-out-2 {
+          border: 1rpx solid #25d7b3;
+
+          .circle-inner {
+            background-color: #25d7b3;
+            border-radius: 50%;
+          }
+        }
+
+        .text {
+          margin-right: 9rpx;
+          font-family: PingFang-SC;
+          font-weight: 500;
+          font-size: 30rpx;
+          color: #470013;
+          line-height: 42rpx;
+          font-style: normal;
+        }
+
+        .text-1 {
+          color: #d72555;
+        }
+
+        .text-2 {
+          color: #25d7b3;
+        }
+      }
+    }
+
+    .previous-next-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20rpx;
+      margin-bottom: 80rpx;
+
+      .previous,
+      .next {
+        width: 318rpx;
+        height: 83rpx;
+        border-radius: 42rpx;
+        border: 2rpx solid #e02c5d;
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 36rpx;
+        color: #e02c5d;
+        font-style: normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .right-answers-content {
+      width: 630rpx;
+      height: 163rpx;
+      background-color: #fef8f9;
+      border-radius: 20rpx;
+      padding: 30rpx 37rpx;
+      box-sizing: border-box;
+
+      .title {
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 36rpx;
+        color: #470013;
+        line-height: 50rpx;
+        font-style: normal;
+      }
+
+      .right-answers {
+        margin-top: 10rpx;
+        font-family: PingFang-SC;
+        font-weight: 500;
+        font-size: 30rpx;
+        color: #25d7b3;
+        line-height: 50rpx;
+        font-style: normal;
+      }
+    }
   }
 }

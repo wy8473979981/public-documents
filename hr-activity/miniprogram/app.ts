@@ -13,7 +13,7 @@ App<IAppOption>({
     // this.onLoadFont();
     this.getEnvironmentVersion();
     // printVersion();
-    // this.getOpenId();
+    this.getOpenId();
   },
   onLoadFont: function () {
     // 加载字体

@@ -5,4 +5,35 @@
     <view class="text-2">福利破驿站</view>
   </view>
   <view class="game-title"></view>
+
+  <view class="qa-wrapper">
+    <view class="header-content">
+      <text class="cur-num">{{currentIndex+1}}</text>
+      <text>/5</text>
+    </view>
+    <view class="question-content">{{currentQuestion.question}}</view>
+    <view class="answer-content">
+      <view wx:for="{{ currentQuestion.answerList }}" wx:for-item="answer" wx:key="index" class="answer answer-{{index}}" data-answer="{{answer}}" bindtap="onClickAnswer">
+        <view class="circle-out circle-out-{{answer.icon}}">
+          <view class="circle-inner"></view>
+        </view>
+        <view class="text text-{{answer.icon}}">{{answer.text}}</view>
+        <view class="icon-content">
+          <van-icon name="cross" wx:if="{{answer.icon === 1}}" color="#d72555" />
+          <van-icon name="success" wx:if="{{answer.icon === 2}}" color="#25d7b3" />
+        </view>
+      </view>
+    </view>
+    <view class="previous-next-content">
+      <view class="previous" wx:if="{{currentIndex > 0}}">上一题</view>
+      <view class="next" wx:if="{{currentIndex < 4}}">下一题</view>
+    </view>
+    <view class="right-answers-content" wx:if="{{currentQuestion.isAnswerWrong}}">
+      <!-- 当前问题选择错误显示 -->
+      <view class="title">正确答案：</view>
+      <view class="right-answers">D.800</view>
+    </view>
+  </view>
+
+
 </view>

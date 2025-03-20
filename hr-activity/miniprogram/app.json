@@ -1,11 +1,11 @@
 {
   "pages": [
+    "pages/game2Page/game2Page",
     "pages/game1Page/game1Page",
     "pages/guidePageTs/guidePageTs",
     "pages/homePage/homePage",
     "pages/guidePage/guidePage",
     "pages/loginPage/loginPage",
-    "pages/game2Page/game2Page",
     "pages/game3Page/game3Page"
   ],
   "window": {

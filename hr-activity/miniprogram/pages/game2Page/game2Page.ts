@@ -5,7 +5,70 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    currentIndex: 0,
+    allQuestionList: [
+      {
+        num: 1,
+        isAnswered: false,
+        isAnswerWrong: false,
+        rightAnswers: 'D.800',
+        question: '1.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
+        answerList: [
+          {
+            id: 1,
+            text: 'A.500',
+            icon: 0,
+            correct: false
+          }, {
+            id: 2,
+            text: 'B.600',
+            icon: 0,
+            correct: false
+          }, {
+            id: 3,
+            text: 'C.700',
+            icon: 0,
+            correct: false
+          }, {
+            id: 4,
+            text: 'D.800',
+            icon: 0,
+            correct: true
+          }
+        ]
+      },
+      {
+        num: 2,
+        isAnswered: false,
+        isAnswerWrong: false,
+        rightAnswers: 'D.800',
+        question: '2.每年福利年度，符合条件的员工可以获得多少积分/人/年的超级积分？',
+        answerList: [
+          {
+            id: 1,
+            text: 'A.500',
+            icon: 0,
+            correct: false
+          }, {
+            id: 2,
+            text: 'B.600',
+            icon: 0,
+            correct: false
+          }, {
+            id: 3,
+            text: 'C.700',
+            icon: 0,
+            correct: false
+          }, {
+            id: 4,
+            text: 'D.800',
+            icon: 0,
+            correct: true
+          }
+        ]
+      }
+    ],
+    currentQuestion: {},
   },
 
   /**
@@ -19,7 +82,39 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    const { allQuestionList, currentIndex } = this.data;
+    this.setData({ currentQuestion: allQuestionList[currentIndex] });
+    console.log(allQuestionList[currentIndex]);
 
+  },
+  onClickAnswer(e: any) {
+    const { answer } = e.currentTarget.dataset;
+    const { allQuestionList, currentIndex } = this.data;
+    const currentQuestion = allQuestionList[currentIndex];
+    if (!currentQuestion.isAnswered) {
+      currentQuestion.isAnswered = true;
+      if (answer.correct) {
+        currentQuestion.answerList.forEach((ans: any) => {
+          if (ans.id === answer.id) {
+            ans.icon = 2;
+          }
+        });
+        this.setData({ allQuestionList });
+      } else {
+        currentQuestion.answerList.forEach((ans: any) => {
+          if (ans.id === answer.id) {
+            ans.icon = 1;
+          } else {
+            if (ans.correct) {
+              ans.icon = 2;
+            }
+          }
+        });
+        currentQuestion.isAnswerWrong = true;
+        this.setData({ allQuestionList });
+      }
+      this.setData({ currentQuestion: allQuestionList[currentIndex] })
+    }
   },
 
   /**
