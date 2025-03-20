@@ -13,6 +13,7 @@ App<IAppOption>({
     // this.onLoadFont();
     this.getEnvironmentVersion();
     // printVersion();
+    this.getOpenId();
   },
   onLoadFont: function () {
     // 加载字体
@@ -118,5 +119,33 @@ App<IAppOption>({
         });
       });
     }
+  },
+  getOpenId() {
+    wx.login({
+      success(res) {
+        console.log(res);
+        if (res.code) {
+          const url = `https://tdauat.aia.com.cn/uat/fan-sail/wx/user/login?code=${res.code}`
+          wx.request({
+            url: url,
+            method: 'GET',
+            header: {
+              'content-type': 'application/json', // 默认值
+            },
+            success: function (res) {
+              console.log(res);
+
+            },
+            fail: function (err) {
+              console.log(err);
+            },
+          });
+        } else {
+          console.log('登录失败！' + res.errMsg)
+        }
+      }
+    })
+
+
   }
 })

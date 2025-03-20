@@ -12,4 +12,5 @@ interface IAppOption {
   checkWeChatVersion: (minVersion: string) => void,
   getEnvironmentVersion: () => void,
   checkForUpdates: () => void,
+  getOpenId: () => void,
 }

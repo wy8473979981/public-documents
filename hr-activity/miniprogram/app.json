@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/homePage/homePage",
     "pages/guidePageTs/guidePageTs",
+    "pages/homePage/homePage",
     "pages/guidePage/guidePage",
     "pages/loginPage/loginPage",
     "pages/game1Page/game1Page",
