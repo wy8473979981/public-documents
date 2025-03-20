@@ -1,4 +1,4 @@
-// pages/flow3Page/flow3Page.ts
+// pages/game2Page/game2Page.ts
 Page({
 
   /**

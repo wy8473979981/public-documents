@@ -1,19 +1,16 @@
 <!--pages/homePage/homePage.wxml-->
 <view class="home-wrapper">
   <view class="header-wrapper">
-    <view class="text-1">完成任务</view>
-    <view class="text-2">领大奖</view>
+    <view class="text-1">弹福星旅探索</view>
+    <view class="text-2">赢取福气好礼</view>
   </view>
   <view class="rule-flow"></view>
   <view class="flow-wrapper">
-    <view class="flow flow-1" bindtap="flow1">
-      登陆弹福平台
-    </view>
-    <view class="flow flow-2" bindtap="flow2">
-      知识问答
-    </view>
-    <view class="flow flow-3" bindtap="flow3">
-      与XX合影
+    <view wx:for="{{ gameList }}" wx:for-item="game" wx:key="index" class="game game-{{index}}" data-game="{{game}}" bindtap="onClickGame">
+      <view class="game-num game-num-{{index}}">{{game.gameNum}}</view>
+      <view class="title title-{{index}}">{{game.gameTitle}}</view>
+      <view class="explain explain-{{index}}">{{game.gameEXplain}}</view>
+      <image class="gif-{{index}}" src="{{game.gameGif}}" mode="aspectFit"></image>
     </view>
   </view>
 </view>

@@ -1,0 +1,8 @@
+<!--pages/game1Page/game1Page.wxml-->
+<view class="game-1-wrapper">
+  <view class="header-wrapper">
+    <view class="text-1">第一关</view>
+    <view class="text-2">初探弹福星</view>
+  </view>
+  <view class="game-title"></view>
+</view>

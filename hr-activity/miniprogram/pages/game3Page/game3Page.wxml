@@ -1,0 +1,8 @@
+<!--pages/game3Page/game3Page.wxml-->
+<view class="game-3-wrapper">
+  <view class="header-wrapper">
+    <view class="text-1">第二关</view>
+    <view class="text-2">福利破驿站</view>
+  </view>
+  <view class="game-title"></view>
+</view>
