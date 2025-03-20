@@ -172,52 +172,49 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    this.init();
+  },
+  init() {
     const { allQuestionList, currentIndex } = this.data;
     this.setData({ currentQuestion: allQuestionList[currentIndex] });
     console.log(allQuestionList[currentIndex]);
-
   },
-  onClickAnswer(e: any) {
+  onClickAnswer(e: { currentTarget: { dataset: { answer: { id: number; correct: boolean } } } }) {
     const { answer } = e.currentTarget.dataset;
     const { allQuestionList, currentIndex } = this.data;
     const currentQuestion = allQuestionList[currentIndex];
+
     if (!currentQuestion.isAnswered) {
       currentQuestion.isAnswered = true;
-      if (answer.correct) {
-        currentQuestion.answerList.forEach((ans: any) => {
-          if (ans.id === answer.id) {
-            ans.icon = 2;
-          }
-        });
-        this.setData({ allQuestionList });
-      } else {
-        currentQuestion.answerList.forEach((ans: any) => {
-          if (ans.id === answer.id) {
-            ans.icon = 1;
-          } else {
-            if (ans.correct) {
-              ans.icon = 2;
-            }
-          }
-        });
+      currentQuestion.answerList.forEach((ans: { id: number; correct: boolean; icon: number }) => {
+        if (ans.id === answer.id) {
+          ans.icon = answer.correct ? 2 : 1;
+        } else if (ans.correct) {
+          ans.icon = 2;
+        }
+      });
+
+      if (!answer.correct) {
         currentQuestion.isAnswerWrong = true;
-        this.setData({ allQuestionList });
       }
-      this.setData({ currentQuestion: allQuestionList[currentIndex] })
+
+      this.setData({ allQuestionList, currentQuestion: allQuestionList[currentIndex] });
     }
   },
   onPrevious() {
-    const { currentIndex } = this.data;
+    const { currentIndex, allQuestionList } = this.data;
     if (currentIndex > 0) {
-      this.setData({ currentIndex: currentIndex - 1 });
-      this.setData({ currentQuestion: this.data.allQuestionList[currentIndex - 1] });
+      const previousIndex = currentIndex - 1;
+      this.setData({
+        currentIndex: previousIndex,
+        currentQuestion: allQuestionList[previousIndex]
+      });
     }
   },
   onNext() {
     const { currentIndex, allQuestionList } = this.data;
     const currentQuestion = allQuestionList[currentIndex];
     if (!currentQuestion.isAnswered) {
-      // 提示请回答问题
       wx.showToast({
         title: '请回答问题',
         icon: 'none',
@@ -226,8 +223,11 @@ Page({
       return;
     }
     if (currentIndex < allQuestionList.length - 1) {
-      this.setData({ currentIndex: currentIndex + 1 });
-      this.setData({ currentQuestion: this.data.allQuestionList[currentIndex + 1] });
+      const nextIndex = currentIndex + 1;
+      this.setData({
+        currentIndex: nextIndex,
+        currentQuestion: allQuestionList[nextIndex]
+      });
     }
   },
   onSubmit() {
