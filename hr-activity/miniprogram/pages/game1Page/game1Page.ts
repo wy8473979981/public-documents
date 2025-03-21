@@ -39,7 +39,7 @@ Page({
     wx.chooseMedia({
       count: 1, // 最多可以选择的图片张数，默认9
       mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
-      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
       success: (res) => {
         console.log(res);
 
