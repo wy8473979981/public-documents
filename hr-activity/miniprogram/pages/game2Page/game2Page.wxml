@@ -27,14 +27,40 @@
     <view class="previous-next-content">
       <view class="previous" wx:if="{{currentIndex > 0}}" bindtap="onPrevious">上一题</view>
       <view class="next" wx:if="{{currentIndex < 4}}" bindtap="onNext">下一题</view>
-      <view class="next" wx:if="{{currentIndex === 4}}" bindtap="onSubmit">提交</view>
+      <view class="next" wx:if="{{allAnswersCompleted}}" bindtap="onSubmit">提交</view>
     </view>
     <view class="right-answers-content" wx:if="{{currentQuestion.isAnswerWrong}}">
-      <!-- 当前问题选择错误显示 -->
       <view class="title">正确答案：</view>
       <view class="right-answers">D.800</view>
     </view>
   </view>
-
+  <van-overlay show="{{ show }}">
+    <view class="overlay-wrapper">
+      <view class="overlay-container">
+        <view class="header-content">
+          <view class="text-1">{{answerResult.pass ? '恭喜你！' : '好可惜！'}}</view>
+          <view class="text-2">您的正确率是 <text class="accuracy-rate">{{answerResult.accuracyRate}}</text></view>
+        </view>
+        <view class="pass-content" wx:if="{{answerResult.pass}}">
+          <image class="game-2-overlay-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2-overlay-1.png" mode="aspectFit"></image>
+          <view class="overlay-btn" bindtap="onContinue">继续闯关</view>
+        </view>
+        <view class="not-pass-content" wx:else>
+          <image class="game-2-overlay-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2-overlay-2.png" mode="aspectFit"></image>
+          <view class="result-content">
+            <view class="result-item">
+              <view class="num">{{answerResult.wrongNum}}</view>
+              <view class="text">错题数</view>
+            </view>
+            <view class="result-item">
+              <view class="num">{{answerResult.correctNum}}</view>
+              <view class="text">正确题数</view>
+            </view>
+          </view>
+          <view class="overlay-btn" bindtap="onAgain">重新答题</view>
+        </view>
+      </view>
+    </view>
+  </van-overlay>
 
 </view>

@@ -7,9 +7,17 @@ Page({
    * 页面的初始数据
    */
   data: {
+    show: false,
     currentIndex: 0,
+    allAnswersCompleted: false,
     allQuestionList: allQuestionList,
     currentQuestion: {},
+    answerResult: {
+      pass: false, // 是否通过
+      accuracyRate: '0%', // 正确率
+      wrongNum: 0, // 错题数
+      correctNum: 0, // 正确题数
+    }
   },
 
   /**
@@ -71,6 +79,12 @@ Page({
 
       this.setData({ allQuestionList, currentQuestion: allQuestionList[currentIndex] });
     }
+
+    // 检查所有问题是否已回答
+    const allAnswered = allQuestionList.every(question => question.isAnswered);
+    if (allAnswered) {
+      this.setData({ allAnswersCompleted: true });
+    }
   },
   onPrevious() {
     const { currentIndex, allQuestionList } = this.data;
@@ -104,10 +118,39 @@ Page({
   onSubmit() {
     const { allQuestionList } = this.data;
     const totalQuestions = allQuestionList.length;
-    const correctQuestions = allQuestionList.filter(question => !question.isAnswerWrong).length;
-    const accuracyRate = (correctQuestions / totalQuestions) * 100;
+    const correctNum = allQuestionList.filter(question => !question.isAnswerWrong).length;
+    const wrongNum = totalQuestions - correctNum;
 
-    console.log(`回答正确率: ${accuracyRate.toFixed(0)}%`);
+    this.setData({
+      show: true,
+      answerResult: {
+        pass: correctNum >= 4,
+        accuracyRate: `${((correctNum / totalQuestions) * 100).toFixed(0)}%`,
+        wrongNum: wrongNum,
+        correctNum: correctNum,
+      }
+    });
+  },
+  onContinue() {
+    // 继续闯关
+    this.onClickHide();
+    wx.redirectTo({ url: '/pages/homePage/homePage' });
+  },
+  onAgain() {
+    // 重新答题
+    const { allQuestionList } = this.data;
+    allQuestionList.forEach(question => {
+      question.isAnswered = false;
+      question.isAnswerWrong = false;
+      question.answerList.forEach(answer => {
+        answer.icon = 0;
+      });
+    });
+    this.setData({ allQuestionList, currentIndex: 0, currentQuestion: allQuestionList[0], allAnswersCompleted: false });
+    this.onClickHide();
+  },
+  onClickHide() {
+    this.setData({ show: false });
   },
 
   /**
