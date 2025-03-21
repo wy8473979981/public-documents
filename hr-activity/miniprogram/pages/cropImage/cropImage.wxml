@@ -1,0 +1,6 @@
+<view class="container">
+  <button bindtap="chooseAndCropImage">选择并裁剪图片</button>
+  <canvas canvas-id="cropCanvas" style="width: 1242px; height: 2208px;"></canvas>
+  <image wx:if="{{croppedImagePath}}" src="{{croppedImagePath}}" mode="widthFix" class="cropped-img"/>
+  <button wx:if="{{croppedImagePath}}" bindtap="saveImage">下载裁剪后的图片</button>
+</view>

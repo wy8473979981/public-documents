@@ -1,55 +1,17 @@
 // app.ts
-import { compareVersion, printVersion } from './utils/index';
-import {getOpenId} from './utils/request'
+import { compareVersion } from './utils/index';
+import { getOpenId, getDict } from './utils/request'
 
 App<IAppOption>({
   globalData: {
     isVersionLow: false, // 初始化为 false
-    envVersion: '',
     platform: ''
   },
   onLaunch() {
     // this.checkForUpdates();
     // this.checkWeChatVersion("3.7.3");
-    // this.onLoadFont();
-    this.getEnvironmentVersion();
-    // printVersion();
-    // this.getOpenId();
     getOpenId();
-  },
-  onLoadFont: function () {
-    // 加载字体
-    const fonts = [
-      {
-        family: 'DingTalk',
-        scopes: ['webview', 'native'],
-        source: 'url("https://tda-static.aia.com.cn/fan/sail/ar-treasure/font/DingTalkJinBuTi.ttf")'
-      },
-      {
-        family: 'HYQiHei',
-        scopes: ['webview', 'native'],
-        source: 'url("https://tda-static.aia.com.cn/fan/sail/ar-treasure/font/HYQiHei-60J.ttf")'
-      },
-    ];
-    const loadFont = (font: { family: any; source: any; scopes: any; }) =>
-      new Promise((resolve, reject) => {
-        wx.loadFontFace({
-          family: font.family,
-          source: font.source,
-          scopes: font.scopes,
-          global: true,
-          success: resolve,
-          fail: reject
-        });
-      });
-
-    Promise.all(fonts.map(loadFont))
-      .then((results) => {
-        console.log('All fonts loaded successfully:', results);
-      })
-      .catch((err) => {
-        console.error('Some fonts failed to load:', err);
-      });
+    getDict();
   },
   checkWeChatVersion(minVersion) {
     try {
@@ -80,11 +42,6 @@ App<IAppOption>({
     } catch (error) {
       console.error('获取微信版本信息失败:', error);
     }
-  },
-  getEnvironmentVersion() {
-    // 获取当前是什么版本；develop:开发版；trial：体验版；release：正式版
-    const accountInfo = wx.getAccountInfoSync();
-    this.globalData.envVersion = accountInfo.miniProgram.envVersion;
   },
   checkForUpdates() {
     if (wx.canIUse('getUpdateManager')) {
@@ -122,32 +79,4 @@ App<IAppOption>({
       });
     }
   },
-  getOpenId() {
-    wx.login({
-      success(res) {
-        console.log(res);
-        if (res.code) {
-          const url = `https://tdauat.aia.com.cn/uat/fan-sail/wx/user/login?code=${res.code}`
-          wx.request({
-            url: url,
-            method: 'GET',
-            header: {
-              'content-type': 'application/json', // 默认值
-            },
-            success: function (res) {
-              console.log(res);
-
-            },
-            fail: function (err) {
-              console.log(err);
-            },
-          });
-        } else {
-          console.log('登录失败！' + res.errMsg)
-        }
-      }
-    })
-
-
-  }
 })

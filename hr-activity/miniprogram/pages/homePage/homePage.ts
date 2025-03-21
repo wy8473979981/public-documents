@@ -1,94 +1,196 @@
 // pages/homePage/homePage.ts
+import { postRequest } from '../../utils/request.js';
+interface Game {
+  count: number;
+  gameNum: string;
+  gameTitle: string;
+  gameExplain: string;
+  gameGif: string;
+  gameImg: string;
+  isPassed: boolean;
+}
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
+    currentStep: 0,
     gameList: [
       {
         count: 1,
         gameNum: '第一关',
         gameTitle: '初探弹福星',
-        gameEXplain: '登录弹福平台并上传截图，一秒解锁弹福星图！',
-        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.gif'
+        gameExplain: '登录弹福平台并上传截图，一秒解锁弹福星图！',
+        gameGif:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.gif',
+        gameImg:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.png',
+        isPassed: false,
+        className: 'game game-1'
       },
       {
         count: 2,
         gameNum: '第二关',
         gameTitle: '福利破译站',
-        gameEXplain: '穿越弹福只是迷宫，破译弹福星系运作秘笈！',
-        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif'
+        gameExplain: '穿越弹福只是迷宫，破译弹福星系运作秘笈！',
+        gameGif:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif',
+        gameImg:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
+        isPassed: false, className: 'game game-2'
       },
       {
         count: 3,
         gameNum: '第三关',
         gameTitle: '福气拍立得',
-        gameEXplain: '拍摄福气相片，AI制作专属海报，许愿转发赢好礼！',
-        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif'
-      }
-    ]
+        gameExplain: '拍摄福气相片，AI制作专属海报，许愿转发赢好礼！',
+        gameGif:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif',
+        gameImg:
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
+        isPassed: false, className: 'game game-3'
+      },
+    ],
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad() {
-
-  },
+  onLoad() { },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    this.init();
+  },
+  init() {
+    wx.showLoading({
+      title: '加载中...',
+      mask: true // 是否显示透明蒙层，防止触摸穿透
+    });
+    wx.getStorage({
+      key: 'openId',
+      success: (res) => {
+        const openId = res.data;
+        if (openId) {
+          Promise.all([
+            this.getGameResult(1, openId),
+            this.getGame2Result(2, openId),
+            this.getGameResult(3, openId),
+          ])
+            .then((results) => {
+              const updatedGameList = this.data.gameList.map((game, index) => {
+                const result = results[index];
+                const data = result.data;
+                const isPassed = data && data.status === 1 ? true : false;
+                return {
+                  ...game,
+                  isPassed,
+                  className: this.getGameClassName(index, {
+                    ...game,
+                    isPassed,
+                  }), // 计算 className
+                };
+              });
 
+              this.setData({ gameList: updatedGameList });
+
+              if (updatedGameList.every((game) => game.isPassed)) {
+                this.setData({ currentStep: 3 });
+              }
+              wx.hideLoading();
+            })
+            .catch((error) => {
+              console.error('Error fetching game results:', error);
+            });
+        }
+      },
+    });
+  },
+  async getGameResult(type: number, openId: string) {
+    try {
+      const result = await postRequest('/poster/getFront', {
+        data: {
+          type: type,
+          openId: openId,
+        },
+      });
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  async getGame2Result(type: number, openId: string) {
+    try {
+      const result = await postRequest('/activity/get', {
+        data: {
+          type: type,
+          openId: openId,
+        },
+      });
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   },
   onClickGame(e: any) {
     const { game } = e.currentTarget.dataset;
     console.log(game);
-    const url = `/pages/game${game.count}Page/game${game.count}Page`
+    if (game.count !== this.data.currentStep + 1) {
+      wx.showToast({
+        title: `请先闯第${this.data.currentStep + 1}关`,
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    const url = `/pages/game${game.count}Page/game${game.count}Page`;
     wx.redirectTo({ url: url });
   },
+  getGameClassName(index: number, game: Game): string {
+    console.log(1);
 
+    const baseClass = `game game-${index + 1}`;
+    if (this.data.currentStep === index) {
+      return `${baseClass} game-${index + 1}-not-pass`;
+    } else if (game.isPassed) {
+      return `${baseClass} game-${index + 1}-pass`;
+    }
+    return baseClass;
+  },
+  /**
+   * 根据 currentStep 和 game.isPassed 返回对应的类名
+   */
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
-
-  },
+  onShow() { },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {
-
-  },
+  onHide() { },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-
-  },
+  onUnload() { },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {
-
-  },
+  onPullDownRefresh() { },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {
-
-  },
+  onReachBottom() { },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {
-
-  }
-})
+  onShareAppMessage() { },
+});

@@ -6,10 +6,10 @@
   </view>
   <view class="rule-flow"></view>
   <view class="flow-wrapper">
-    <view wx:for="{{ gameList }}" wx:for-item="game" wx:key="index" class="{{game.className}}" data-game="{{game}}" bindtap="onClickGame">
+    <view wx:for="{{ gameList }}" wx:for-item="game" wx:for-index="index" wx:key="index" class="{{getGameClass(index + 1, game.isPassed, currentStep)}}" data-game="{{game}}" bindtap="onClickGame">
       <view class="game-num game-num-{{index+1}}">{{game.gameNum}}</view>
       <view class="title title-{{index+1}}">{{game.gameTitle}}</view>
-      <view class="explain explain-{{index+1}}">{{game.gameExplain}}</view>
+      <view class="explain explain-{{index+1}}">{{game.gameEXplain}}</view>
       <image class="gif-{{index+1}}" src="{{currentStep === index ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
     </view>
   </view>

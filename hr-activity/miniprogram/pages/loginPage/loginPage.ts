@@ -1,5 +1,5 @@
 // pages/loginPage/loginPage.ts
-import { convertToUpperCase } from '../../utils/index';
+import { convertToUpperCase, validateInput } from '../../utils/index';
 Page({
 
   /**
@@ -7,7 +7,6 @@ Page({
    */
   data: {
     userInfo: {
-      userId: '',
       username: '',
     },
   },
@@ -28,15 +27,28 @@ Page({
   loginInput: function (e: any) {
     const value = convertToUpperCase(e.detail.value);
     const userInfo = {
-      username: value.length ? value : '',
-      userId: value.length ? value : '',
+      username: value.length ? value : ''
     };
     this.setData({ userInfo: userInfo });
   },
-  login() {
+  login: async function () {
     let { userInfo } = this.data;
-    if (userInfo.userId) {
-      wx.redirectTo({ url: '/pages/homePage/homePage' });
+    if (userInfo.username) {
+      if (!validateInput(userInfo.username)) {
+        wx.showModal({
+          title: "温馨提示",
+          content: "您输入的账号不符合要求",
+          confirmText: "确定",
+          showCancel: false, // 禁用取消按钮
+          success: () => { }
+        });
+      } else {
+        wx.setStorage({
+          key: "username",
+          data: userInfo.username
+        })
+        wx.redirectTo({ url: '/pages/homePage/homePage' });
+      }
     } else {
       wx.showToast({
         title: '请输入账号',
@@ -45,7 +57,6 @@ Page({
       });
     }
   },
-
   /**
    * 生命周期函数--监听页面显示
    */

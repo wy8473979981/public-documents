@@ -75,7 +75,7 @@ Page({
 
     cameraReady: false, // 相机是否渲染
     cameraContext: null as WechatMiniprogram.CameraContext | null,
-    resultantPictureUrl:'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/photograph.png',
+    resultantPictureUrl: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/photograph.png',
   },
 
   /**
@@ -176,6 +176,7 @@ Page({
 
         const tempFilePaths = res.tempFiles.map(file => file.tempFilePath);
         this.setData({ currentPhoto: tempFilePaths[0] });
+        this.onImageFileFormat(tempFilePaths[0]);
       },
       fail: (err) => {
         console.error('选择图片失败', err);
@@ -198,6 +199,15 @@ Page({
         },
       });
     }
+  },
+  onImageFileFormat(file: any, type: number) {
+    const maxSize = type === 1 ? 15 * 1024 * 1024 : 3 * 1024 * 1024; // 设置文件大小限制
+    if (file.size > maxSize) {
+      console.error(`文件大小超过限制，最大${maxSize / (1024 * 1024)}MB`);
+      return false;
+    }
+    
+
   },
   onCameraInitDone() {
     console.log('Camera initialized');

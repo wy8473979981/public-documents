@@ -25,7 +25,7 @@ export async function getRequest(url, options = {}) {
       },
       data: options.data || {},
       success: function (res) {
-        resolve(res);
+        resolve(res?.data);
       },
       fail: function (err) {
         reject(err);
@@ -46,7 +46,7 @@ export async function postRequest(url, options = {}) {
       },
       data: options.data || {},
       success: function (res) {
-        resolve(res);
+        resolve(res?.data);
       },
       fail: function (err) {
         reject(err);
@@ -59,20 +59,40 @@ export function getOpenId() {
   wx.login({
     success: async (res) => {
       if (res.code) {
-        wx.setStorage({
-          key: "wxCode",
-          data: res.code
-        })
-        const result = await getRequest('/fan-sail/wx/user/login', {
+        const result = await getRequest('/wx/user/login', {
           data: {
             code: res.code
           }
         })
-        console.log('result', result);
-
+        if (result) {
+          wx.setStorage({
+            key: "openId",
+            data: result
+          })
+        }
       } else {
         console.log('登录失败！' + res.errMsg)
       }
     }
   })
+}
+export const getDict = async () => {
+  try {
+    const result = await postRequest('/sys/dict/list');
+    if (result.code === "200") {
+      const {
+        bu_question,
+        bu_algo_type
+      } = result.data;
+      wx.setStorage({
+        key: "dict",
+        data: JSON.stringify({
+          bu_question,
+          bu_algo_type
+        })
+      })
+    }
+  } catch (error) {
+    console.log('getDict', error);
+  }
 }
