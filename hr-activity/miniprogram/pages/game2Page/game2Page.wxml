@@ -36,7 +36,7 @@
   </view>
   <van-overlay show="{{ show }}">
     <view class="overlay-wrapper">
-      <view class="overlay-container">
+      <view class="overlay-container {{answerResult.pass ? 'overlay-bg-pass' : ''}}">
         <view class="header-content">
           <view class="text-1">{{answerResult.pass ? '恭喜你！' : '好可惜！'}}</view>
           <view class="text-2">您的正确率是 <text class="accuracy-rate">{{answerResult.accuracyRate}}</text></view>
