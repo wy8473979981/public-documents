@@ -10,7 +10,7 @@
       <view class="game-num game-num-{{index+1}}">{{game.gameNum}}</view>
       <view class="title title-{{index+1}}">{{game.gameTitle}}</view>
       <view class="explain explain-{{index+1}}">{{game.gameExplain}}</view>
-      <image class="gif-{{index+1}}" src="{{currentStep === index ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
+      <image class="gif-{{index+1}}" src="{{currentStep === index + 1 ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
     </view>
   </view>
 </view>

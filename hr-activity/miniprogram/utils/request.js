@@ -84,10 +84,17 @@ export const getDict = async () => {
         bu_question,
         bu_algo_type
       } = result.data;
+
+      const buQuestion = bu_question.map((n, i) => {
+        return {
+          ...n,
+          enumvalue: n.enumvalue.replace(/“|”/g, '"')
+        }
+      })
       wx.setStorage({
         key: "dict",
         data: JSON.stringify({
-          bu_question,
+          bu_question: buQuestion,
           bu_algo_type
         })
       })

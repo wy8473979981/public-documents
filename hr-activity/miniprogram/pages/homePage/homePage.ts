@@ -14,7 +14,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    currentStep: 0,
+    currentStep: 1,
     gameList: [
       {
         count: 1,
@@ -80,6 +80,24 @@ Page({
             this.getGameResult(3, openId),
           ])
             .then((results) => {
+              results[0] = {
+                code: '200',
+                data: {
+                  status: 1
+                }
+              }
+              if (results.every((n) => n.data)) {
+                this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
+              } else {
+                // results = [
+                //   { code: "200", msg: "成功", data: { status: 1 } },
+                //   { code: "200", msg: "成功", data: null },
+                //   { code: "200", msg: "成功", data: null }
+                // ]
+                const currentStep = results.findIndex((n) => !n.data);
+                this.setData({ currentStep: currentStep + 1 });
+              }
+
               const updatedGameList = this.data.gameList.map((game, index) => {
                 const result = results[index];
                 const data = result.data;
@@ -90,15 +108,10 @@ Page({
                   className: this.getGameClassName(index, {
                     ...game,
                     isPassed,
-                  }), // 计算 className
+                  }),
                 };
               });
-
               this.setData({ gameList: updatedGameList });
-
-              if (updatedGameList.every((game) => game.isPassed)) {
-                this.setData({ currentStep: 3 });
-              }
               wx.hideLoading();
             })
             .catch((error) => {
@@ -109,6 +122,7 @@ Page({
     });
   },
   async getGameResult(type: number, openId: string) {
+    // 第一关和第三关的闯关结果
     try {
       const result = await postRequest('/poster/getFront', {
         data: {
@@ -123,6 +137,7 @@ Page({
     }
   },
   async getGame2Result(type: number, openId: string) {
+    // 第二关的闯关结果
     try {
       const result = await postRequest('/activity/get', {
         data: {
@@ -138,23 +153,26 @@ Page({
   },
   onClickGame(e: any) {
     const { game } = e.currentTarget.dataset;
-    console.log(game);
-    if (game.count !== this.data.currentStep + 1) {
+    if (game.isPassed) {
       wx.showToast({
-        title: `请先闯第${this.data.currentStep + 1}关`,
+        title: `请闯第${this.data.currentStep}关！`,
         icon: 'none',
         duration: 2000
       });
-      return;
+    } else if (game.count !== this.data.currentStep) {
+      wx.showToast({
+        title: `请先闯第${this.data.currentStep}关！`,
+        icon: 'none',
+        duration: 2000
+      });
+    } else {
+      const url = `/pages/game${game.count}Page/game${game.count}Page`;
+      wx.redirectTo({ url: url });
     }
-    const url = `/pages/game${game.count}Page/game${game.count}Page`;
-    wx.redirectTo({ url: url });
   },
   getGameClassName(index: number, game: Game): string {
-    console.log(1);
-
     const baseClass = `game game-${index + 1}`;
-    if (this.data.currentStep === index) {
+    if (this.data.currentStep === index + 1) {
       return `${baseClass} game-${index + 1}-not-pass`;
     } else if (game.isPassed) {
       return `${baseClass} game-${index + 1}-pass`;
