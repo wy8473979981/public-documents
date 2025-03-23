@@ -1,11 +1,11 @@
 {
   "pages": [
+    "pages/game3Page/game3Page",
+    "pages/cropImage/cropImage",
+    "pages/loginPage/loginPage",
     "pages/homePage/homePage",
     "pages/game2Page/game2Page",
-    "pages/loginPage/loginPage",
     "pages/guidePageTs/guidePageTs",
-    "pages/cropImage/cropImage",
-    "pages/game3Page/game3Page",
     "pages/game1Page/game1Page",
     "pages/guidePage/guidePage"
   ],

@@ -1,6 +1,6 @@
 // app.ts
 import { compareVersion } from './utils/index';
-import { getOpenId, getDict } from './utils/request'
+import { getOpenId, getDict, getToken } from './utils/request'
 
 App<IAppOption>({
   globalData: {
@@ -12,6 +12,7 @@ App<IAppOption>({
     // this.checkWeChatVersion("3.7.3");
     getOpenId();
     getDict();
+    getToken();
   },
   checkWeChatVersion(minVersion) {
     try {

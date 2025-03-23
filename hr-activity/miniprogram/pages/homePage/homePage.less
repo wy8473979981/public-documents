@@ -2,11 +2,17 @@
 .home-wrapper {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: auto;
+  min-height: 1625rpx;
   background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/home-bg.png) no-repeat;
-  background-size: cover;
-  overflow: hidden;
+  background-size: 100% 1625rpx;
+  background-attachment: scroll;
+  overflow: auto;
   position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   .header-wrapper {
     font-family: PingFangSC;
@@ -206,5 +212,25 @@
 
   }
 
+  .gift-box {
+    width: 690rpx;
+    height: 352rpx;
+    background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box.png) no-repeat;
+    background-size: contain;
+    margin-bottom: 59rpx;
+    display: flex;
+    justify-content: center;
+    .text {
+      width: 416rpx;
+      height: 76rpx;
+      margin-top: 183rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 500;
+      font-size: 28rpx;
+      color: #EC5E84;
+      line-height: 40rpx;
+      font-style: normal;
+    }
+  }
 
 }

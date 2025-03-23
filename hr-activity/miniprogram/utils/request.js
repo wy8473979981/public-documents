@@ -103,3 +103,18 @@ export const getDict = async () => {
     console.log('getDict', error);
   }
 }
+
+export const getToken = async () => {
+  try {
+    // const result = await postRequest('/poster/getToken');
+    // if (result.code === "200") {
+    const token = 'Bearer fCebZ1SBPiGnyKVk9z3PpLoY9aUG6iYvEmVB2jopshr8UgjwN1h9PI+H1VdaXQzr2z+pGU0c5Ppx0NBS/1E8u0R7cmmoQ6uXTdpqZX0/LKW9wXhecMZcnHv8upIiNj9pE3oilaonnqJEPp9zWhFM2WMeSBAi8Ci/dFsMN9UyskeBwNW2zVluCv2T04LeIdFXnd/vVRUXf5TFJqe6HaFspDUJLURanZOxA10QMDoqnPoVUD5GfzxGsXb7DmQ5Z7y8BshivNgdnuXJyEwl0yKiE0keElpGuPU5LA/tkGTe0y/sNf54ft2IYv8pQBuC+mxTjqsQkIGYPovhv5UXkOnP]Q==';
+    wx.setStorage({
+      key: "token",
+      data: token
+    });
+    // }
+  } catch (error) {
+    console.log('getDict', error);
+  }
+}

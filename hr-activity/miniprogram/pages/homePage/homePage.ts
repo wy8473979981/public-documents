@@ -26,7 +26,7 @@ Page({
         gameImg:
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.png',
         isPassed: false,
-        className: 'game game-1'
+        className: 'game game-1',
       },
       {
         count: 2,
@@ -37,7 +37,8 @@ Page({
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif',
         gameImg:
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
-        isPassed: false, className: 'game game-2'
+        isPassed: false,
+        className: 'game game-2',
       },
       {
         count: 3,
@@ -48,7 +49,8 @@ Page({
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif',
         gameImg:
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
-        isPassed: false, className: 'game game-3'
+        isPassed: false,
+        className: 'game game-3',
       },
     ],
   },
@@ -56,18 +58,18 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad() { },
+  onLoad() {
+    this.init();
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {
-    this.init();
-  },
+  onReady() { },
   init() {
     wx.showLoading({
       title: '加载中...',
-      mask: true // 是否显示透明蒙层，防止触摸穿透
+      mask: true, // 是否显示透明蒙层，防止触摸穿透
     });
     wx.getStorage({
       key: 'openId',
@@ -80,20 +82,20 @@ Page({
             this.getGameResult(3, openId),
           ])
             .then((results) => {
-              results[0] = {
-                code: '200',
-                data: {
-                  status: 1
-                }
-              }
+              // results[0] = {
+              //   code: '200',
+              //   data: {
+              //     status: 1
+              //   }
+              // }
+              results = [
+                { code: '200', msg: '成功', data: { status: 1 } },
+                { code: '200', msg: '成功', data: { status: 1 } },
+                { code: '200', msg: '成功', data: { status: 1 } },
+              ];
               if (results.every((n) => n.data)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
               } else {
-                // results = [
-                //   { code: "200", msg: "成功", data: { status: 1 } },
-                //   { code: "200", msg: "成功", data: null },
-                //   { code: "200", msg: "成功", data: null }
-                // ]
                 const currentStep = results.findIndex((n) => !n.data);
                 this.setData({ currentStep: currentStep + 1 });
               }
@@ -153,17 +155,20 @@ Page({
   },
   onClickGame(e: any) {
     const { game } = e.currentTarget.dataset;
+    if (this.data.currentStep > 3) {
+      return;
+    }
     if (game.isPassed) {
       wx.showToast({
         title: `请闯第${this.data.currentStep}关！`,
         icon: 'none',
-        duration: 2000
+        duration: 2000,
       });
     } else if (game.count !== this.data.currentStep) {
       wx.showToast({
         title: `请先闯第${this.data.currentStep}关！`,
         icon: 'none',
-        duration: 2000
+        duration: 2000,
       });
     } else {
       const url = `/pages/game${game.count}Page/game${game.count}Page`;
