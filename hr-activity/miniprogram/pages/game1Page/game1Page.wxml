@@ -10,10 +10,10 @@
     <view class="upload-contaniner" wx:if="{{!uploadStatus}}">
       <view class="upload-content">
         <van-loading wx:if="{{loading}}" color="#d72555" />
-        <image wx:else class="game-1-img" bindtap="chooseImage" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-img.png" mode="aspectFit"></image>
+        <image wx:else class="game-1-img" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-img.png" mode="aspectFit"></image>
       </view>
       <view class="examlpe-title" bindtap="onClickShow">查看示例图></view>
-      <view class="upload-btn" bindtap="onUpload">上传</view>
+      <view class="upload-btn" bindtap="chooseImage">上传</view>
     </view>
 
     <view class="upload-contaniner-success" wx:else>

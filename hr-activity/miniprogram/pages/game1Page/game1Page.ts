@@ -1,4 +1,6 @@
 // pages/game1Page/game1Page.ts
+import { uploadFile } from '../../utils/request.js';
+import { showToast } from '../../utils/index';
 Page({
 
   /**
@@ -6,15 +8,17 @@ Page({
    */
   data: {
     show: false,
-    uploadStatus: false,// false:上传失败或者没有上传，true：上传成功
-    loading: false,// false:没有上传，true：上传中
+    uploadStatus: false,
+    loading: false, // false:没有上传，true：上传中
+    openId: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-
+    const openId = wx.getStorageSync('openId');
+    this.setData({ openId: openId });
   },
 
   /**
@@ -29,50 +33,50 @@ Page({
   onClickHide() {
     this.setData({ show: false });
   },
-  onUpload() {
-    // this.chooseImage();
-  },
-
   chooseImage() {
-    console.log('chooseImage');
-
     wx.chooseMedia({
       count: 1, // 最多可以选择的图片张数，默认9
       mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
       sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
       success: (res) => {
-        console.log(res);
-
-        // const tempFilePaths = res.tempFiles.map(file => file.tempFilePath);
-        // this.uploadImage(tempFilePaths[0]);
+        const tempFilePaths = res.tempFiles.map(file => file.tempFilePath);
+        this.setDataAsync({ loading: true }).then(() => {
+          this.uploadImage(tempFilePaths[0]);
+        });
       },
       fail: (err) => {
         console.error('选择图片失败', err);
       }
     });
   },
-
-  uploadImage(filePath: string) {
-    wx.uploadFile({
-      url: 'https://example.com/upload', // 上传的服务器地址
-      filePath: filePath,
-      name: 'file',
-      formData: {
-        'user': 'test'
+  async uploadImage(filePath: string) {
+    const { openId } = this.data;
+    const params = {
+      data: {
+        status: 1,
+        type: 1,
+        openId: openId,
+        srcImage: filePath,
       },
-      success: (res) => {
-        const data = res.data;
-        console.log('上传成功', data);
-        this.setData({ uploadStatus: true, loading: false });
+      header: {
+        'content-type': 'multipart/form-data', // 默认值
       },
-      fail: (err) => {
-        console.error('上传失败', err);
-        this.setData({ loading: false });
-      }
-    });
+    };
+    const res = await uploadFile('/poster/createPosterImageF', params);
+    const { code, msg } = JSON.parse(res.data);
+    if (code === '200') {
+      this.setData({ loading: false, uploadStatus: true });
+    } else {
+      showToast(`保存图片错误：${msg}`);
+    }
   },
   goHome() {
     wx.redirectTo({ url: '/pages/homePage/homePage' });
+  },
+  setDataAsync(data: any) {
+    return new Promise((resolve: any) => {
+      this.setData(data, resolve); // 利用 setData 的回调
+    });
   },
 
   /**

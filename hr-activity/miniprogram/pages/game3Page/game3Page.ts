@@ -228,7 +228,7 @@ Page({
         this.setData({ currentPhoto: tempFilePaths[0], currentStep: 1 });
       },
       fail: (err) => {
-        showToast(`选择图片失败：${err}`);
+        console.error('选择图片失败', err);
       },
     });
   },

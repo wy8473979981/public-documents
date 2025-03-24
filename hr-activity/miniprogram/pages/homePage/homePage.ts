@@ -67,10 +67,12 @@ Page({
    */
   onReady() { },
   init() {
+
     wx.showLoading({
       title: '加载中...',
       mask: true, // 是否显示透明蒙层，防止触摸穿透
     });
+    
     wx.getStorage({
       key: 'openId',
       success: (res) => {
@@ -82,17 +84,11 @@ Page({
             this.getGameResult(2, openId),
           ])
             .then((results) => {
-              // results[0] = {
-              //   code: '200',
-              //   data: {
-              //     status: 1
-              //   }
-              // }
-              results = [
-                { code: '200', msg: '成功', data: { status: 1 } },
-                { code: '200', msg: '成功', data: { status: 1 } },
-                { code: '200', msg: '成功', data: null },
-              ];
+              // results = [
+              //   { code: '200', msg: '成功', data: null },
+              //   { code: '200', msg: '成功', data: null },
+              //   { code: '200', msg: '成功', data: null },
+              // ];
               if (results.every((n) => n.data)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
               } else {

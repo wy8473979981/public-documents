@@ -27,7 +27,7 @@
     <view class="previous-next-content">
       <view class="previous" wx:if="{{currentIndex > 0}}" bindtap="onPrevious">上一题</view>
       <view class="next" wx:if="{{currentIndex < 4}}" bindtap="onNext">下一题</view>
-      <view class="next" wx:if="{{allAnswersCompleted}}" bindtap="onSubmit">提交</view>
+      <view class="next" wx:if="{{currentIndex === 4 && allAnswersCompleted}}" bindtap="onSubmit">提交</view>
     </view>
     <view class="right-answers-content" wx:if="{{currentQuestion.isAnswerWrong}}">
       <view class="title">正确答案：</view>

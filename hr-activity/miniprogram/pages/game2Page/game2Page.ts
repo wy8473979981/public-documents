@@ -39,6 +39,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
+
     this.init();
   },
 
@@ -49,45 +50,43 @@ Page({
 
   },
   init() {
-    wx.getStorage({
-      key: 'dict',
-      success: (res) => {
-        const dict = JSON.parse(res.data);
-        const { bu_question } = dict;
-        const order = ['A', 'B', 'C', 'D'];
+    const data = wx.getStorageSync('dict');
+    const dict = JSON.parse(data);
+    const { bu_question } = dict;
+    const order = ['A', 'B', 'C', 'D'];
 
-        if (Array.isArray(bu_question) && bu_question.length > 0) {
-          const list = bu_question.map((item: any, index: number): Question => {
-            const qna = JSON.parse(item.enumvalue);
-            const rightAnswerIndex = qna.options.findIndex((n: any) => n.correct)
-            const rightAnswer = `${order[rightAnswerIndex]}.${qna.options[rightAnswerIndex]?.answer}`;
-            return {
-              num: index + 1,
-              isAnswered: false,
-              isAnswerWrong: false,
-              rightAnswer: rightAnswer,
-              question: qna.question,
-              answerList: qna.options.map(
-                (answerItem: any, answerIndex: number): Answer => ({
-                  id: answerIndex + 1,
-                  text: `${order[answerIndex]}.${answerItem.answer}`,
-                  icon: 0,
-                  correct: answerItem.correct,
-                })
-              ),
-            };
-          });
+    if (Array.isArray(bu_question) && bu_question.length > 0) {
+      const list = bu_question.map((item: any, index: number): Question => {
+        const qna = JSON.parse(item.enumvalue);
+        const rightAnswerIndex = qna.options.findIndex((n: any) => n.correct)
+        const rightAnswer = `${order[rightAnswerIndex]}.${qna.options[rightAnswerIndex]?.answer}`;
+        return {
+          num: index + 1,
+          isAnswered: false,
+          isAnswerWrong: false,
+          rightAnswer: rightAnswer,
+          question: qna.question,
+          answerList: qna.options.map(
+            (answerItem: any, answerIndex: number): Answer => ({
+              id: answerIndex + 1,
+              text: `${order[answerIndex]}.${answerItem.answer}`,
+              icon: 0,
+              correct: answerItem.correct,
+            })
+          ),
+        };
+      });
 
-          const shuffledList = list.sort(() => 0.5 - Math.random());
-          const currentQuestionList = shuffledList.slice(0, 5);
-          this.setData({
-            allQuestionList: list,
-            currentQuestionList,
-            currentQuestion: currentQuestionList[0],
-          });
-        }
-      },
-    });
+      const shuffledList = list.sort(() => 0.5 - Math.random());
+      const currentQuestionList = shuffledList.slice(0, 5);
+      this.setData({
+        allQuestionList: list,
+        currentQuestionList,
+        currentQuestion: currentQuestionList[0],
+      });
+      console.log('allQuestionList', list);
+
+    }
   },
   onClickAnswer(e: {
     currentTarget: { dataset: { answer: { id: number; correct: boolean } } };
@@ -188,14 +187,13 @@ Page({
         const { answerResult } = this.data;
         const params = {
           data: {
+            status: 1,
+            type: 2,
             openId: res.data,
             score: answerResult.accuracyRate,
-            status: 1,
-            type: 2
           },
         }
         const result = await postRequest('/activity/record', params);
-        console.log(result);
         if (result.code === '200') {
           // 继续闯关
           this.onClickHide();
