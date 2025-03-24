@@ -4,20 +4,29 @@ export function getEnvVersion() {
   return accountInfo?.miniProgram?.envVersion || 'develop';
 }
 
-function getBaseUrl(envVersion) {
+function getBaseUrl(envVersion, type = 1) {
   const urlMap = {
     develop: 'https://tdauat.aia.com.cn/uat/fan-sail',
     trial: 'https://tdauat.aia.com.cn/uat/fan-sail',
     release: 'https://tda.aia.com.cn/p/fan-sail',
   };
-  return urlMap[envVersion];
+
+  const gatewayUrlMap = {
+    develop: 'https://gateway-test.nuanwa.net',
+    trial: 'https://gateway-test.nuanwa.net',
+    release: 'https://gateway.nuanwa.net',
+  };
+
+  return type === 1 ? urlMap[envVersion] : gatewayUrlMap[envVersion];
 }
 
 export async function getRequest(url, options = {}) {
   const envVersion = getEnvVersion();
+  const type = options?.header?.type
+  const requestUrl = getBaseUrl(envVersion, type) + url
   return new Promise((resolve, reject) => {
     wx.request({
-      url: getBaseUrl(envVersion) + url,
+      url: requestUrl,
       method: 'GET',
       header: {
         'content-type': 'application/json', // 默认值
@@ -36,9 +45,11 @@ export async function getRequest(url, options = {}) {
 
 export async function postRequest(url, options = {}) {
   const envVersion = getEnvVersion();
+  const type = options?.header?.type
+  const requestUrl = getBaseUrl(envVersion, type) + url
   return new Promise((resolve, reject) => {
     wx.request({
-      url: getBaseUrl(envVersion) + url,
+      url: requestUrl,
       method: 'POST',
       header: {
         'content-type': 'application/json', // 默认值
@@ -50,6 +61,33 @@ export async function postRequest(url, options = {}) {
       },
       fail: function (err) {
         reject(err);
+      },
+    });
+  });
+}
+
+export async function uploadFile(url, options = {}) {
+
+  const envVersion = getEnvVersion();
+  const type = options?.header?.type;
+  const requestUrl = getBaseUrl(envVersion, type) + url;
+
+  return new Promise((resolve, reject) => {
+    const filePath = options.data.srcImage; // 获取图片路径
+    wx.uploadFile({
+      url: requestUrl,
+      name: 'srcImage',
+      filePath: filePath,
+      formData: options.data || {},
+      header: {
+        'content-type': 'application/json', // 默认值
+        ...options.header,
+      },
+      success: function (res) {
+        resolve(res); // 返回数据
+      },
+      fail: function (err) {
+        reject(err); // 返回错误
       },
     });
   });
@@ -106,14 +144,13 @@ export const getDict = async () => {
 
 export const getToken = async () => {
   try {
-    // const result = await postRequest('/poster/getToken');
-    // if (result.code === "200") {
-    const token = 'Bearer fCebZ1SBPiGnyKVk9z3PpLoY9aUG6iYvEmVB2jopshr8UgjwN1h9PI+H1VdaXQzr2z+pGU0c5Ppx0NBS/1E8u0R7cmmoQ6uXTdpqZX0/LKW9wXhecMZcnHv8upIiNj9pE3oilaonnqJEPp9zWhFM2WMeSBAi8Ci/dFsMN9UyskeBwNW2zVluCv2T04LeIdFXnd/vVRUXf5TFJqe6HaFspDUJLURanZOxA10QMDoqnPoVUD5GfzxGsXb7DmQ5Z7y8BshivNgdnuXJyEwl0yKiE0keElpGuPU5LA/tkGTe0y/sNf54ft2IYv8pQBuC+mxTjqsQkIGYPovhv5UXkOnP]Q==';
-    wx.setStorage({
-      key: "token",
-      data: token
-    });
-    // }
+    const result = await postRequest('/poster/getToken');
+    if (result.code === "200") {
+      wx.setStorage({
+        key: "token",
+        data: `Bearer ${result.data}`
+      });
+    }
   } catch (error) {
     console.log('getDict', error);
   }

@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/homePage/homePage",
+    "pages/loginPage/loginPage",
     "pages/game3Page/game3Page",
     "pages/cropImage/cropImage",
-    "pages/loginPage/loginPage",
-    "pages/homePage/homePage",
     "pages/game2Page/game2Page",
     "pages/guidePageTs/guidePageTs",
     "pages/game1Page/game1Page",

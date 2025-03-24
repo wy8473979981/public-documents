@@ -345,3 +345,12 @@ export function getBaseUrl(envVersion: string) {
   }
   return urlMap[envVersion];
 }
+
+type ToastIconType = 'error' | 'success' | 'loading' | 'none';
+export function showToast(msg: string, icon: ToastIconType = 'none', duration = 2000) {
+  wx.showToast({
+    title: msg,
+    icon: icon,
+    duration: duration,
+  });
+}

@@ -79,7 +79,7 @@ Page({
           Promise.all([
             this.getGameResult(1, openId),
             this.getGame2Result(2, openId),
-            this.getGameResult(3, openId),
+            this.getGameResult(2, openId),
           ])
             .then((results) => {
               // results[0] = {
@@ -91,7 +91,7 @@ Page({
               results = [
                 { code: '200', msg: '成功', data: { status: 1 } },
                 { code: '200', msg: '成功', data: { status: 1 } },
-                { code: '200', msg: '成功', data: { status: 1 } },
+                { code: '200', msg: '成功', data: null },
               ];
               if (results.every((n) => n.data)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4

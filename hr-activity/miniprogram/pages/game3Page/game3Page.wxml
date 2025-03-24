@@ -9,9 +9,6 @@
     <view class="photo-content">
       <image wx:if="{{currentPhoto}}" class="current-photo" src="{{currentPhoto}}" mode="aspectFit"></image>
       <camera wx:else class="camera" device-position="back" frame-size="small" flash="off" bindinitdone="onCameraInitDone" bindstop="onCameraStop" binderror="onCameraError"></camera>
-      <view wx:if="{{currentPhoto}}" class="afresh" bind:tap="onReselectImg">
-        <view class="text">重新选择图片</view>
-      </view>
     </view>
     <view class="photo-title">相机</view>
     <view class="operate-content">
@@ -23,7 +20,6 @@
         <image class="photograph-img" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/photograph.png" mode="aspectFit"></image>
       </view>
     </view>
-    <view class="btn" bind:tap="onToMake">去制作</view>
   </view>
   <view class="flow-wrapper flow-wrapper-2" wx:if="{{currentStep===1 || currentStep===2}}">
     <view class="photo-content" wx:if="{{currentStep===1}}">
@@ -35,8 +31,8 @@
     </view>
     <view class="generate" wx:else>
       <view class="progress-content">
-        <view class="text">合成中</view>
-        <view class="num">{{progress}}%</view>
+        <view class="text">{{compoundProgress.text}}</view>
+        <view class="num" wx:if="{{compoundProgress.progress}}">{{compoundProgress.progress}}%</view>
       </view>
     </view>
     <view class="style-content">
@@ -53,7 +49,10 @@
   </view>
   <view class="flow-wrapper flow-wrapper-3" wx:if="{{currentStep===3}}">
     <view class="compound-content">
-      <view class="afresh" bind:tap="onMakeOver">重新制作</view>
+      <image wx:if="{{resultantPictureUrl}}" class="resultant-picture" src="{{resultantPictureUrl}}" mode="aspectFit"></image>
+      <view class="afresh" bind:tap="onReselectImg">
+        <view class="text">重新制作</view>
+      </view>
     </view>
     <view class="btn-content">
       <view class="btn" bind:tap="onBackHome">返回首页</view>

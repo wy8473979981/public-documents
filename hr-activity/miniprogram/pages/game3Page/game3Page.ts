@@ -1,5 +1,7 @@
 // pages/game3Page/game3Page.ts
-import { getRequest, postRequest } from '../../utils/request.js';
+import { postRequest, uploadFile } from '../../utils/request.js';
+import { delayFn, showToast } from '../../utils/index';
+
 // 定义接口
 interface ImgItem {
   index: number;
@@ -10,6 +12,7 @@ interface ImgItem {
 interface TabItem {
   index: number;
   name: string;
+  label: string;
   imgList: ImgItem[]; // 确保 imgList 符合 ImgItem[]
 }
 
@@ -44,42 +47,47 @@ Page({
     currentImgList: [] as ImgItem[], // 明确类型
     cameraReady: false, // 相机是否渲染
     cameraContext: null as WechatMiniprogram.CameraContext | null,
-    resultantPictureUrl:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/photograph.png', // 合成图片的地址
+    resultantPictureUrl: '', // 合成图片的地址
     token: '',
-    algoType: '',
-    templId: '',
+    openId: '',
+    templId: '', // 模板编码
+    algoType: '', // 漫画类型
     taskCode: '', // 海报合成任务编码
-    progress: 0, // 合成进度
+    compoundProgress: {
+      text: '合成中',
+      progress: 0,
+    },
+    createPosterId: '',
   },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad() {
+    const token = wx.getStorageSync('token');
+    const openId = wx.getStorageSync('openId');
+    this.setData({ token: token, openId: openId });
+
     this.init();
-    wx.getStorage({
-      key: 'token',
-      success: (res) => {
-        this.setData({ token: res.data });
-      },
-    });
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {},
+  onReady() { },
   init() {
     wx.getStorage({
       key: 'dict',
       success: (res) => {
         const dict = JSON.parse(res.data);
         const bu_algo_type: BuAlgoTypeItem[] = dict.bu_algo_type || []; // 明确类型并提供默认值
+
         // 构造 tabList
         const tabList = bu_algo_type
           .map((item: BuAlgoTypeItem, index: number) => {
             if (!(item.label in names)) {
-              console.warn(`未知的 label: ${item.label}`);
+
+              showToast(`未知的 label: ${item.label}`);
               return undefined; // 返回 undefined 而非 null
+
             }
             const enumvalueArray = JSON.parse(item.enumvalue);
             return {
@@ -95,17 +103,22 @@ Page({
           })
           .filter((tab): tab is TabItem => Boolean(tab)); // 使用类型守卫过滤掉 undefined
 
-        console.log('tabList', tabList);
-
+        // 设置初始数据
         const currentImgList = tabList[0]?.imgList;
         this.setData({
           tabList,
+          algoType: tabList[0]?.label,
           templId: currentImgList[0].templateId,
           currentImgList: currentImgList || [],
         });
+
       },
       fail: (err) => {
-        console.error('获取存储失败', err);
+        wx.showToast({
+          title: `获取存储失败:${err}`,
+          icon: 'none',
+          duration: 2000,
+        });
       },
     });
   },
@@ -122,12 +135,10 @@ Page({
       templId: currentImgList[0].templateId,
       currentImgList: currentImgList, // 同步更新 currentImgList
     });
-    console.log('currentImgList', currentImgList);
   },
   onImgItemTap(e: any) {
     // 处理图片点击逻辑
     const { img } = e.currentTarget.dataset;
-    console.log(img);
     this.setData({
       activeImgIndex: img.index,
       templId: img.templateId,
@@ -135,11 +146,7 @@ Page({
   },
   onReselectImg() {
     // 重新选择图片
-    this.setData({ currentStep: 0, currentPhoto: '' });
-  },
-  onToMake() {
-    // 去制作
-    this.setData({ currentStep: 1 });
+    this.setData({ currentStep: 0, currentPhoto: '', activeTabIndex: 0, activeImgIndex: 0 });
   },
   onToGenerate() {
     // 去生成
@@ -150,6 +157,7 @@ Page({
         wx.getImageInfo({
           src: currentPhoto,
           success: async (imgInfo) => {
+            // 裁剪图片
             const croppedImagePath = await this.cropImage(
               currentPhoto,
               imgInfo.width,
@@ -163,17 +171,14 @@ Page({
               maxSizeInMB
             );
             if (!isValidSize) {
-              console.error(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
-              wx.showToast({
-                title: `图片大小超过限制，最大允许 ${maxSizeInMB}MB`,
-                icon: 'none',
-                duration: 2000,
-              });
+              showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
               return;
             }
-            this.setData({ currentStep: 2 });
-            this.updateProgress(); // 调用更新进度函数
+
+            // 转成 base64 字符串
             const base64Data = await this.readFileAsBase64(croppedImagePath);
+
+            // 调用海报合成接口
             const params = {
               data: {
                 imageBase64: base64Data,
@@ -182,40 +187,285 @@ Page({
               },
               header: {
                 Authorization: token,
+                type: 2,
               },
             };
-            console.log('params', params);
-            // 调用海报合成接口
-            const result = await postRequest(
-              '/forward/nova-poster/mini-program/composite-poster',
-              params
-            );
 
-            if (result.code === '1') {
-              wx.showToast({
-                title: result.message,
-                icon: 'none',
-                duration: 2000,
-              });
-              this.setData({ taskCode: result.result });
-              this.setData({ currentStep: 2 });
-              this.updateProgress(); // 调用更新进度函数
+            const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
+            const { code, message, result } = res;
+            if (code === '0') {
+              const taskCode = result;
+              this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
+                () => {
+                  this.createPosterImageF();
+                  this.updateProgress(); // 调用更新进度函数
+                }
+              );
             } else {
-              wx.showToast({
-                title: result.message,
-                icon: 'none',
-                duration: 2000,
-              });
+              showToast(message);
+
             }
-            console.log('result', result);
           },
         });
       } else {
-        console.error('currentPhoto 为空');
+        showToast('currentPhoto 为空');
       }
     } catch (error) {
-      console.log('onToGenerate', error);
+      showToast(`onToGenerate：${error}`);
     }
+  },
+  onBackHome() {
+    // 返回首页
+    wx.redirectTo({ url: '/pages/homePage/homePage' });
+  },
+  chooseImage() {
+    wx.chooseMedia({
+      count: 1, // 最多可以选择的图片张数，默认9
+      mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
+      sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
+      success: (res) => {
+        const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
+        this.setData({ currentPhoto: tempFilePaths[0], currentStep: 1 });
+      },
+      fail: (err) => {
+        showToast(`选择图片失败：${err}`);
+      },
+    });
+  },
+  onClickPhoto() {
+    const { cameraContext } = this.data;
+    if (cameraContext) {
+      cameraContext.takePhoto({
+        quality: 'low',
+        success: (res) => {
+          this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
+        },
+        fail: (err) => {
+          showToast(`拍照失败：${err}`);
+        },
+      });
+    } else {
+      showToast('cameraContext 未初始化');
+    }
+  },
+  async updateProgress() {
+    try {
+      const { taskCode, token } = this.data;
+      if (!taskCode) {
+        showToast('taskCode 为空，无法查询进度');
+        return;
+      }
+      const params = {
+        data: {
+          taskCode: taskCode,
+        },
+        header: {
+          Authorization: token,
+          type: 2,
+        },
+      };
+
+      const res = await postRequest('/forward/nova-poster/mini-program/composite-poster-result', params);
+      const { code, message, result } = res;
+      if (code === '0') {
+        const status = result?.status;
+
+        if (status === 1) {
+          // 图片合成中，继续查询进度
+          const currentIndex = result?.currentIndex;
+          const posterCount = result?.posterCount;
+
+          let progress = 0;
+          if (currentIndex === -1) {
+            progress = 99;
+          } else if (posterCount > 0) {
+            progress = Math.floor((1 - currentIndex / posterCount) * 100);
+          }
+
+          this.setDataAsync({
+            compoundProgress: { progress: progress, text: '合成中' },
+          }).then(() => {
+            this.updateProgress(); // 递归调用，继续查询进度
+          });
+
+        } else if (status === 2) {
+          // 图片已合成，停止查询进度
+          showToast('合成成功');
+
+          this.setDataAsync({
+            compoundProgress: { progress: 100, text: '合成中' },
+          }).then(async () => {
+            await delayFn(2000);
+
+            this.setData({
+              currentStep: 3,
+              resultantPictureUrl: result?.posterPath,
+            });
+
+            this.updatePosterImageF(result?.posterPath);
+
+          });
+
+        } else if (status === 3) {
+          // 合成失败，停止查询进度
+          showToast(result?.failMsg);
+          this.setData({ compoundProgress: { progress: 0, text: '合成失败' } });
+        }
+      } else {
+        showToast(`获取进度失败：${message}`);
+      }
+    } catch (error) {
+      showToast(`获取进度时发生错误${error}`);
+    }
+  },
+  async createPosterImageF() {
+    try {
+      const { algoType, templId, currentPhoto, openId, taskCode } = this.data;
+
+      const params = {
+        data: {
+          status: 0,
+          type: 2,
+          openId: openId,
+          algoType: algoType,
+          templateId: templId,
+          srcImage: currentPhoto,
+          taskId: taskCode,
+        },
+        header: {
+          'content-type': 'multipart/form-data', // 默认值
+        },
+      };
+      const res = await uploadFile('/poster/createPosterImageF', params);
+      const { code, data, msg } = JSON.parse(res.data);
+      if (code === '200') {
+        this.setData({ createPosterId: data.id });
+      } else {
+        showToast(`保存图片错误：${msg}`);
+      }
+    } catch (error) {
+      showToast(`保存图片错误：${error}`);
+    }
+  },
+  async updatePosterImageF(posterPath: any) {
+    try {
+      const { createPosterId } = this.data;
+      const tempFilePath = await this.savePosterToServer(posterPath);
+      const params = {
+        data: {
+          status: 1,
+          srcImage: tempFilePath,
+          id: createPosterId,
+        },
+        header: {
+          'content-type': 'multipart/form-data', // 默认值
+        },
+      };
+      // 请求接口将文件保存到服务器
+      const res = await uploadFile('/poster/updatePosterImageF', params);
+      const { code, msg } = JSON.parse(res.data);
+      if (code === '200') {
+      } else {
+        showToast(`保存海报错误：${msg}`);
+      }
+    } catch (error) {
+      showToast(`保存海报错误：${error}`);
+    }
+  },
+  // 将在线地址转为文件
+  savePosterToServer(posterPath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      wx.downloadFile({
+        url: posterPath,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            const tempFilePath = res.tempFilePath;
+            return resolve(tempFilePath);
+          } else {
+            return reject(new Error('下载海报失败'));
+          }
+        },
+        fail: (err) => {
+          console.error('下载图片失败', err);
+          return reject(new Error('下载图片失败'));
+        },
+      });
+    });
+  },
+  onDownload() {
+    const { resultantPictureUrl } = this.data;
+    wx.downloadFile({
+      url: resultantPictureUrl,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          wx.saveImageToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success: () => {
+              showToast('保存成功', 'success', 2000);
+            },
+            fail: (err) => {
+              if (err.errMsg.includes('auth denied')) {
+                showToast('请授权保存图片到相册', 'none', 2000);
+              }
+            },
+          });
+        } else {
+          showToast(`下载图片失败：${res}`, 'none', 2000);
+        }
+      },
+      fail: (err) => {
+        showToast(`下载图片失败：${err}`, 'none', 2000);
+      },
+    });
+  },
+  setDataAsync(data: any) {
+    return new Promise((resolve: any) => {
+      this.setData(data, resolve); // 利用 setData 的回调
+    });
+  },
+  onCameraInitDone() {
+    console.log('Camera initialized');
+    this.setDataAsync({ cameraReady: true }).then(() => {
+      console.log('cameraReady set to true');
+      this.checkCameraPermission();
+    });
+  },
+  onCameraStop(e: any) {
+    console.log('onCameraStop', e.detail);
+  },
+  onCameraError(e: any) {
+    const errMsg = e.detail?.errMsg;
+    const errMsgArr = [
+      'insertCamera:fail auth deny',
+      'insertXWebCamera:fail auth deny',
+    ];
+    let title = '';
+    errMsg;
+    if (errMsgArr.includes(errMsg)) {
+      title = '请开启摄像头权限';
+      this.checkCameraPermission();
+    } else {
+      title = '摄像机异常';
+    }
+    showToast(title, 'error', 5000);
+  },
+  // 检查并请求相机权限
+  checkCameraPermission() {
+    wx.getSetting({
+      success: (res) => {
+        if (!res.authSetting['scope.camera']) {
+          // 用户之前拒绝了相机权限
+          promptCameraAuthorization();
+        } else {
+          // 用户已授权相机
+          this.initPhoto();
+        }
+      },
+    });
+  },
+  initPhoto() {
+    const cameraContext = wx.createCameraContext();
+    this.setData({ cameraContext: cameraContext });
   },
   /**
    * 裁剪图片
@@ -249,17 +499,7 @@ Page({
             const img = canvas.createImage();
             img.src = imagePath;
             img.onload = () => {
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                imgWidth,
-                imgHeight,
-                0,
-                0,
-                targetWidth,
-                targetHeight
-              );
+              ctx.drawImage(img, 0, 0, imgWidth, imgHeight, 0, 0, targetWidth, targetHeight);
 
               // 将 Canvas 转为图片
               wx.canvasToTempFilePath({
@@ -267,12 +507,10 @@ Page({
                 fileType: 'jpg',
                 quality: 1,
                 success: (res) => {
-                  console.log('裁剪完成', res);
-                  // this.saveImage(res.tempFilePath);
                   return resolve(res.tempFilePath);
                 },
                 fail(err) {
-                  console.error('裁剪失败：', err);
+                  showToast(`裁剪失败：${err}`);
                   return reject(err);
                 },
               });
@@ -284,6 +522,22 @@ Page({
         });
     });
   },
+  validateImageSize(filePath: string, maxSizeInMB: number): Promise<boolean> {
+    // 验证图片大小
+    return new Promise((resolve, reject) => {
+      const fs = wx.getFileSystemManager();
+      fs.getFileInfo({
+        filePath: filePath,
+        success: (res) => {
+          const fileSizeInMB = res.size / (1024 * 1024);
+          return resolve(fileSizeInMB <= maxSizeInMB);
+        },
+        fail: (err) => {
+          return reject(err);
+        },
+      });
+    });
+  },
   // 下载裁剪后的图片
   saveImage(url: any) {
     wx.saveImageToPhotosAlbum({
@@ -292,7 +546,6 @@ Page({
         wx.showToast({ title: '保存成功', icon: 'success' });
       },
       fail(err) {
-        console.error('保存失败：', err);
         if (
           err.errMsg.includes('auth deny') ||
           err.errMsg.includes('auth denied')
@@ -318,311 +571,45 @@ Page({
         encoding: 'base64', // 明确指定编码为 base64，确保返回值为字符串
         success: (res) => {
           if (typeof res.data === 'string') {
-            resolve(res.data); // 确保传递给 resolve 的是字符串
+            const base64 = `data:image/jpeg;base64,${res.data}`;
+            return resolve(base64); // 确保传递给 resolve 的是字符串
           } else {
-            reject(new Error('读取的数据不是字符串类型')); // 如果数据类型不符合预期，抛出错误
+            return reject(new Error('读取的数据不是字符串类型')); // 如果数据类型不符合预期，抛出错误
           }
         },
         fail: (err) => {
-          reject(err); // 捕获并传递错误
+          return reject(err); // 捕获并传递错误
         },
       });
-    });
-  },
-  onMakeOver() {
-    // 重新制作
-    this.setData({ currentStep: 0, currentPhoto: '' });
-  },
-  onBackHome() {
-    // 返回首页
-    wx.redirectTo({ url: '/pages/homePage/homePage' });
-  },
-  chooseImage() {
-    wx.chooseMedia({
-      count: 1, // 最多可以选择的图片张数，默认9
-      mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
-      sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
-      success: (res) => {
-        const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
-        this.setData({ currentPhoto: tempFilePaths[0] });
-      },
-      fail: (err) => {
-        console.error('选择图片失败', err);
-      },
-    });
-  },
-  onClickPhoto() {
-    const { cameraContext } = this.data;
-    if (cameraContext) {
-      cameraContext.takePhoto({
-        quality: 'low',
-        success: (res) => {
-          this.setData({ currentPhoto: res.tempImagePath });
-        },
-        fail: (err) => {
-          console.log('takePhoto--拍照失败', err);
-        },
-      });
-    } else {
-      console.error('cameraContext 未初始化');
-    }
-  },
-  onCameraInitDone() {
-    console.log('Camera initialized');
-    this.setDataAsync({ cameraReady: true }).then(() => {
-      console.log('cameraReady set to true');
-      this.checkCameraPermission();
-    });
-  },
-  onCameraStop(e: any) {
-    console.log('onCameraStop', e.detail);
-  },
-  onCameraError(e: any) {
-    const errMsg = e.detail?.errMsg;
-    const errMsgArr = [
-      'insertCamera:fail auth deny',
-      'insertXWebCamera:fail auth deny',
-    ];
-    let title = '';
-    errMsg;
-    if (errMsgArr.includes(errMsg)) {
-      title = '请开启摄像头权限';
-      this.checkCameraPermission();
-    } else {
-      title = '摄像机异常';
-    }
-    wx.showToast({
-      title: title,
-      icon: 'error',
-      duration: 5000,
-    });
-  },
-  // 检查并请求相机权限
-  checkCameraPermission() {
-    wx.getSetting({
-      success: (res) => {
-        if (!res.authSetting['scope.camera']) {
-          // 用户之前拒绝了相机权限
-          promptCameraAuthorization();
-        } else {
-          // 用户已授权相机
-          this.initPhoto();
-        }
-      },
-    });
-  },
-  initPhoto() {
-    const cameraContext = wx.createCameraContext();
-    this.setData({ cameraContext: cameraContext });
-  },
-  setDataAsync(data: any) {
-    return new Promise((resolve: any) => {
-      this.setData(data, resolve); // 利用 setData 的回调
-    });
-  },
-  onDownload() {
-    const { resultantPictureUrl } = this.data;
-    wx.downloadFile({
-      url: resultantPictureUrl,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          wx.saveImageToPhotosAlbum({
-            filePath: res.tempFilePath,
-            success: () => {
-              wx.showToast({
-                title: '保存成功',
-                icon: 'success',
-                duration: 2000,
-              });
-            },
-            fail: (err) => {
-              console.error('保存图片失败', err);
-              if (err.errMsg.includes('auth denied')) {
-                wx.showToast({
-                  title: '请授权保存图片到相册',
-                  icon: 'none',
-                  duration: 2000,
-                });
-              }
-            },
-          });
-        } else {
-          console.error('下载图片失败', res);
-          wx.showToast({
-            title: '下载失败',
-            icon: 'none',
-            duration: 2000,
-          });
-        }
-      },
-      fail: (err) => {
-        console.error('下载图片失败', err);
-        wx.showToast({
-          title: '下载失败',
-          icon: 'none',
-          duration: 2000,
-        });
-      },
     });
   },
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {},
+  onShow() { },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {},
+  onHide() { },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {},
+  onUnload() { },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {},
+  onPullDownRefresh() { },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {},
+  onReachBottom() { },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {},
-
-  // 新增函数：验证图片大小
-  validateImageSize(filePath: string, maxSizeInMB: number): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      const fs = wx.getFileSystemManager();
-      fs.getFileInfo({
-        filePath: filePath,
-        success: (res) => {
-          const fileSizeInMB = res.size / (1024 * 1024);
-          resolve(fileSizeInMB <= maxSizeInMB);
-        },
-        fail: (err) => {
-          reject(err);
-        },
-      });
-    });
-  },
-  async updateProgress() {
-    try {
-      const { taskCode, token } = this.data;
-      if (!taskCode) {
-        console.error('taskCode 为空，无法查询进度');
-        return;
-      }
-
-      const result = await postRequest(
-        '/forward/nova-poster/mini-program/composite-poster-result',
-        {
-          data: {
-            taskCode: taskCode,
-          },
-          header: {
-            Authorization: token,
-          },
-        }
-      );
-
-      if (result.code === '0') {
-        const status = result.result.status;
-
-        if (status === 1) {
-          // 图片未合成，继续查询进度
-          const progress = result.result.currentIndex;
-          this.setData({ progress });
-          this.updateProgress(); // 递归调用，继续查询进度
-        } else if (status === 2) {
-          // 图片已合成，停止查询进度
-          wx.showToast({
-            title: '合成成功',
-            icon: 'none',
-            duration: 2000,
-          });
-          this.setData({
-            currentStep: 3,
-            resultantPictureUrl: result.result.posterPath,
-          });
-          // 调用保存海报到服务器的函数
-          this.savePosterToServer(result.result.posterPath);
-        } else if (status === 3) {
-          // 合成失败，停止查询进度
-          console.error('合成失败', result.result.failMsg);
-          wx.showToast({
-            title: '合成失败，请检查样例图片是否符合规范',
-            icon: 'none',
-            duration: 2000,
-          });
-        }
-      } else {
-        console.error('获取进度失败', result.message);
-      }
-    } catch (error) {
-      console.error('获取进度时发生错误', error);
-    }
-  },
-
-  // 新建函数：将在线地址转为文件并保存到服务器
-  async savePosterToServer(posterPath: string) {
-    wx.downloadFile({
-      url: posterPath,
-      success: async (res) => {
-        if (res.statusCode === 200) {
-          const tempFilePath = res.tempFilePath;
-          const fs = wx.getFileSystemManager();
-          const fileBuffer = fs.readFileSync(tempFilePath);
-
-          // 请求接口将文件保存到服务器
-          const uploadResult = await postRequest(
-            '/your-server-endpoint/save-poster',
-            {
-              data: {
-                file: fileBuffer,
-              },
-              header: {
-                Authorization: this.data.token,
-                'Content-Type': 'application/octet-stream',
-              },
-            }
-          );
-
-          if (uploadResult.code === '1') {
-            wx.showToast({
-              title: '海报保存成功',
-              icon: 'success',
-              duration: 2000,
-            });
-          } else {
-            wx.showToast({
-              title: '海报保存失败',
-              icon: 'none',
-              duration: 2000,
-            });
-          }
-        } else {
-          console.error('下载海报失败', res);
-          wx.showToast({
-            title: '下载海报失败',
-            icon: 'none',
-            duration: 2000,
-          });
-        }
-      },
-      fail: (err) => {
-        console.error('下载图片失败', err);
-        wx.showToast({
-          title: '下载失败',
-          icon: 'none',
-          duration: 2000,
-        });
-      },
-    });
-  },
+  onShareAppMessage() { },
 });
