@@ -1,5 +1,6 @@
 // pages/loginPage/loginPage.ts
-import { convertToUpperCase, validateInput } from '../../utils/index';
+import { convertToUpperCase, validateInput, showToast } from '../../utils/index';
+import { postRequest } from '../../utils/request.js';
 Page({
 
   /**
@@ -43,18 +44,28 @@ Page({
           success: () => { }
         });
       } else {
-        wx.setStorage({
-          key: "username",
-          data: userInfo.username
-        })
-        wx.redirectTo({ url: '/pages/homePage/homePage' });
+        const openId = wx.getStorageSync('openId');
+        const params = {
+          data: {
+            openId: openId,
+            ntCode: userInfo.username
+          }
+        }
+        const result = await postRequest('/wx/user/bind', params);
+        const { code, msg } = result;
+        if (code === "200") {
+          wx.setStorage({
+            key: "username",
+            data: userInfo.username
+          })
+          wx.redirectTo({ url: '/pages/homePage/homePage' });
+        } else {
+          showToast(msg);
+        }
+
       }
     } else {
-      wx.showToast({
-        title: '请输入账号',
-        icon: 'error',
-        duration: 1000,
-      });
+      showToast('请输入账号')
     }
   },
   /**

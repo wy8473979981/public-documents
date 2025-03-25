@@ -34,6 +34,8 @@ const names = {
 
 import { promptCameraAuthorization } from '../../utils/index';
 
+let countdownInterval = 0;
+
 Page({
   /**
    * 页面的初始数据
@@ -53,10 +55,7 @@ Page({
     templId: '', // 模板编码
     algoType: '', // 漫画类型
     taskCode: '', // 海报合成任务编码
-    compoundProgress: {
-      text: '合成中',
-      progress: 0,
-    },
+    countdown: 180,
     createPosterId: '',
   },
   /**
@@ -77,50 +76,58 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {},
+  onReady() { },
   init() {
     wx.getStorage({
       key: 'dict',
       success: (res) => {
-        const dict = JSON.parse(res.data);
-        const bu_algo_type: BuAlgoTypeItem[] = dict.bu_algo_type || []; // 明确类型并提供默认值
+        let dict: any;
 
-        // 构造 tabList
+        try {
+          dict = JSON.parse(res.data);
+        } catch (error) {
+          showToast('数据解析失败');
+          return;
+        }
+
+        const bu_algo_type: BuAlgoTypeItem[] = dict.bu_algo_type || [];
+
+        const namesKeys = Object.keys(names);
         const tabList = bu_algo_type
           .map((item: BuAlgoTypeItem, index: number) => {
-            if (!(item.label in names)) {
-              showToast(`未知的 label: ${item.label}`);
-              return undefined; // 返回 undefined 而非 null
+            let enumvalueArray: any[] = [];
+            try {
+              enumvalueArray = JSON.parse(item.enumvalue);
+            } catch (error) {
+              console.error('enumvalue 解析失败', error);
             }
-            const enumvalueArray = JSON.parse(item.enumvalue);
+
             return {
               index,
-              name: names[item.label], // 安全访问 names[item.label]
-              label: item.label, // 添加 label 属性
+              name: names[item.label],
+              label: item.label,
               imgList: enumvalueArray.map((imgItem: any, imgIndex: number) => ({
                 index: imgIndex,
                 templateId: imgItem.templateId,
-                src: imgItem.src, // 添加 src 属性
+                src: imgItem.src,
               })),
-            } as TabItem; // 显式断言为 TabItem
+            } as TabItem;
           })
-          .filter((tab): tab is TabItem => Boolean(tab)); // 使用类型守卫过滤掉 undefined
+          .sort(
+            (a, b) => namesKeys.indexOf(a.label) - namesKeys.indexOf(b.label)
+          )
+          .map((tab, i) => ({ ...tab, index: i }));
 
-        // 设置初始数据
-        const currentImgList = tabList[0]?.imgList;
+        const currentImgList = tabList[0]?.imgList || [];
         this.setData({
           tabList,
-          algoType: tabList[0]?.label,
-          templId: currentImgList[0].templateId,
-          currentImgList: currentImgList || [],
+          algoType: tabList[0]?.label || '',
+          templId: currentImgList[0]?.templateId || '',
+          currentImgList,
         });
       },
       fail: (err) => {
-        wx.showToast({
-          title: `获取存储失败:${err}`,
-          icon: 'none',
-          duration: 2000,
-        });
+        showToast(`获取存储失败:${err}`);
       },
     });
   },
@@ -134,7 +141,7 @@ Page({
       activeTabIndex: tab.index,
       activeImgIndex: 0,
       algoType: tab.label,
-      templId: currentImgList[0].templateId,
+      templId: currentImgList[0]?.templateId,
       currentImgList: currentImgList, // 同步更新 currentImgList
     });
   },
@@ -157,77 +164,71 @@ Page({
   },
   onToGenerate() {
     // 去生成
-    try {
-      const { currentPhoto, algoType, templId, token } = this.data;
-      if (currentPhoto) {
-        // 使用 wx.getImageInfo 获取图片信息，然后进行裁剪并转换为 base64
-        wx.getImageInfo({
-          src: currentPhoto,
-          success: async (imgInfo) => {
-            // 裁剪图片
-            const croppedImagePath = await this.cropImage(
-              currentPhoto,
-              imgInfo.width,
-              imgInfo.height
+    const { currentPhoto, algoType, templId, token } = this.data;
+    if (currentPhoto) {
+      // 使用 wx.getImageInfo 获取图片信息，然后进行裁剪并转换为 base64
+      wx.getImageInfo({
+        src: currentPhoto,
+        success: async (imgInfo) => {
+          // 裁剪图片
+          const croppedImagePath = await this.cropImage(
+            currentPhoto,
+            imgInfo.width,
+            imgInfo.height
+          );
+
+          // 验证图片大小
+          const maxSizeInMB = algoType === 'original' ? 15 : 3;
+          const isValidSize = await this.validateImageSize(
+            croppedImagePath,
+            maxSizeInMB
+          );
+          if (!isValidSize) {
+            showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
+            return;
+          }
+
+          // 转成 base64 字符串
+          const base64Data = await this.readFileAsBase64(croppedImagePath);
+
+          // 调用海报合成接口
+          const params = {
+            data: {
+              imageBase64: base64Data,
+              algoType: algoType === 'original' ? undefined : algoType,
+              templId: templId,
+            },
+            header: { Authorization: token, type: 2 },
+          };
+
+          const res = await postRequest(
+            '/forward/nova-poster/mini-program/composite-poster',
+            params
+          );
+          const { code, result, message } = res;
+          if (code === '0') {
+            const taskCode = result;
+            this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
+              () => {
+                this.createPosterImageF();
+                this.updateProgress(true); // 调用更新进度函数
+              }
             );
-
-            // 验证图片大小
-            const maxSizeInMB = algoType === 'original' ? 15 : 3;
-            const isValidSize = await this.validateImageSize(
-              croppedImagePath,
-              maxSizeInMB
-            );
-            if (!isValidSize) {
-              showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
-              return;
-            }
-
-            // 转成 base64 字符串
-            const base64Data = await this.readFileAsBase64(croppedImagePath);
-
-            // 调用海报合成接口
-            const params = {
-              data: {
-                imageBase64: base64Data,
-                algoType: algoType === 'original' ? null : algoType,
-                templId: templId,
-              },
-              header: { Authorization: token, type: 2 },
-            };
-
-            const res = await postRequest(
-              '/forward/nova-poster/mini-program/composite-poster',
-              params
-            );
-            const { code, result } = res;
-            if (code === '0') {
-              const taskCode = result;
-              this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
-                () => {
-                  this.createPosterImageF();
-                  this.updateProgress(); // 调用更新进度函数
+          } else {
+            wx.showModal({
+              title: '提示',
+              content: message,
+              showCancel: false, // 禁用取消按钮
+              confirmText: '确定',
+              success: (res) => {
+                if (res.confirm) {
+                  this.onReselectImg();
                 }
-              );
-            } else {
-              wx.showModal({
-                title: '提示',
-                content: '合成失败，请重新制作！',
-                showCancel: false, // 禁用取消按钮
-                confirmText: '确定',
-                success: (res) => {
-                  if (res.confirm) {
-                    this.onReselectImg();
-                  }
-                },
-              });
-            }
-          },
-        });
-      } else {
-        showToast('currentPhoto 为空');
-      }
-    } catch (error) {
-      showToast(`onToGenerate：${error}`);
+              },
+            });
+          }
+        },
+      });
     }
   },
   onBackHome() {
@@ -264,157 +265,153 @@ Page({
       showToast('cameraContext 未初始化');
     }
   },
-  async updateProgress() {
-    try {
-      const { taskCode, token } = this.data;
-      if (!taskCode) {
-        showToast('taskCode 为空，无法查询进度');
-        return;
-      }
-      const params = {
-        data: {
-          taskCode: taskCode,
-        },
-        header: {
-          Authorization: token,
-          type: 2,
-        },
-      };
+  async updateProgress(first: boolean) {
+    const { taskCode, token } = this.data;
+    if (!taskCode) {
+      showToast('taskCode 为空，无法查询进度');
+      return;
+    }
+    const params = {
+      data: {
+        taskCode: taskCode,
+      },
+      header: {
+        Authorization: token,
+        type: 2,
+      },
+    };
 
-      const res = await postRequest(
-        '/forward/nova-poster/mini-program/composite-poster-result',
-        params
-      );
-      const { code, message, result } = res;
-      if (code === '0') {
-        const status = result?.status;
-
-        if (status === 1) {
-          // 图片合成中，继续查询进度
+    const res = await postRequest(
+      '/forward/nova-poster/mini-program/composite-poster-result',
+      params
+    );
+    const { code, result } = res;
+    if (code === '0') {
+      const status = result?.status;
+      if (status === 1) {
+        if (first) {
           const currentIndex = result?.currentIndex;
-          const posterCount = result?.posterCount;
-
-          let progress = 0;
-          if (currentIndex === -1) {
-            progress = 99;
-          } else if (posterCount > 0) {
-            progress = Math.floor((1 - currentIndex / posterCount) * 100);
-          }
-
-          this.setDataAsync({
-            compoundProgress: { progress: progress, text: '合成中' },
-          }).then(() => {
-            this.updateProgress(); // 递归调用，继续查询进度
-          });
-          
-        } else if (status === 2) {
-          // 图片已合成，停止查询进度
-          showToast('合成成功');
-
-          this.setDataAsync({
-            compoundProgress: { progress: 100, text: '合成中' },
-          }).then(async () => {
-            await delayFn(2000);
-
-            this.setData({
-              currentStep: 3,
-              resultantPictureUrl: result?.posterPath,
-            });
-
-            this.updatePosterImageF(result?.posterPath, '');
-          });
-        } else if (status === 3) {
-          // 合成失败，停止查询进度
-          // showToast(result?.failMsg);
-
-          this.setData({ compoundProgress: { progress: 0, text: '合成失败' } });
-          this.updatePosterImageF('', result?.failMsg);
-
-          wx.showModal({
-            title: '提示',
-            content: '合成失败，请重新制作！',
-            showCancel: false, // 禁用取消按钮
-            confirmText: '确定',
-            success: (res) => {
-              if (res.confirm) {
-                this.onReselectImg();
-              }
-            },
-          });
+          this.startCountdown(currentIndex);
         }
-      } else {
-        showToast(`获取进度失败：${message}`);
+        this.updateProgress(false); // 递归调用，继续查询进度
+      } else if (status === 2) {
+        // 图片已合成，停止查询进度
+        
+        showToast('合成成功');
+        clearInterval(countdownInterval);
+
+        this.setDataAsync({ countdown: 0 }).then(async () => {
+          await delayFn(2000);
+          this.setData({
+            currentStep: 3,
+            resultantPictureUrl: result?.posterPath,
+          });
+
+          this.updatePosterImageF(result?.posterPath, '');
+        });
+      } else if (status === 3) {
+        // 合成失败，停止查询进度
+        const failMsg = result?.failMsg;
+        this.setData({ compoundProgress: { progress: 0, text: '倒计时' } });
+        this.updatePosterImageF('', result?.failMsg);
+
+        wx.showModal({
+          title: '提示',
+          content: failMsg,
+          showCancel: false, // 禁用取消按钮
+          confirmText: '确定',
+          success: (res) => {
+            if (res.confirm) {
+              this.onReselectImg();
+            }
+          },
+        });
       }
-    } catch (error) {
-      showToast(`获取进度时发生错误${error}`);
+    } else {
+      wx.showModal({
+        title: '提示',
+        content: '合成失败，请重新制作！',
+        showCancel: false, // 禁用取消按钮
+        confirmText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            this.onReselectImg();
+          }
+        },
+      });
     }
   },
-  async createPosterImageF() {
-    try {
-      const { algoType, templId, currentPhoto, openId, taskCode } = this.data;
-
-      const params = {
-        data: {
-          status: 0,
-          type: 2,
-          openId: openId,
-          algoType: algoType,
-          templateId: templId,
-          srcImage: currentPhoto,
-          taskId: taskCode,
-        },
-        header: {
-          'content-type': 'multipart/form-data', // 默认值
-        },
-      };
-      const res = await uploadFile('/poster/createPosterImageF', params);
-      const { code, data, msg } = JSON.parse(res.data);
-      if (code === '200') {
-        this.setData({ createPosterId: data.id });
-      } else {
-        showToast(`保存图片错误：${msg}`);
+  startCountdown(currentIndex: any) {
+    let countdown = 0;
+    if (currentIndex === -1) {
+      countdown = 180;
+    } else {
+      countdown = 300;
+    }
+    countdownInterval = setInterval(() => {
+      countdown--;
+      console.log('countdown', countdown);
+      this.setData({ countdown: countdown });
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
       }
-    } catch (error) {
-      showToast(`保存图片错误：${error}`);
+    }, 1000);
+  },
+  async createPosterImageF() {
+    const { algoType, templId, currentPhoto, openId, taskCode } = this.data;
+    const params = {
+      data: {
+        status: 0,
+        type: 2,
+        openId: openId,
+        algoType: algoType,
+        templateId: templId,
+        srcImage: currentPhoto,
+        taskId: taskCode,
+      },
+      header: {
+        'content-type': 'multipart/form-data', // 默认值
+      },
+    };
+    const res = await uploadFile('/poster/createPosterImageF', params);
+    const { code, data, msg } = JSON.parse(res.data);
+    if (code === '200') {
+      this.setData({ createPosterId: data.id });
+    } else {
+      showToast(msg);
     }
   },
   async updatePosterImageF(posterPath: string | null, failMsg: string) {
     const { createPosterId } = this.data;
-    try {
-      let params;
-      const header = {
-        'content-type': 'multipart/form-data',
+    let params;
+    const header = {
+      'content-type': 'multipart/form-data',
+    };
+    if (posterPath) {
+      const tempFilePath = await this.savePosterToServer(posterPath);
+      params = {
+        data: {
+          status: 1,
+          srcImage: tempFilePath,
+          id: createPosterId,
+        },
+        header: header,
       };
-      if (posterPath) {
-        const tempFilePath = await this.savePosterToServer(posterPath);
-        params = {
-          data: {
-            status: 1,
-            srcImage: tempFilePath,
-            id: createPosterId,
-          },
-          header: header,
-        };
-      } else {
-        params = {
-          data: {
-            status: -1,
-            srcImage: null,
-            id: createPosterId,
-            failMsg: failMsg,
-          },
-          header: header,
-        };
-      }
-      console.log('params', params);
-
-      const res = await uploadFile('/poster/updatePosterImageF', params);
-      const { code, msg } = JSON.parse(res.data);
-      if (code !== '200') {
-        showToast(`保存海报错误：${msg}`);
-      }
-    } catch (error) {
-      showToast(`保存海报时发生错误：${error}`);
+    } else {
+      params = {
+        data: {
+          status: -1,
+          srcImage: '',
+          id: createPosterId,
+          failMsg: failMsg,
+        },
+        header: header,
+      };
+    }
+    const res = await uploadFile('/poster/updatePosterImageF', params);
+    const { code, msg } = JSON.parse(res.data);
+    if (code !== '200') {
+      showToast(msg);
     }
   },
   // 将在线地址转为文件
@@ -641,30 +638,30 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {},
+  onShow() { },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {},
+  onHide() { },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {},
+  onUnload() { },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {},
+  onPullDownRefresh() { },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {},
+  onReachBottom() { },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {},
+  onShareAppMessage() { },
 });

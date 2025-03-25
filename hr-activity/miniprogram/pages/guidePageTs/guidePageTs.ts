@@ -15,19 +15,23 @@ Page({
     current: 0, // 当前 swiper 的索引
     animateMap: [false, false, false],
     noSliding: true,
+    shopGirl: '',
+    shopMan: '',
+    goods: '',
+    cart: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function () { },
+  onLoad: function () {
+    this.loaderFn();
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {
-    this.loaderFn();
-  },
+  onReady() {},
   // 自定义指示点点击事件
   onIndicatorTap(e: any) {
     const index = e.currentTarget.dataset.index;
@@ -58,9 +62,31 @@ Page({
     }
   },
   async loaderFn() {
-    await delayFn(2000);
-    this.setData({ loading: false });
-    this.shopGirlAnimate();
+    const imageUrls = [
+      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png',
+    ];
+
+    try {
+      const images = await this.loadImages(imageUrls);
+      await delayFn(2000);
+      await this.setDataAsync({
+        shopGirl: images[0].path,
+        shopMan: images[1].path,
+        goods: images[2].path,
+        cart: images[3].path,
+        loading: false,
+      });
+      this.shopGirlAnimate();
+    } catch (error) {
+      console.error('Failed to load images:', error);
+      wx.showToast({
+        title: '图片加载失败，请重试',
+        icon: 'none',
+      });
+    }
   },
   shopGirlAnimate() {
     this.setData({
@@ -158,7 +184,7 @@ Page({
             },
           ],
           3500,
-          () => { }
+          () => {}
         );
       }
     );
@@ -254,7 +280,7 @@ Page({
             },
           ],
           3500,
-          () => { }
+          () => {}
         );
       }
     );
@@ -306,7 +332,7 @@ Page({
         },
       ],
       500,
-      () => { }
+      () => {}
     );
   },
   shopCartAnimate() {
@@ -439,7 +465,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -503,7 +529,7 @@ Page({
             },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -540,7 +566,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -577,7 +603,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -614,7 +640,7 @@ Page({
             { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -651,7 +677,7 @@ Page({
             { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -723,7 +749,7 @@ Page({
             { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 1 },
           ],
           500,
-          () => { }
+          () => {}
         );
         this.animate(
           '.custom-indicator',
@@ -813,7 +839,7 @@ Page({
             },
           ],
           1000,
-          () => { }
+          () => {}
         );
       }
     );
@@ -838,40 +864,70 @@ Page({
         },
       ],
       1000,
-      () => { }
+      () => {}
     );
   },
   goLogin() {
-    wx.redirectTo({ url: '/pages/loginPage/loginPage' });
-  },
+    const openId = wx.getStorageSync('openId');
+    const ntCode = wx.getStorageSync('ntCode');
 
+    if (openId && ntCode) {
+      wx.redirectTo({ url: '/pages/homePage/homePage' });
+    } else {
+      wx.redirectTo({ url: '/pages/loginPage/loginPage' });
+    }
+  },
+  loadImages(urls: string[]): Promise<any[]> {
+    return Promise.all(
+      urls.map(
+        (url) =>
+          new Promise((resolve, reject) => {
+            wx.getImageInfo({
+              src: url,
+              success: (res) => resolve(res),
+              fail: (err) =>
+                reject(
+                  new Error(
+                    `Failed to load image: ${url}, Error: ${err.errMsg}`
+                  )
+                ),
+            });
+          })
+      )
+    );
+  },
+  setDataAsync(data: any) {
+    return new Promise((resolve: any) => {
+      this.setData(data, resolve); // 利用 setData 的回调
+    });
+  },
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() { },
+  onShow() {},
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() { },
+  onHide() {},
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () { },
+  onUnload: function () {},
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() { },
+  onPullDownRefresh() {},
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() { },
+  onReachBottom() {},
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() { },
+  onShareAppMessage() {},
 });

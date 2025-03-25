@@ -83,11 +83,11 @@ Page({
             this.getGameResult(2, openId),
           ])
             .then((results) => {
-              results = [
-                { code: '200', msg: '成功', data: null },
-                { code: '200', msg: '成功', data: null },
-                { code: '200', msg: '成功', data: null },
-              ];
+              // results = [
+              //   { code: '200', msg: '成功', data: { status: 1 } },
+              //   { code: '200', msg: '成功', data: { status: 1 } },
+              //   { code: '200', msg: '成功', data: null },
+              // ];
               if (results.every((n) => n?.data && n?.data?.status === 1)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
               } else {

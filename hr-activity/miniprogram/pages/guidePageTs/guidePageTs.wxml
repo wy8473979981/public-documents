@@ -10,10 +10,10 @@
         <swiper-item>
           <view class="swiper-item">
             <view class="swiper-item-1">
-              <image class="shop-girl" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-girl.png" mode="aspectFit"></image>
-              <image class="shop-man" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png" mode="aspectFit"></image>
-              <image class="goods" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png" mode="aspectFit"></image>
-              <image class="cart" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png" mode="aspectFit"></image>
+              <image class="shop-girl" src="{{shopGirl}}" mode="aspectFit"></image>
+              <image class="shop-man" src="{{shopMan}}" mode="aspectFit"></image>
+              <image class="goods" src="{{goods}}" mode="aspectFit"></image>
+              <image class="cart" src="{{cart}}" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-1 label-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-1.png" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-1 label-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-2.png" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-1 label-3" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-3.png" mode="aspectFit"></image>

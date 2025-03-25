@@ -102,10 +102,19 @@ export function getOpenId() {
             code: res.code
           }
         })
-        if (result) {
+        const {
+          code,
+          data
+        } = result;
+
+        if (code === "200") {
           wx.setStorage({
             key: "openId",
-            data: result
+            data: data?.openId ? data?.openId : ''
+          });
+          wx.setStorage({
+            key: "ntCode",
+            data: data?.ntCode ? data?.ntCode : ''
           })
         }
       } else {

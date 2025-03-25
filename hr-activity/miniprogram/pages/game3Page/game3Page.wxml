@@ -31,8 +31,8 @@
     </view>
     <view class="generate" wx:else>
       <view class="progress-content">
-        <view class="text">{{compoundProgress.text}}</view>
-        <view class="num" wx:if="{{compoundProgress.progress}}">{{compoundProgress.progress}}%</view>
+        <view class="text">倒计时</view>
+        <view class="num" wx:if="{{countdown>=0}}">{{countdown}}秒</view>
       </view>
     </view>
     <view class="style-content">

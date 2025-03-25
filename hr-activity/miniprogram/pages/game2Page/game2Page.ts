@@ -1,5 +1,5 @@
 // pages/game2Page/game2Page.ts
-import { getRequest, postRequest } from '../../utils/request.js';
+import { postRequest } from '../../utils/request.js';
 interface Answer {
   id: number;
   text: string;
@@ -33,13 +33,15 @@ Page({
       wrongNum: 0, // 错题数
       correctNum: 0, // 正确题数
     },
+    openId: ''
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-
+    const openId = wx.getStorageSync('openId');
+    this.setData({ openId: openId });
     this.init();
   },
 
@@ -84,13 +86,10 @@ Page({
         currentQuestionList,
         currentQuestion: currentQuestionList[0],
       });
-      console.log('allQuestionList', list);
-
+      console.log('currentQuestionList', currentQuestionList);
     }
   },
-  onClickAnswer(e: {
-    currentTarget: { dataset: { answer: { id: number; correct: boolean } } };
-  }) {
+  onClickAnswer(e: any) {
     const { answer } = e.currentTarget.dataset;
     const { currentQuestionList, currentIndex } = this.data;
     const currentQuestion = currentQuestionList[currentIndex];
@@ -165,9 +164,7 @@ Page({
   onSubmit() {
     const { currentQuestionList } = this.data;
     const totalQuestions = currentQuestionList.length;
-    const correctNum = currentQuestionList.filter(
-      (question) => !question.isAnswerWrong
-    ).length;
+    const correctNum = currentQuestionList.filter((question) => !question.isAnswerWrong).length;
     const wrongNum = totalQuestions - correctNum;
 
     this.setData({
@@ -180,27 +177,34 @@ Page({
       },
     });
   },
-  onContinue() {
-    wx.getStorage({
-      key: 'openId',
-      success: async (res) => {
-        const { answerResult } = this.data;
-        const params = {
-          data: {
-            status: 1,
-            type: 2,
-            openId: res.data,
-            score: answerResult.accuracyRate,
-          },
-        }
-        const result = await postRequest('/activity/record', params);
-        if (result.code === '200') {
-          // 继续闯关
-          this.onClickHide();
-          wx.redirectTo({ url: '/pages/homePage/homePage' });
-        }
-      }
-    })
+  async onContinue() {
+    const { answerResult, openId } = this.data;
+    const params = {
+      data: {
+        status: 1,
+        type: 2,
+        openId: openId,
+        score: answerResult.accuracyRate,
+      },
+    }
+    const result = await postRequest('/activity/record', params);
+    if (result.code === '200') {
+      // 继续闯关
+      wx.redirectTo({ url: '/pages/homePage/homePage' });
+      this.onClickHide();
+    } else {
+      wx.showModal({
+        title: '提示',
+        content: '保存失败，请重新答题！',
+        showCancel: false, // 禁用取消按钮
+        confirmText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            this.onAgain();
+          }
+        },
+      });
+    }
   },
   onAgain() {
     // 重新答题
