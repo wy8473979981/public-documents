@@ -142,6 +142,8 @@ export function refreshPage() {
   // 手动刷新页面
   const currentPage = getCurrentPages().pop(); // 获取当前页面实例
   const url = currentPage?.route ? '/' + currentPage.route : '/';
+  console.log(url, 'url');
+  
   wx.reLaunch({
     url,
     success: () => {

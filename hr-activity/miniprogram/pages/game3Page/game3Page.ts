@@ -1,6 +1,6 @@
 // pages/game3Page/game3Page.ts
 import { postRequest, uploadFile } from '../../utils/request.js';
-import { delayFn, showToast } from '../../utils/index';
+import { delayFn, showToast, refreshPage } from '../../utils/index';
 
 // 定义接口
 interface ImgItem {
@@ -185,6 +185,7 @@ Page({
       activeImgIndex: 0,
       showCountDownText: true,
     });
+    refreshPage();
   },
   onToGenerate() {
     // 去生成
@@ -578,8 +579,9 @@ Page({
               wx.canvasToTempFilePath({
                 canvas: canvas,
                 fileType: 'jpg',
-                quality: 1,
+                quality: 0.7, // 设置图片质量
                 success: (res) => {
+                  // this.saveImage(res.tempFilePath);
                   return resolve(res.tempFilePath);
                 },
                 fail(err) {
