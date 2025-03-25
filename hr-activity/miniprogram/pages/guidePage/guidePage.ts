@@ -767,7 +767,6 @@ Page({
       }
     );
   },
-
   swiperLabelAnimate(className: string) {
     this.animate(
       `.${className}`,

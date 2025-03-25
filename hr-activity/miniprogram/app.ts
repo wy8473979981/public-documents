@@ -1,5 +1,5 @@
 // app.ts
-import { compareVersion } from './utils/index';
+import { compareVersion, printVersion } from './utils/index';
 import { getOpenId, getDict, getToken } from './utils/request'
 
 App<IAppOption>({
@@ -13,6 +13,7 @@ App<IAppOption>({
     getOpenId();
     getDict();
     getToken();
+    printVersion();
   },
   checkWeChatVersion(minVersion) {
     try {
