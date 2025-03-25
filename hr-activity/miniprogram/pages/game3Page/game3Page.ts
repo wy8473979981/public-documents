@@ -32,9 +32,17 @@ const names = {
   anime: '日漫',
 } as const; // 使用 as const 确保 names 的键和值是固定的
 
+interface PageOptions {
+  id?: string;
+  status?: string;
+  tarImage?: string;
+  taskId?: string;
+}
+
 import { promptCameraAuthorization } from '../../utils/index';
 
 let countdownInterval = 0;
+let updateProgressTimer = 0;
 
 Page({
   /**
@@ -55,23 +63,38 @@ Page({
     templId: '', // 模板编码
     algoType: '', // 漫画类型
     taskCode: '', // 海报合成任务编码
-    countdown: 180,
+    countDownText: '60秒',
+    showCountDownText: true,
     createPosterId: '',
   },
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options: any) {
-    if (options.status === '1') {
-      // 闯关成功，再次进入页面时，直接展示海报图片
-      const tarImage = options.tarImage;
-      this.setData({ currentStep: 3, resultantPictureUrl: tarImage });
-    }
-
+  onLoad(options: PageOptions) {
+    const { id, status, tarImage, taskId } = options;
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
-    this.setData({ token: token, openId: openId });
+    this.setData({ token, openId });
     this.init();
+
+    if (status === '1') {
+      // 闯关成功，再次进入页面时，直接展示海报图片
+      this.setData({ currentStep: 3, resultantPictureUrl: tarImage });
+    } else if (status === '0' && id && taskId) {
+      // 再次进入第三关 查询图片合成进度
+      this.setDataAsync({
+        currentStep: 2,
+        createPosterId: id,
+        taskCode: taskId,
+      })
+        .then(async () => {
+          await this.updateProgress();
+        })
+        .catch((err) => {
+          console.error('Failed to set data or update progress:', err);
+          showToast('初始化失败，请重试');
+        });
+    }
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -160,6 +183,7 @@ Page({
       currentPhoto: '',
       activeTabIndex: 0,
       activeImgIndex: 0,
+      showCountDownText: true,
     });
   },
   onToGenerate() {
@@ -211,7 +235,7 @@ Page({
             this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
               () => {
                 this.createPosterImageF();
-                this.updateProgress(true); // 调用更新进度函数
+                this.updateProgress(); // 调用更新进度函数
               }
             );
           } else {
@@ -265,20 +289,19 @@ Page({
       showToast('cameraContext 未初始化');
     }
   },
-  async updateProgress(first: boolean) {
+  async updateProgress() {
     const { taskCode, token } = this.data;
     if (!taskCode) {
       showToast('taskCode 为空，无法查询进度');
       return;
     }
+
+    // 清除之前的定时器
+    clearTimeout(updateProgressTimer);
+
     const params = {
-      data: {
-        taskCode: taskCode,
-      },
-      header: {
-        Authorization: token,
-        type: 2,
-      },
+      data: { taskCode },
+      header: { Authorization: token, type: 2 },
     };
 
     const res = await postRequest(
@@ -286,72 +309,70 @@ Page({
       params
     );
     const { code, result } = res;
-    if (code === '0') {
-      const status = result?.status;
-      if (status === 1) {
-        if (first) {
-          const currentIndex = result?.currentIndex;
-          this.startCountdown(currentIndex);
-        }
-        this.updateProgress(false); // 递归调用，继续查询进度
-      } else if (status === 2) {
-        // 图片已合成，停止查询进度
-        
-        showToast('合成成功');
-        clearInterval(countdownInterval);
-
-        this.setDataAsync({ countdown: 0 }).then(async () => {
-          await delayFn(2000);
-          this.setData({
-            currentStep: 3,
-            resultantPictureUrl: result?.posterPath,
-          });
-
-          this.updatePosterImageF(result?.posterPath, '');
-        });
-      } else if (status === 3) {
-        // 合成失败，停止查询进度
-        const failMsg = result?.failMsg;
-        this.setData({ compoundProgress: { progress: 0, text: '倒计时' } });
-        this.updatePosterImageF('', result?.failMsg);
-
-        wx.showModal({
-          title: '提示',
-          content: failMsg,
-          showCancel: false, // 禁用取消按钮
-          confirmText: '确定',
-          success: (res) => {
-            if (res.confirm) {
-              this.onReselectImg();
-            }
-          },
-        });
-      }
-    } else {
+    if (code !== '0') {
       wx.showModal({
         title: '提示',
         content: '合成失败，请重新制作！',
-        showCancel: false, // 禁用取消按钮
+        showCancel: false,
         confirmText: '确定',
         success: (res) => {
-          if (res.confirm) {
-            this.onReselectImg();
-          }
+          if (res.confirm) this.onReselectImg();
+        },
+      });
+      return;
+    }
+
+    const status = result?.status;
+    if (status === 1) {
+      this.startCountdown(result?.currentIndex);
+      updateProgressTimer = setTimeout(() => this.updateProgress(), 10000);
+    } else if (status === 2) {
+      showToast('合成成功');
+      this.setData({
+        showCountDownText: false,
+        currentStep: 3,
+        resultantPictureUrl: result?.posterPath,
+      });
+      this.updatePosterImageF(result?.posterPath, '');
+    } else if (status === 3) {
+      const failMsg = result?.failMsg;
+      this.setData({ compoundProgress: { progress: 0, text: '倒计时' } });
+      this.updatePosterImageF('', failMsg);
+      wx.showModal({
+        title: '提示',
+        content: failMsg,
+        showCancel: false,
+        confirmText: '确定',
+        success: (res) => {
+          if (res.confirm) this.onReselectImg();
         },
       });
     }
   },
   startCountdown(currentIndex: any) {
-    let countdown = 0;
-    if (currentIndex === -1) {
-      countdown = 180;
+    clearInterval(countdownInterval);
+    const timePerTask = 60 / 100; // 60秒内完成100个任务
+    let countdown = Math.ceil(timePerTask * currentIndex); // 计算倒计时时间
+
+    if (currentIndex < 0) {
+      countdown = 10;
     } else {
-      countdown = 300;
+      // 限制 countdown 最大值为 180 秒
+      countdown = countdown > 180 ? 180 : countdown;
     }
+
     countdownInterval = setInterval(() => {
+      const minutes = Math.floor(countdown / 60);
+      const seconds = countdown % 60;
+
+      if (countdown > 60) {
+        this.setData({ countDownText: `${minutes}分${seconds}秒` });
+      } else {
+        this.setData({ countDownText: `${countdown}秒` });
+      }
+
       countdown--;
-      console.log('countdown', countdown);
-      this.setData({ countdown: countdown });
+
       if (countdown <= 0) {
         clearInterval(countdownInterval);
       }
@@ -648,7 +669,11 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() { },
+  onUnload() {
+    // 清除定时器
+    clearInterval(countdownInterval);
+    clearInterval(updateProgressTimer);
+  },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作

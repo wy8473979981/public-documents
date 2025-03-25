@@ -72,7 +72,7 @@ Page({
       } else {
         wx.showModal({
           title: '提示',
-          content: '保存失败，请重新上传！',
+          content: '图片不合规，请重新上传！',
           showCancel: false, // 禁用取消按钮
           confirmText: '确定',
           success: (res) => {
