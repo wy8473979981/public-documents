@@ -1,13 +1,11 @@
 {
   "pages": [
-    "pages/guidePageTs/guidePageTs",
+    "pages/guidePage/guidePage",
     "pages/loginPage/loginPage",
     "pages/homePage/homePage",
-    "pages/game3Page/game3Page",
-    "pages/cropImage/cropImage",
-    "pages/game2Page/game2Page",
     "pages/game1Page/game1Page",
-    "pages/guidePage/guidePage"
+    "pages/game2Page/game2Page",
+    "pages/game3Page/game3Page"
   ],
   "window": {
     "navigationBarTextStyle": "black",

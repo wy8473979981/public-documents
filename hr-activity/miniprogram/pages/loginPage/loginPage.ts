@@ -57,7 +57,7 @@ Page({
           wx.setStorage({
             key: "username",
             data: userInfo.username
-          })
+          });
           wx.redirectTo({ url: '/pages/homePage/homePage' });
         } else {
           showToast(msg);

@@ -1,4 +1,4 @@
 export const config = {
-  "version": "1.8.4",
-  "name": "寻找能量弹"
+  "version": "0.0.1",
+  "name": "HR活动"
 }

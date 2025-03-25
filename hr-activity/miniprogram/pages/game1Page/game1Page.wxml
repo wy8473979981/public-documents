@@ -15,8 +15,8 @@
         </view>
         <image wx:else class="game-1-img" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-img.png" mode="aspectFit"></image>
       </view>
-      <view class="examlpe-title" bindtap="onClickShow">查看示例图></view>
-      <view class="upload-btn" bindtap="chooseImage">上传</view>
+      <view class="examlpe-title" wx:if="{{!loading}}" bindtap="onClickShow">查看示例图></view>
+      <view class="upload-btn" wx:if="{{!loading}}" bindtap="chooseImage">上传</view>
     </view>
 
     <view class="upload-contaniner-success" wx:else>

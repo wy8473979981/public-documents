@@ -84,10 +84,10 @@ export async function uploadFile(url, options = {}) {
         ...options.header,
       },
       success: function (res) {
-        resolve(res); // 返回数据
+        return resolve(res); // 返回数据
       },
       fail: function (err) {
-        reject(err); // 返回错误
+        return reject(err); // 返回错误
       },
     });
   });

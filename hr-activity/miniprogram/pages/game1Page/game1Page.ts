@@ -50,26 +50,44 @@ Page({
     });
   },
   async uploadImage(filePath: string) {
-    const { openId } = this.data;
-    const params = {
-      data: {
-        status: 1,
-        type: 1,
-        openId: openId,
-        srcImage: filePath,
-      },
-      header: {
-        'content-type': 'multipart/form-data', // 默认值
-      },
-    };
-    const res = await uploadFile('/poster/createPosterImageF', params);
-    const { code } = JSON.parse(res.data);
-    if (code === '200') {
-      this.setData({ loading: false, uploadStatus: true });
-    } else {
+    try {
+      const { openId } = this.data;
+      const params = {
+        data: {
+          status: 1,
+          type: 1,
+          openId: openId,
+          srcImage: filePath,
+        },
+        header: {
+          'content-type': 'multipart/form-data', // 默认值
+        },
+      };
+      console.log('uploadImage', params);
+      
+      const res = await uploadFile('/poster/createPosterImageF', params);
+      const { code } = JSON.parse(res.data);
+      if (code === '200') {
+        this.setData({ loading: false, uploadStatus: true });
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: '保存失败，请重新上传！',
+          showCancel: false, // 禁用取消按钮
+          confirmText: '确定',
+          success: (res) => {
+            if (res.confirm) {
+              this.setData({ loading: false, uploadStatus: false });
+            }
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      const text = error?.errMsg === 'uploadFile:fail timeout' ? '超时请重新上传！' : '';
       wx.showModal({
         title: '提示',
-        content: '保存失败，请重新上传！',
+        content: text,
         showCancel: false, // 禁用取消按钮
         confirmText: '确定',
         success: (res) => {

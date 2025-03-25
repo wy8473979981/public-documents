@@ -8,8 +8,8 @@ App<IAppOption>({
     platform: ''
   },
   onLaunch() {
-    // this.checkForUpdates();
-    // this.checkWeChatVersion("3.7.3");
+    this.checkForUpdates();
+    this.checkWeChatVersion("3.7.3");
     getOpenId();
     getDict();
     getToken();
@@ -30,7 +30,6 @@ App<IAppOption>({
       } else {
         console.log(`当前微信版本 ${currentVersion} 满足最低版本要求 ${minVersion}`);
       }
-
       const platform = systemInfo.platform; // 获取平台信息
       this.globalData.platform = platform;
       if (platform === 'ios') {
