@@ -67,12 +67,11 @@ Page({
    */
   onReady() { },
   init() {
-
     wx.showLoading({
       title: '加载中...',
       mask: true, // 是否显示透明蒙层，防止触摸穿透
     });
-    
+
     wx.getStorage({
       key: 'openId',
       success: (res) => {
@@ -84,15 +83,18 @@ Page({
             this.getGameResult(2, openId),
           ])
             .then((results) => {
-              // results = [
-              //   { code: '200', msg: '成功', data: null },
-              //   { code: '200', msg: '成功', data: null },
-              //   { code: '200', msg: '成功', data: null },
-              // ];
-              if (results.every((n) => n.data)) {
+              results = [
+                { code: '200', msg: '成功', data: null },
+                { code: '200', msg: '成功', data: null },
+                { code: '200', msg: '成功', data: null },
+              ];
+              if (results.every((n) => n?.data && n?.data?.status === 1)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
               } else {
-                const currentStep = results.findIndex((n) => !n.data);
+                // 查找没有过关的 关卡
+                const currentStep = results.findIndex(
+                  (n) => !n.data || (n?.data && n?.data?.status != 1)
+                );
                 this.setData({ currentStep: currentStep + 1 });
               }
 
@@ -107,6 +109,7 @@ Page({
                     ...game,
                     isPassed,
                   }),
+                  originalData: data,
                 };
               });
               this.setData({ gameList: updatedGameList });
@@ -149,18 +152,19 @@ Page({
       throw error;
     }
   },
-  onClickGame(e: any) {
+  onClickGame(e: WechatMiniprogram.TouchEvent) {
     const { game } = e.currentTarget.dataset;
+
     if (this.data.currentStep > 3) {
+      if (game.count === 3) {
+        const { status, tarImage } = game.originalData;
+        const url = `/pages/game${game.count}Page/game${game.count}Page?status=${status}&tarImage=${tarImage}`;
+        wx.redirectTo({ url });
+      }
       return;
     }
-    if (game.isPassed) {
-      wx.showToast({
-        title: `请闯第${this.data.currentStep}关！`,
-        icon: 'none',
-        duration: 2000,
-      });
-    } else if (game.count !== this.data.currentStep) {
+
+    if (game.count !== this.data.currentStep || game.isPassed) {
       wx.showToast({
         title: `请先闯第${this.data.currentStep}关！`,
         icon: 'none',
@@ -168,7 +172,7 @@ Page({
       });
     } else {
       const url = `/pages/game${game.count}Page/game${game.count}Page`;
-      wx.redirectTo({ url: url });
+      wx.redirectTo({ url });
     }
   },
   getGameClassName(index: number, game: Game): string {

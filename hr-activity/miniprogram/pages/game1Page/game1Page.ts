@@ -63,11 +63,21 @@ Page({
       },
     };
     const res = await uploadFile('/poster/createPosterImageF', params);
-    const { code, msg } = JSON.parse(res.data);
+    const { code } = JSON.parse(res.data);
     if (code === '200') {
       this.setData({ loading: false, uploadStatus: true });
     } else {
-      showToast(`保存图片错误：${msg}`);
+      wx.showModal({
+        title: '提示',
+        content: '保存失败，请重新上传！',
+        showCancel: false, // 禁用取消按钮
+        confirmText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            this.setData({ loading: false, uploadStatus: false });
+          }
+        },
+      });
     }
   },
   goHome() {

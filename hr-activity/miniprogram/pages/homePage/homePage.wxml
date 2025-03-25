@@ -13,7 +13,11 @@
       <image class="gif-{{index+1}}" src="{{currentStep === index + 1 ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
     </view>
   </view>
-  <view class="gift-box" wx:if="{{currentStep === 4}}" >
-    <view class="text">文案文案文案文案文案文案文案文案文案文案文案文案文</view>
+  <view class="gift-box" wx:if="{{currentStep === 4}}">
+    <view class="content">
+      <view class="text">恭喜您完成弹福星旅探索🎉</view>
+      <view class="text">请您联系现场工作人员并出示此界面</view>
+      <view class="text">领取您的专属精美好礼吧！🎁</view>
+    </view>
   </view>
 </view>

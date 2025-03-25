@@ -9,7 +9,10 @@
   <view class="upload-wrapper">
     <view class="upload-contaniner" wx:if="{{!uploadStatus}}">
       <view class="upload-content">
-        <van-loading wx:if="{{loading}}" color="#d72555" />
+        <view class="loading-content" wx:if="{{loading}}">
+          <van-loading color="#d72555" size="39rpx"/>
+          <view class="text">上传中</view>
+        </view>
         <image wx:else class="game-1-img" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1-img.png" mode="aspectFit"></image>
       </view>
       <view class="examlpe-title" bindtap="onClickShow">查看示例图></view>
@@ -25,6 +28,7 @@
     <van-overlay show="{{ show }}">
       <view class="overlay-wrapper">
         <view class="overlay-container">
+          <image class="example-img" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/example.jpg" mode="aspectFit"></image>
         </view>
         <van-icon name="cross" custom-class="my-cross" bind:click="onClickHide" />
       </view>

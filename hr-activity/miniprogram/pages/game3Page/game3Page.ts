@@ -62,17 +62,22 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad() {
+  onLoad(options: any) {
+    if (options.status === '1') {
+      // 闯关成功，再次进入页面时，直接展示海报图片
+      const tarImage = options.tarImage;
+      this.setData({ currentStep: 3, resultantPictureUrl: tarImage });
+    }
+
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
     this.setData({ token: token, openId: openId });
-
     this.init();
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() { },
+  onReady() {},
   init() {
     wx.getStorage({
       key: 'dict',
@@ -84,10 +89,8 @@ Page({
         const tabList = bu_algo_type
           .map((item: BuAlgoTypeItem, index: number) => {
             if (!(item.label in names)) {
-
               showToast(`未知的 label: ${item.label}`);
               return undefined; // 返回 undefined 而非 null
-
             }
             const enumvalueArray = JSON.parse(item.enumvalue);
             return {
@@ -111,7 +114,6 @@ Page({
           templId: currentImgList[0].templateId,
           currentImgList: currentImgList || [],
         });
-
       },
       fail: (err) => {
         wx.showToast({
@@ -146,7 +148,12 @@ Page({
   },
   onReselectImg() {
     // 重新选择图片
-    this.setData({ currentStep: 0, currentPhoto: '', activeTabIndex: 0, activeImgIndex: 0 });
+    this.setData({
+      currentStep: 0,
+      currentPhoto: '',
+      activeTabIndex: 0,
+      activeImgIndex: 0,
+    });
   },
   onToGenerate() {
     // 去生成
@@ -185,14 +192,14 @@ Page({
                 algoType: algoType === 'original' ? null : algoType,
                 templId: templId,
               },
-              header: {
-                Authorization: token,
-                type: 2,
-              },
+              header: { Authorization: token, type: 2 },
             };
 
-            const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
-            const { code, message, result } = res;
+            const res = await postRequest(
+              '/forward/nova-poster/mini-program/composite-poster',
+              params
+            );
+            const { code, result } = res;
             if (code === '0') {
               const taskCode = result;
               this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
@@ -202,8 +209,17 @@ Page({
                 }
               );
             } else {
-              showToast(message);
-
+              wx.showModal({
+                title: '提示',
+                content: '合成失败，请重新制作！',
+                showCancel: false, // 禁用取消按钮
+                confirmText: '确定',
+                success: (res) => {
+                  if (res.confirm) {
+                    this.onReselectImg();
+                  }
+                },
+              });
             }
           },
         });
@@ -265,7 +281,10 @@ Page({
         },
       };
 
-      const res = await postRequest('/forward/nova-poster/mini-program/composite-poster-result', params);
+      const res = await postRequest(
+        '/forward/nova-poster/mini-program/composite-poster-result',
+        params
+      );
       const { code, message, result } = res;
       if (code === '0') {
         const status = result?.status;
@@ -287,7 +306,7 @@ Page({
           }).then(() => {
             this.updateProgress(); // 递归调用，继续查询进度
           });
-
+          
         } else if (status === 2) {
           // 图片已合成，停止查询进度
           showToast('合成成功');
@@ -302,14 +321,26 @@ Page({
               resultantPictureUrl: result?.posterPath,
             });
 
-            this.updatePosterImageF(result?.posterPath);
-
+            this.updatePosterImageF(result?.posterPath, '');
           });
-
         } else if (status === 3) {
           // 合成失败，停止查询进度
-          showToast(result?.failMsg);
+          // showToast(result?.failMsg);
+
           this.setData({ compoundProgress: { progress: 0, text: '合成失败' } });
+          this.updatePosterImageF('', result?.failMsg);
+
+          wx.showModal({
+            title: '提示',
+            content: '合成失败，请重新制作！',
+            showCancel: false, // 禁用取消按钮
+            confirmText: '确定',
+            success: (res) => {
+              if (res.confirm) {
+                this.onReselectImg();
+              }
+            },
+          });
         }
       } else {
         showToast(`获取进度失败：${message}`);
@@ -347,29 +378,43 @@ Page({
       showToast(`保存图片错误：${error}`);
     }
   },
-  async updatePosterImageF(posterPath: any) {
+  async updatePosterImageF(posterPath: string | null, failMsg: string) {
+    const { createPosterId } = this.data;
     try {
-      const { createPosterId } = this.data;
-      const tempFilePath = await this.savePosterToServer(posterPath);
-      const params = {
-        data: {
-          status: 1,
-          srcImage: tempFilePath,
-          id: createPosterId,
-        },
-        header: {
-          'content-type': 'multipart/form-data', // 默认值
-        },
+      let params;
+      const header = {
+        'content-type': 'multipart/form-data',
       };
-      // 请求接口将文件保存到服务器
+      if (posterPath) {
+        const tempFilePath = await this.savePosterToServer(posterPath);
+        params = {
+          data: {
+            status: 1,
+            srcImage: tempFilePath,
+            id: createPosterId,
+          },
+          header: header,
+        };
+      } else {
+        params = {
+          data: {
+            status: -1,
+            srcImage: null,
+            id: createPosterId,
+            failMsg: failMsg,
+          },
+          header: header,
+        };
+      }
+      console.log('params', params);
+
       const res = await uploadFile('/poster/updatePosterImageF', params);
       const { code, msg } = JSON.parse(res.data);
-      if (code === '200') {
-      } else {
+      if (code !== '200') {
         showToast(`保存海报错误：${msg}`);
       }
     } catch (error) {
-      showToast(`保存海报错误：${error}`);
+      showToast(`保存海报时发生错误：${error}`);
     }
   },
   // 将在线地址转为文件
@@ -405,16 +450,16 @@ Page({
             },
             fail: (err) => {
               if (err.errMsg.includes('auth denied')) {
-                showToast('请授权保存图片到相册', 'none', 2000);
+                showToast('请授权保存图片到相册');
               }
             },
           });
         } else {
-          showToast(`下载图片失败：${res}`, 'none', 2000);
+          showToast(`下载图片失败：${res}`);
         }
       },
       fail: (err) => {
-        showToast(`下载图片失败：${err}`, 'none', 2000);
+        showToast(`下载图片失败：${err}`);
       },
     });
   },
@@ -499,7 +544,17 @@ Page({
             const img = canvas.createImage();
             img.src = imagePath;
             img.onload = () => {
-              ctx.drawImage(img, 0, 0, imgWidth, imgHeight, 0, 0, targetWidth, targetHeight);
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                imgWidth,
+                imgHeight,
+                0,
+                0,
+                targetWidth,
+                targetHeight
+              );
 
               // 将 Canvas 转为图片
               wx.canvasToTempFilePath({
@@ -586,30 +641,30 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() { },
+  onShow() {},
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() { },
+  onHide() {},
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() { },
+  onUnload() {},
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() { },
+  onPullDownRefresh() {},
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() { },
+  onReachBottom() {},
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() { },
+  onShareAppMessage() {},
 });
