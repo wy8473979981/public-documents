@@ -43,7 +43,7 @@ import { promptCameraAuthorization } from '../../utils/index';
 
 let countdownInterval = 0;
 let updateProgressTimer = 0;
-
+const gifUrl = 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/compound.gif'
 Page({
   /**
    * 页面的初始数据
@@ -66,6 +66,7 @@ Page({
     countDownText: '60秒',
     showCountDownText: true,
     createPosterId: '',
+    compoundGif: '',
   },
   /**
    * 生命周期函数--监听页面加载
@@ -76,6 +77,7 @@ Page({
     const openId = wx.getStorageSync('openId');
     this.setData({ token, openId });
     this.init();
+    this.getImageInfo(gifUrl);
 
     if (status === '1') {
       // 闯关成功，再次进入页面时，直接展示海报图片
@@ -657,6 +659,14 @@ Page({
         },
       });
     });
+  },
+  async getImageInfo(src: string) {
+    try {
+      const res = await wx.getImageInfo({ src });
+      this.setData({ compoundGif: res.path });
+    } catch (err) {
+      console.error(err); // 处理错误情况
+    }
   },
   /**
    * 生命周期函数--监听页面显示
