@@ -56,7 +56,7 @@
           </view>
         </swiper-item>
       </swiper>
-      <view class="{{noSliding ? '' : 'no-sliding'}}"></view>
+      <view class="{{noSliding || current !== 2 ? '' : 'no-sliding'}}"></view>
       <view class="start-btn" bindtap="goLogin">开始探索</view>
       <view class="custom-indicator">
         <view class="indicator-dot {{current === 0 ? 'active' : ''}}" bindtap="onIndicatorTap" data-index="0"></view>

@@ -45,9 +45,9 @@ Page({
     );
   },
   onSwiperChange(e: any) {
-    const { animateMap, noSliding } = this.data;
+    const { animateMap } = this.data;
     const { current } = e.detail;
-    if (typeof current === 'number' && current in animateMap && noSliding) {
+    if (typeof current === 'number' && current in animateMap) {
       this.setData({
         current: e.detail.current,
       });
@@ -432,6 +432,7 @@ Page({
   discussBg2Animate() {
     this.setData({
       animateMap: [true, true, true],
+      noSliding: false,
     });
     this.swiperTextAnimate('swiper-text-3');
     this.animate(
