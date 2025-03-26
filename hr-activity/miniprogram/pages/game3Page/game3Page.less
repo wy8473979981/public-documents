@@ -54,6 +54,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
   }
 
   .flow-wrapper {
@@ -158,6 +159,7 @@
       width: 690rpx;
       height: 760rpx;
       position: relative;
+      background-color: #000000;
 
       .current-photo {
         width: 100%;
@@ -251,9 +253,23 @@
     }
   }
 
+}
+
+.game-3-wrapper-3 {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3-bg.png) no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  background-attachment: fixed; // 背景图固定
+
   .flow-wrapper-3 {
+    width: 100vw;
+    height: 100vh;
     margin: 423rpx auto 0;
-    padding-bottom: 101rpx;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -261,8 +277,9 @@
 
     .compound-content {
       width: 690rpx;
-      height: 1227rpx;
+      height: calc(100% - 624rpx);
       position: relative;
+      background-color: #000000;
 
       .resultant-picture {
         width: 100%;
@@ -273,7 +290,7 @@
     .btn-content {
       display: flex;
       gap: 54rpx;
-      margin-top: 59rpx;
+      margin: 59rpx 0rpx;
 
       .btn {
         .download {

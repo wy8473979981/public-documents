@@ -208,20 +208,11 @@ Page({
   },
   onAgain() {
     // 重新答题
-    const { currentQuestionList } = this.data;
-    currentQuestionList.forEach((question) => {
-      question.isAnswered = false;
-      question.isAnswerWrong = false;
-      question.answerList.forEach((answer) => {
-        answer.icon = 0;
-      });
-    });
     this.setData({
-      currentQuestionList,
       currentIndex: 0,
-      currentQuestion: currentQuestionList[0],
-      allAnswersCompleted: false,
+      allAnswersCompleted: false
     });
+    this.init();
     this.onClickHide();
   },
   onClickHide() {

@@ -1,5 +1,6 @@
 // pages/homePage/homePage.ts
 import { postRequest } from '../../utils/request.js';
+import { showToast } from '../../utils/index';
 interface Game {
   count: number;
   gameNum: string;
@@ -83,6 +84,16 @@ Page({
             this.getGameResult(2, openId),
           ])
             .then((results) => {
+              // results = [
+              //   { code: '200', msg: '成功', data: { status: 1 } },
+              //   { code: '200', msg: '成功', data: { status: 1 } },
+              //   { "code": "200", "msg": "成功", "data": { "id": "1904440241939288066", "appUserId": null, "openId": "oeY5s7Rf4NGQFhfPW-xZBPokFVH8", "templateId": 79, "status": 0, "taskId": "tJhSyXcwRcpZQ0i34ClR", "type": 2, "srcImage": "https://nav-uat.aia.com.cn/fan/sail/resource/poster/20250325/4e16cf76-94a0-4128-86d2-4c51e056411c.png", "tarImage": null, "msg": null, "algoType": "original", "createdAt": "2025-03-25T07:48:31.000+00:00", "updatedAt": "2025-03-25T07:48:31.000+00:00" } },
+              // ];
+              results = [
+                { code: '200', msg: '成功', data: { status: 1 } },
+                { code: '200', msg: '成功', data: { status: 1 } },
+                { code: '200', msg: '成功', data: null },
+              ];
               if (results.every((n) => n?.data && n?.data?.status === 1)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
               } else {
@@ -149,6 +160,7 @@ Page({
   },
   onClickGame(e: WechatMiniprogram.TouchEvent) {
     const { game } = e.currentTarget.dataset;
+    const { currentStep } = this.data;
 
     const redirectToGamePage = (params?: {
       status?: string;
@@ -163,27 +175,21 @@ Page({
       wx.redirectTo({ url });
     };
 
-    if (this.data.currentStep > 3) {
-      if (game.count === 3 && game.originalData) {
-        const { status, tarImage, id, taskId } = game.originalData;
-        redirectToGamePage({ status, tarImage, id, taskId });
-      }
-      return;
+    if (game.isPassed && game.count !== 3) {
+      return showToast('本关已通过');
     }
 
-    if (game.count !== this.data.currentStep || game.isPassed) {
-      wx.showToast({
-        title: `请先闯第${this.data.currentStep}关！`,
-        icon: 'none',
-        duration: 2000,
-      });
-    } else {
-      if (game.count === 3 && game.originalData) {
-        const { status, tarImage, id, taskId } = game.originalData;
-        redirectToGamePage({ status, tarImage, id, taskId });
-      } else {
-        redirectToGamePage();
+    if (game.count !== currentStep) {
+      if (game.count !== 3 || !game.isPassed) {
+        return showToast('本关未解锁');
       }
+    }
+
+    if (game.count === 3 && game.originalData) {
+      const { status, tarImage, id, taskId } = game.originalData;
+      redirectToGamePage({ status, tarImage, id, taskId });
+    } else {
+      redirectToGamePage();
     }
   },
   getGameClassName(index: number, game: Game): string {

@@ -1,5 +1,5 @@
 <!--pages/game3Page/game3Page.wxml-->
-<view class="game-3-wrapper">
+<view class="game-3-wrapper game-3-wrapper-{{currentStep}}">
   <view class="header-wrapper">
     <view class="text-1">第三关</view>
     <view class="text-2">福利破驿站</view>
@@ -8,7 +8,7 @@
   <view class="flow-wrapper flow-wrapper-1" wx:if="{{currentStep===0}}">
     <view class="photo-content">
       <image wx:if="{{currentPhoto}}" class="current-photo" src="{{currentPhoto}}" mode="aspectFit"></image>
-      <camera wx:else class="camera" device-position="back" frame-size="small" flash="off" bindinitdone="onCameraInitDone" bindstop="onCameraStop" binderror="onCameraError"></camera>
+      <camera wx:else class="camera" mode="normal" device-position="front" frame-size="small" flash="off" bindinitdone="onCameraInitDone" bindstop="onCameraStop" binderror="onCameraError"></camera>
     </view>
     <view class="photo-title">相机</view>
     <view class="operate-content">
