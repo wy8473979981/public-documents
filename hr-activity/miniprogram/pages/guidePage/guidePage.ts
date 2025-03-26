@@ -1,24 +1,21 @@
 // pages/guidePage/guidePage.ts
-import { delayFn } from '../../utils/index';
+import { showToast, delayFn } from '../../utils/index';
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    infinite:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/infinite.gif',
-    guideTitle:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/guide-title.png',
-    loading: true,
-    red: '#ff0000', // 定义 red 变量
+    infinite: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/infinite.gif',
     current: 0, // 当前 swiper 的索引
     animateMap: [false, false, false],
+    loading: true,
     noSliding: true,
     shopGirl: '',
     shopMan: '',
     goods: '',
     cart: '',
+    guideTitle: '',
   },
 
   /**
@@ -31,18 +28,11 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {},
+  onReady() { },
   // 自定义指示点点击事件
   onIndicatorTap(e: any) {
     const index = e.currentTarget.dataset.index;
-    this.setData(
-      {
-        current: index,
-      },
-      () => {
-        console.log('Swiper current updated to', this.data.current);
-      }
-    );
+    this.setData({ current: index });
   },
   onSwiperChange(e: any) {
     const { animateMap } = this.data;
@@ -67,124 +57,76 @@ Page({
       'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/shop-man.png',
       'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/goods.png',
       'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/cart.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/guide-title.png'
     ];
 
     try {
       const images = await this.loadImages(imageUrls);
-      await delayFn(2000);
       await this.setDataAsync({
         shopGirl: images[0].path,
         shopMan: images[1].path,
         goods: images[2].path,
         cart: images[3].path,
+        guideTitle: images[4].path,
         loading: false,
       });
-      this.shopGirlAnimate();
+      this.guideTitleAnmate();
+      this.swiper1Animation();
     } catch (error) {
       console.error('Failed to load images:', error);
-      wx.showToast({
-        title: '图片加载失败，请重试',
-        icon: 'none',
-      });
+      showToast('图片加载失败，请重试');
     }
   },
-  shopGirlAnimate() {
-    this.setData({
-      animateMap: [true, false, false],
-    });
-    this.guideTitleAnmate();
+  async swiper1Animation() {
+    this.setData({ animateMap: [true, false, false] });
     this.swiperTextAnimate('swiper-text-1');
+    this.shopGirlAnimate();
+    // await delayFn(100);
+    this.shopManAnimate();
+    this.shopGoodsAnimate();
+    this.shopCartAnimate();
+  },
+  swiper2Animation() {
+
+  },
+  swiper3Animation() {
+
+  },
+  guideTitleAnmate() {
+    this.animate(
+      '.guide-title',
+      [
+        { transformOrigin: 'center', opacity: 0, translate: ['-50%', '-150rpx'], scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center', opacity: 1, translate: ['-50%', '254rpx'], scale: [1], ease: 'ease-in-out', offset: 1 },
+      ],
+      250,
+      () => { }
+    );
+  },
+  shopGirlAnimate() {
     this.animate(
       '.shop-girl',
       [
-        {
-          transformOrigin: 'bottom left',
-          opacity: 0,
-          translateY: '140rpx',
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'bottom left',
-          opacity: 1,
-          translateY: '140rpx',
-          scale: [0.02],
-          ease: 'ease-in-out',
-          offset: 0.5,
-        },
-        {
-          transformOrigin: 'bottom left',
-          opacity: 1,
-          translateY: '10rpx',
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'bottom left', opacity: 0, translateY: '140rpx', scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'bottom left', opacity: 1, translateY: '10rpx', scale: [1], ease: 'ease-in-out', offset: 1 }
       ],
-      500,
+      1000,
       () => {
-        this.shopManAnimate();
         this.animate(
           '.shop-girl',
           [
-            {
-              transformOrigin: 'center',
-              translateY: '10rpx',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '60rpx',
-              rotateZ: 0.8,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '17.5rpx',
-              rotateZ: -0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '56.67rpx',
-              rotateZ: 0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '25rpx',
-              rotateZ: -0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '53.34rpx',
-              rotateZ: 0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '32.5rpx',
-              rotateZ: -0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '50rpx',
-              rotateZ: 0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '40rpx',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
+            { transformOrigin: 'center', translateY: '10rpx', rotateZ: 0, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '60rpx', rotateZ: 0.8, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '17.5rpx', rotateZ: -0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '56.67rpx', rotateZ: 0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '25rpx', rotateZ: -0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '53.34rpx', rotateZ: 0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '32.5rpx', rotateZ: -0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '50rpx', rotateZ: 0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '40rpx', rotateZ: 0, ease: 'ease-in-out' },
           ],
           3500,
-          () => {}
+          () => { }
         );
       }
     );
@@ -193,94 +135,27 @@ Page({
     this.animate(
       '.shop-man',
       [
-        {
-          transformOrigin: 'bottom left',
-          opacity: 0,
-          translateY: '120rpx',
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'bottom left',
-          opacity: 1,
-          translateY: '120rpx',
-          scale: [0.02],
-          ease: 'ease-in-out',
-          offset: 0.5,
-        },
-        {
-          transformOrigin: 'bottom left',
-          opacity: 1,
-          translateY: '-20rpx',
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'bottom left', opacity: 0, translateY: '120rpx', scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'bottom left', opacity: 0, translateY: '120rpx', scale: [0], ease: 'ease-in-out', offset: 0.8 },
+        { transformOrigin: 'bottom left', opacity: 1, translateY: '-20rpx', scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      500,
+      1000,
       () => {
-        this.shopGoodsAnimate();
         this.animate(
           '.shop-man',
           [
-            {
-              transformOrigin: 'center',
-              translateY: '-20rpx',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '20rpx',
-              rotateZ: 0.8,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '0rpx',
-              rotateZ: -0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '12rpx',
-              rotateZ: 0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '0rpx',
-              rotateZ: -0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '8rpx',
-              rotateZ: 0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '0rpx',
-              rotateZ: -0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '4rpx',
-              rotateZ: 0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateY: '0rpx',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
+            { transformOrigin: 'center', translateY: '-20rpx', rotateZ: 0, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '20rpx', rotateZ: 0.8, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '12rpx', rotateZ: 0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '8rpx', rotateZ: 0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '4rpx', rotateZ: 0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateY: '0rpx', rotateZ: 0, ease: 'ease-in-out' },
           ],
           3500,
-          () => {}
+          () => { }
         );
       }
     );
@@ -289,75 +164,22 @@ Page({
     this.animate(
       '.goods',
       [
-        {
-          transformOrigin: 'right bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'right bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'right bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'right bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      250,
-      () => {
-        this.shopCartAnimate();
-      }
-    );
-  },
-  guideTitleAnmate() {
-    this.animate(
-      '.guide-title',
-      [
-        {
-          transformOrigin: 'center',
-          opacity: 0,
-          translate: ['-50%', '-150rpx'],
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center',
-          opacity: 1,
-          translate: ['-50%', '254rpx'],
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
-      ],
-      250,
-      () => {}
+      500,
+      () => { }
     );
   },
   shopCartAnimate() {
     this.animate(
       '.cart',
       [
-        {
-          transformOrigin: 'right bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'right bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'right bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'right bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      250,
-      () => {
-        this.swiperLabelAnimate('swiper-label-1');
-      }
+      500,
+      () => { }
     );
   },
   pharmacistManAnimate() {
@@ -438,20 +260,8 @@ Page({
     this.animate(
       '.discuss-bg-2',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -466,7 +276,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -475,22 +285,8 @@ Page({
     this.animate(
       '.discuss-bg-1',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          translateX: '-50%',
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          translateX: '-50%',
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, translateX: '-50%', scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, translateX: '-50%', scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -498,39 +294,14 @@ Page({
         this.animate(
           '.discuss-bg-1',
           [
-            {
-              transformOrigin: 'center',
-              translateX: '-50%',
-              scaleX: 1,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateX: '-50%',
-              scaleX: 1.06,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateX: '-50%',
-              scaleX: 1,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateX: '-50%',
-              scaleX: 1.02,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'center',
-              translateX: '-50%',
-              scaleX: 1,
-              ease: 'ease-in-out',
-            },
+            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateX: '-50%', scaleX: 1.06, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateX: '-50%', scaleX: 1.02, ease: 'ease-in-out' },
+            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -539,20 +310,8 @@ Page({
     this.animate(
       '.discuss-bg-3',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -567,7 +326,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -576,20 +335,8 @@ Page({
     this.animate(
       '.discuss-bg-4',
       [
-        {
-          transformOrigin: 'center top',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center top',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center top', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center top', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -604,7 +351,7 @@ Page({
             { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -613,20 +360,8 @@ Page({
     this.animate(
       '.discuss-man',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -641,7 +376,7 @@ Page({
             { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -650,20 +385,8 @@ Page({
     this.animate(
       '.discuss-girl-1',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -678,7 +401,7 @@ Page({
             { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
@@ -687,20 +410,8 @@ Page({
     this.animate(
       '.discuss-girl-2',
       [
-        {
-          transformOrigin: 'center bottom',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center bottom',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center bottom', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center bottom', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -726,20 +437,8 @@ Page({
     this.animate(
       '.start-btn',
       [
-        {
-          translateX: '-50%',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          translateX: '-50%',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { translateX: '-50%', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { translateX: '-50%', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
       () => {
@@ -750,7 +449,7 @@ Page({
             { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 1 },
           ],
           500,
-          () => {}
+          () => { }
         );
         this.animate(
           '.custom-indicator',
@@ -772,99 +471,41 @@ Page({
     this.animate(
       `.${className}`,
       [
-        {
-          transformOrigin: 'bottom right',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'bottom right',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'bottom right', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'bottom right', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       1000,
       () => {
         this.animate(
           `.${className}`,
           [
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0.8,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: -0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0.6,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: -0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0.4,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: -0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0.2,
-              ease: 'ease-in-out',
-            },
-            {
-              transformOrigin: 'bottom right',
-              rotateZ: 0,
-              ease: 'ease-in-out',
-            },
+            { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: 0.8, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: -0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: 0.6, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: -0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: 0.4, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: -0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: 0.2, ease: 'ease-in-out' },
+            { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
           ],
           1000,
-          () => {}
+          () => { }
         );
       }
     );
   },
   swiperTextAnimate(className: string) {
+    console.log(className);
+
     this.animate(
       `.${className}`,
       [
-        {
-          transformOrigin: 'center',
-          opacity: 0,
-          scale: [0],
-          ease: 'ease-in-out',
-          offset: 0,
-        },
-        {
-          transformOrigin: 'center',
-          opacity: 1,
-          scale: [1],
-          ease: 'ease-in-out',
-          offset: 1,
-        },
+        { transformOrigin: 'center', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
+        { transformOrigin: 'center', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       1000,
-      () => {}
+      () => { }
     );
   },
   goLogin() {
@@ -904,30 +545,30 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {},
+  onShow() { },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {},
+  onHide() { },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {},
+  onUnload: function () { },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {},
+  onPullDownRefresh() { },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {},
+  onReachBottom() { },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {},
+  onShareAppMessage() { },
 });
