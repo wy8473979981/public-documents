@@ -122,7 +122,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.shopManAnimate();
         this.animate(
@@ -218,7 +218,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.shopGoodsAnimate();
         this.animate(
@@ -304,7 +304,7 @@ Page({
           offset: 1,
         },
       ],
-      500,
+      250,
       () => {
         this.shopCartAnimate();
       }
@@ -331,7 +331,7 @@ Page({
           offset: 1,
         },
       ],
-      500,
+      250,
       () => {}
     );
   },
@@ -354,7 +354,7 @@ Page({
           offset: 1,
         },
       ],
-      500,
+      250,
       () => {
         this.swiperLabelAnimate('swiper-label-1');
       }
@@ -371,7 +371,7 @@ Page({
         { opacity: 0, translateY: '-100%', ease: 'ease-in-out', offset: 0 },
         { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      500,
       () => {
         this.pharmacistGirlAnimate();
       }
@@ -384,7 +384,7 @@ Page({
         { opacity: 0, translateX: '100%', ease: 'ease-in-out', offset: 0 },
         { opacity: 1, translateX: '0%', ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      500,
       () => {
         this.pharmacistPotAnimate();
       }
@@ -397,7 +397,7 @@ Page({
         { opacity: 0, translateY: '100%', ease: 'ease-in-out', offset: 0 },
         { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      500,
       () => {
         this.pill2Animate();
       }
@@ -410,7 +410,7 @@ Page({
         { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
         { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      500,
+      250,
       () => {
         this.pill1Animate();
       }
@@ -423,7 +423,7 @@ Page({
         { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
         { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      250,
       () => {
         this.swiperLabelAnimate('swiper-label-2');
       }
@@ -452,7 +452,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussBg1Animate();
         this.animate(
@@ -491,7 +491,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussBg3Animate();
         this.animate(
@@ -553,7 +553,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussBg4Animate();
         this.animate(
@@ -590,7 +590,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussManAnimate();
         this.animate(
@@ -627,7 +627,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussGirl1Animate();
         this.animate(
@@ -664,7 +664,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.discussGirl2Animate();
         this.animate(
@@ -701,7 +701,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.swiperLabelAnimate('swiper-label-3');
         this.animate(
@@ -740,7 +740,7 @@ Page({
           offset: 1,
         },
       ],
-      1000,
+      500,
       () => {
         this.animate(
           '.swiper-text-3',
