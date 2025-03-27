@@ -108,7 +108,7 @@ Page({
     this.swiperLabelAnimate('swiper-label-2');
   },
   async swiper3Animation() {
-    this.setData({ animateMap: [true, true, true] });
+    this.setData({ animateMap: [true, true, true], noSliding: false });
     this.swiperTextAnimate('swiper-text-3');
     this.discussBg2Animate(); // 500
     await delayFn(100);
@@ -467,11 +467,7 @@ Page({
             { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 1 },
           ],
           500,
-          () => {
-            this.setData({
-              noSliding: false,
-            });
-          }
+          () => { }
         );
       }
     );

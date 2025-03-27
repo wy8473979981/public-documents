@@ -29,10 +29,10 @@
               <image class="pharmacist-pot" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pharmacist-pot.png" mode="aspectFit"></image>
               <image class="pill-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-2.png" mode="aspectFit"></image>
               <image class="pill-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/pill-1.png" mode="aspectFit"></image>
+              <image class="swiper-label swiper-label-2 label-4" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-4.png" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-2 label-5" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-5.png" mode="aspectFit"></image>
               <image class="swiper-label swiper-label-2 label-6" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-6.png" mode="aspectFit"></image>
-              <image class="swiper-label swiper-label-2 label-7" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-7.png" mode="aspectFit"></image>
-              <image class="swiper-label  swiper-label-2 label-8" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-8.png" mode="aspectFit"></image>
+              <image class="swiper-label  swiper-label-2 label-7" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/label-7.png" mode="aspectFit"></image>
             </view>
             <view class="swiper-text swiper-text-2">个性需求 一站满足</view>
           </view>
