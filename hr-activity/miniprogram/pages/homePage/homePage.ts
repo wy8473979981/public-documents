@@ -15,7 +15,17 @@ Page({
    * 页面的初始数据
    */
   data: {
+    show: false,
     currentStep: 1,
+    x: 5, // rpx
+    y: 1000, // rpx
+    startX: 0, // px
+    startY: 0, // px
+    screenWidth: 0, // px
+    screenHeight: 0, // px
+    elementWidth: 100, // rpx
+    elementHeight: 100, // rpx
+    rpxRatio: 1, // px到rpx的转换比例
     gameList: [
       {
         count: 1,
@@ -61,8 +71,18 @@ Page({
    */
   onLoad() {
     this.init();
+    wx.getSystemInfo({
+      success: (res) => {
+        // 750rpx = res.windowWidth px
+        const rpxRatio = 750 / res.windowWidth;
+        this.setData({
+          screenWidth: res.windowWidth,
+          screenHeight: res.windowHeight,
+          rpxRatio: rpxRatio
+        });
+      }
+    });
   },
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -200,6 +220,52 @@ Page({
       return `${baseClass} game-${index + 1}-pass`;
     }
     return baseClass;
+  },
+  onClickShow() {
+    this.setData({ show: true });
+  },
+  onClickHide() {
+    this.setData({ show: false });
+  },
+  onTouchStart(e: any) {
+    this.setData({
+      startX: e.touches[0].clientX, // px
+      startY: e.touches[0].clientY  // px
+    });
+  },
+
+  onTouchMove(e: any) {
+    const { startX, startY, x, y, screenHeight, elementWidth, elementHeight, rpxRatio } = this.data;
+
+    const currentX = e.touches[0].clientX; // px
+    const currentY = e.touches[0].clientY; // px
+
+    // 计算px移动距离
+    const offsetXPx = currentX - startX;
+    const offsetYPx = currentY - startY;
+
+    // 将px移动距离转换为rpx
+    const offsetXRpx = offsetXPx * rpxRatio;
+    const offsetYRpx = offsetYPx * rpxRatio;
+
+    // 计算新位置(rpx)
+    let newX = x + offsetXRpx;
+    let newY = y + offsetYRpx;
+
+    // 边界检查(全部使用rpx单位)
+    const maxXRpx = 750 - elementWidth;  // 750rpx是屏幕宽度
+    const maxYRpx = (screenHeight * rpxRatio) - elementHeight;
+
+    newX = Math.max(0, Math.min(newX, maxXRpx));
+    newY = Math.max(0, Math.min(newY, maxYRpx));
+    console.log(newX, newY, currentX, currentY);
+
+    this.setData({
+      x: newX,
+      y: newY,
+      startX: currentX,
+      startY: currentY
+    });
   },
   /**
    * 根据 currentStep 和 game.isPassed 返回对应的类名

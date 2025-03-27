@@ -13,11 +13,25 @@
       <image class="gif-{{index+1}}" src="{{currentStep === index + 1 ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
     </view>
   </view>
-  <view class="gift-box" wx:if="{{currentStep === 4}}">
-    <view class="content">
-      <view class="text">恭喜您完成弹福星旅探索🎉</view>
-      <view class="text">请您联系现场工作人员并出示此界面</view>
-      <view class="text">领取您的专属精美好礼吧！🎁</view>
-    </view>
+  <!-- <view class="gift-box" wx:if="{{currentStep === 4}}">
+    <image bindtap="onClickShow" class="gift-box-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-1.png" mode="aspectFit"></image>
+  </view> -->
+  <view wx:if="{{currentStep === 4}}" class="gift-box draggable" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="left:{{x}}rpx; top:{{y}}rpx;">
+    <image bindtap="onClickShow" class="gift-box-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-1.png" mode="aspectFit"></image>
   </view>
+  <van-overlay show="{{ show }}">
+    <view class="overlay-wrapper">
+      <view class="overlay-container">
+        <view class="text-box">
+          <view class="title">恭喜您</view>
+          <view class="sub-title">完成弹福星旅探索多</view>
+        </view>
+        <image class="gift-box-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-2.png" mode="aspectFit"></image>
+        <view class="tip">请您联系现场工作人员并出示此界面领取您的专属精美好礼吧！</view>
+        <view class="bg-1"></view>
+        <view class="bg-2"></view>
+      </view>
+      <van-icon name="cross" custom-class="my-cross" bind:click="onClickHide" />
+    </view>
+  </van-overlay>
 </view>

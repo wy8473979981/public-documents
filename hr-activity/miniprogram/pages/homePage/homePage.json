@@ -1,3 +1,7 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "van-overlay": "@vant/weapp/overlay/index",
+    "van-icon": "@vant/weapp/icon/index"
+  },
+  "disableScroll": true
 }

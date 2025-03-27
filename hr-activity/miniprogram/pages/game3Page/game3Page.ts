@@ -197,26 +197,29 @@ Page({
       wx.getImageInfo({
         src: currentPhoto,
         success: async (imgInfo) => {
+          console.log(imgInfo);
+          // TODO 下周优化裁剪功能
+
           // 裁剪图片
-          const croppedImagePath = await this.cropImage(
-            currentPhoto,
-            imgInfo.width,
-            imgInfo.height
-          );
+          // const croppedImagePath = await this.cropImage(
+          //   currentPhoto,
+          //   imgInfo.width,
+          //   imgInfo.height
+          // );
 
           // 验证图片大小
-          const maxSizeInMB = algoType === 'original' ? 15 : 3;
-          const isValidSize = await this.validateImageSize(
-            croppedImagePath,
-            maxSizeInMB
-          );
-          if (!isValidSize) {
-            showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
-            return;
-          }
+          // const maxSizeInMB = algoType === 'original' ? 15 : 3;
+          // const isValidSize = await this.validateImageSize(
+          //   croppedImagePath,
+          //   maxSizeInMB
+          // );
+          // if (!isValidSize) {
+          //   showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
+          //   return;
+          // }
 
           // 转成 base64 字符串
-          const base64Data = await this.readFileAsBase64(croppedImagePath);
+          const base64Data = await this.readFileAsBase64(currentPhoto);
 
           // 调用海报合成接口
           const params = {

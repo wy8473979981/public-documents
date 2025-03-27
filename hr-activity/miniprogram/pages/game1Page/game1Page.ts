@@ -46,6 +46,7 @@ Page({
       },
       fail: (err) => {
         console.error('选择图片失败', err);
+        showToast('选择图片失败');
       }
     });
   },

@@ -43,12 +43,13 @@ Page({
       });
 
       if (current === 0 && !animateMap[current]) {
-        this.shopGirlAnimate();
+        this.swiper1Animation();
       } else if (current === 1 && !animateMap[current]) {
-        this.pharmacistManAnimate();
+        this.swiper2Animation();
       } else if (current === 2 && !animateMap[current]) {
-        this.discussBg2Animate();
+        this.swiper3Animation();
       }
+
     }
   },
   async loaderFn() {
@@ -70,27 +71,62 @@ Page({
         guideTitle: images[4].path,
         loading: false,
       });
+      await delayFn(100);
       this.guideTitleAnmate();
       this.swiper1Animation();
     } catch (error) {
-      console.error('Failed to load images:', error);
+      console.error('图片加载失败:', error);
       showToast('图片加载失败，请重试');
     }
   },
   async swiper1Animation() {
     this.setData({ animateMap: [true, false, false] });
     this.swiperTextAnimate('swiper-text-1');
-    this.shopGirlAnimate();
-    // await delayFn(100);
-    this.shopManAnimate();
-    this.shopGoodsAnimate();
-    this.shopCartAnimate();
+    this.shopGirlAnimate(); // 500
+    await delayFn(100);
+    this.shopManAnimate(); // 500
+    await delayFn(100);
+    this.shopGoodsAnimate(); // 500
+    await delayFn(100);
+    this.shopCartAnimate(); // 500
+    await delayFn(550); // 标签的动画需要其他动画结束
+    this.swiperLabelAnimate('swiper-label-1'); // 1000
   },
-  swiper2Animation() {
-
+  async swiper2Animation() {
+    this.setData({ animateMap: [true, true, false] });
+    this.swiperTextAnimate('swiper-text-2');
+    this.pharmacistManAnimate(); // 500
+    await delayFn(100);
+    this.pharmacistGirlAnimate(); // 500
+    await delayFn(100);
+    this.pharmacistPotAnimate(); // 500
+    await delayFn(100);
+    this.pill2Animate(); // 250
+    await delayFn(100);
+    this.pill1Animate(); // 250
+    await delayFn(300);
+    this.swiperLabelAnimate('swiper-label-2');
   },
-  swiper3Animation() {
-
+  async swiper3Animation() {
+    this.setData({ animateMap: [true, true, true] });
+    this.swiperTextAnimate('swiper-text-3');
+    this.discussBg2Animate(); // 500
+    await delayFn(100);
+    this.discussBg1Animate(); // 500
+    await delayFn(100);
+    this.discussBg3Animate(); // 500
+    await delayFn(100);
+    this.discussBg4Animate(); // 500
+    await delayFn(100);
+    this.discussManAnimate(); // 500
+    await delayFn(100);
+    this.discussGirl1Animate(); // 500
+    await delayFn(100);
+    this.discussGirl2Animate(); // 500
+    await delayFn(550);
+    this.swiperLabelAnimate('swiper-label-3'); // 1000
+    await delayFn(1100);
+    this.startBtnAnimate();
   },
   guideTitleAnmate() {
     this.animate(
@@ -108,26 +144,26 @@ Page({
       '.shop-girl',
       [
         { transformOrigin: 'bottom left', opacity: 0, translateY: '140rpx', scale: [0], ease: 'ease-in-out', offset: 0 },
-        { transformOrigin: 'bottom left', opacity: 1, translateY: '10rpx', scale: [1], ease: 'ease-in-out', offset: 1 }
+        { transformOrigin: 'bottom left', opacity: 1, translateY: '0rpx', scale: [1], ease: 'ease-in-out', offset: 1 }
       ],
-      1000,
+      500,
       () => {
-        this.animate(
-          '.shop-girl',
-          [
-            { transformOrigin: 'center', translateY: '10rpx', rotateZ: 0, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '60rpx', rotateZ: 0.8, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '17.5rpx', rotateZ: -0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '56.67rpx', rotateZ: 0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '25rpx', rotateZ: -0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '53.34rpx', rotateZ: 0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '32.5rpx', rotateZ: -0.2, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '50rpx', rotateZ: 0.2, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '40rpx', rotateZ: 0, ease: 'ease-in-out' },
-          ],
-          3500,
-          () => { }
-        );
+        // this.animate(
+        //   '.shop-girl',
+        //   [
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: 0, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '60rpx', rotateZ: 0.8, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '17.5rpx', rotateZ: -0.6, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '56.67rpx', rotateZ: 0.6, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '25rpx', rotateZ: -0.4, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '53.34rpx', rotateZ: 0.4, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '32.5rpx', rotateZ: -0.2, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '50rpx', rotateZ: 0.2, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: 0, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -136,27 +172,26 @@ Page({
       '.shop-man',
       [
         { transformOrigin: 'bottom left', opacity: 0, translateY: '120rpx', scale: [0], ease: 'ease-in-out', offset: 0 },
-        { transformOrigin: 'bottom left', opacity: 0, translateY: '120rpx', scale: [0], ease: 'ease-in-out', offset: 0.8 },
-        { transformOrigin: 'bottom left', opacity: 1, translateY: '-20rpx', scale: [1], ease: 'ease-in-out', offset: 1 },
+        { transformOrigin: 'bottom left', opacity: 1, translateY: '0rpx', scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      500,
       () => {
-        this.animate(
-          '.shop-man',
-          [
-            { transformOrigin: 'center', translateY: '-20rpx', rotateZ: 0, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '20rpx', rotateZ: 0.8, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '12rpx', rotateZ: 0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '8rpx', rotateZ: 0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.2, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '4rpx', rotateZ: 0.2, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateY: '0rpx', rotateZ: 0, ease: 'ease-in-out' },
-          ],
-          3500,
-          () => { }
-        );
+        // this.animate(
+        //   '.shop-man',
+        //   [
+        //     { transformOrigin: 'center', translateY: '-20rpx', rotateZ: 0, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '20rpx', rotateZ: 0.8, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.6, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '12rpx', rotateZ: 0.6, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.4, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '8rpx', rotateZ: 0.4, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: -0.2, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '4rpx', rotateZ: 0.2, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateY: '0rpx', rotateZ: 0, ease: 'ease-in-out' },
+        //   ],
+        //   3500,
+        //   () => { }
+        // );
       }
     );
   },
@@ -183,10 +218,6 @@ Page({
     );
   },
   pharmacistManAnimate() {
-    this.setData({
-      animateMap: [true, true, false],
-    });
-    this.swiperTextAnimate('swiper-text-2');
     this.animate(
       '.pharmacist-man',
       [
@@ -194,9 +225,7 @@ Page({
         { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
       ],
       500,
-      () => {
-        this.pharmacistGirlAnimate();
-      }
+      () => { }
     );
   },
   pharmacistGirlAnimate() {
@@ -207,9 +236,7 @@ Page({
         { opacity: 1, translateX: '0%', ease: 'ease-in-out', offset: 1 },
       ],
       500,
-      () => {
-        this.pharmacistPotAnimate();
-      }
+      () => { }
     );
   },
   pharmacistPotAnimate() {
@@ -220,9 +247,7 @@ Page({
         { opacity: 1, translateY: '0%', ease: 'ease-in-out', offset: 1 },
       ],
       500,
-      () => {
-        this.pill2Animate();
-      }
+      () => { }
     );
   },
   pill2Animate() {
@@ -233,9 +258,7 @@ Page({
         { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       250,
-      () => {
-        this.pill1Animate();
-      }
+      () => { }
     );
   },
   pill1Animate() {
@@ -246,17 +269,10 @@ Page({
         { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       250,
-      () => {
-        this.swiperLabelAnimate('swiper-label-2');
-      }
+      () => { }
     );
   },
   discussBg2Animate() {
-    this.setData({
-      animateMap: [true, true, true],
-      noSliding: false,
-    });
-    this.swiperTextAnimate('swiper-text-3');
     this.animate(
       '.discuss-bg-2',
       [
@@ -265,19 +281,18 @@ Page({
       ],
       500,
       () => {
-        this.discussBg1Animate();
-        this.animate(
-          '.discuss-bg-2',
-          [
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-bg-2',
+        //   [
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -290,19 +305,18 @@ Page({
       ],
       500,
       () => {
-        this.discussBg3Animate();
-        this.animate(
-          '.discuss-bg-1',
-          [
-            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateX: '-50%', scaleX: 1.06, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateX: '-50%', scaleX: 1.02, ease: 'ease-in-out' },
-            { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-bg-1',
+        //   [
+        //     { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateX: '-50%', scaleX: 1.06, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateX: '-50%', scaleX: 1.02, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', translateX: '-50%', scaleX: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -315,19 +329,18 @@ Page({
       ],
       500,
       () => {
-        this.discussBg4Animate();
-        this.animate(
-          '.discuss-bg-3',
-          [
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-bg-3',
+        //   [
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -340,19 +353,18 @@ Page({
       ],
       500,
       () => {
-        this.discussManAnimate();
-        this.animate(
-          '.discuss-bg-4',
-          [
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-bg-4',
+        //   [
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.06, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1.02, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleX: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -365,19 +377,18 @@ Page({
       ],
       500,
       () => {
-        this.discussGirl1Animate();
-        this.animate(
-          '.discuss-man',
-          [
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.05, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-man',
+        //   [
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.05, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -390,19 +401,18 @@ Page({
       ],
       500,
       () => {
-        this.discussGirl2Animate();
-        this.animate(
-          '.discuss-girl-1',
-          [
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.05, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => { }
-        );
+        // this.animate(
+        //   '.discuss-girl-1',
+        //   [
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.05, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => { }
+        // );
       }
     );
   },
@@ -415,21 +425,20 @@ Page({
       ],
       500,
       () => {
-        this.swiperLabelAnimate('swiper-label-3');
-        this.animate(
-          '.discuss-girl-2',
-          [
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.15, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1.07, ease: 'ease-in-out' },
-            { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
-          ],
-          1000,
-          () => {
-            this.startBtnAnimate();
-          }
-        );
+        // this.animate(
+        //   '.discuss-girl-2',
+        //   [
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.15, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1.07, ease: 'ease-in-out' },
+        //     { transformOrigin: 'center', scaleY: 1, ease: 'ease-in-out' },
+        //   ],
+        //   1000,
+        //   () => {
+        //     this.startBtnAnimate();
+        //   }
+        // );
       }
     );
   },
@@ -474,7 +483,7 @@ Page({
         { transformOrigin: 'bottom right', opacity: 0, scale: [0], ease: 'ease-in-out', offset: 0 },
         { transformOrigin: 'bottom right', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
-      1000,
+      500,
       () => {
         this.animate(
           `.${className}`,
@@ -489,15 +498,13 @@ Page({
             { transformOrigin: 'bottom right', rotateZ: 0.2, ease: 'ease-in-out' },
             { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
           ],
-          1000,
+          500,
           () => { }
         );
       }
     );
   },
   swiperTextAnimate(className: string) {
-    console.log(className);
-
     this.animate(
       `.${className}`,
       [
