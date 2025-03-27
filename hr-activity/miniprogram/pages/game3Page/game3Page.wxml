@@ -32,7 +32,7 @@
     <view class="generate" wx:else>
       <image class="compound-gif" src="{{compoundGif}}" mode="aspectFit"></image>
       <view class="progress-content" wx:if="{{showCountDownText}}">
-        <view class="text">倒计时</view>
+        <view class="text">预计合成等待时间</view>
         <view class="num">{{countDownText}}</view>
       </view>
     </view>
