@@ -34,10 +34,8 @@ Page({
         gameNum: '第一关',
         gameTitle: '初探弹福星',
         gameExplain: '登录弹福平台并上传截图，一秒解锁弹福星图！',
-        gameGif:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.gif',
-        gameImg:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.png',
+        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.gif',
+        gameImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-1.png',
         isPassed: false,
         className: 'game game-1',
       },
@@ -46,10 +44,8 @@ Page({
         gameNum: '第二关',
         gameTitle: '福利破译站',
         gameExplain: '穿越弹福只是迷宫，破译弹福星系运作秘笈！',
-        gameGif:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif',
-        gameImg:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
+        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif',
+        gameImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
         isPassed: false,
         className: 'game game-2',
       },
@@ -58,10 +54,8 @@ Page({
         gameNum: '第三关',
         gameTitle: '福气拍立得',
         gameExplain: '拍摄福气相片，AI制作专属海报，许愿转发赢好礼！',
-        gameGif:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif',
-        gameImg:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.png',
+        gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif',
+        gameImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.png',
         isPassed: false,
         className: 'game game-3',
       },
@@ -120,6 +114,8 @@ Page({
               const updatedGameList = this.data.gameList.map((game, index) => {
                 const result = results[index];
                 const data = result.data;
+                const algoType = data?.algoType;
+                const templateId = data?.templateId;
                 const isPassed = data && data.status === 1 ? true : false;
                 return {
                   ...game,
@@ -128,6 +124,8 @@ Page({
                     ...game,
                     isPassed,
                   }),
+                  algoType: algoType,
+                  templateId: templateId,
                   originalData: data,
                 };
               });
@@ -175,14 +173,9 @@ Page({
     const { game } = e.currentTarget.dataset;
     const { currentStep } = this.data;
 
-    const redirectToGamePage = (params?: {
-      status?: string;
-      tarImage?: string;
-      id?: string;
-      taskId?: string;
-    }) => {
+    const redirectToGamePage = (params?: { status?: string; tarImage?: string; id?: string; taskId?: string; algoType?: string; templateId?: string; }) => {
       const query = params
-        ? `?status=${params.status}&tarImage=${params.tarImage}&id=${params.id}&taskId=${params.taskId}`
+        ? `?status=${params.status}&tarImage=${params.tarImage}&id=${params.id}&taskId=${params.taskId}&algoType=${params.algoType}&templateId=${params.templateId}`
         : '';
       const url = `/pages/game${game.count}Page/game${game.count}Page${query}`;
       wx.redirectTo({ url });
@@ -199,8 +192,8 @@ Page({
     }
 
     if (game.count === 3 && game.originalData) {
-      const { status, tarImage, id, taskId } = game.originalData;
-      redirectToGamePage({ status, tarImage, id, taskId });
+      const { status, tarImage, id, taskId, algoType, templateId } = game.originalData;
+      redirectToGamePage({ status, tarImage, id, taskId, algoType, templateId });
     } else {
       redirectToGamePage();
     }
@@ -260,7 +253,7 @@ Page({
       startY: currentY
     });
   },
-  handleTap() {
+  handleDoubleTap() {
     const currentTime = new Date().getTime()
     const lastTime = this.data.lastTapTime
 

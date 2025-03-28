@@ -138,11 +138,24 @@ export const getDict = async () => {
           enumvalue: n.enumvalue.replace(/“|”/g, '"')
         }
       })
+      const buAlgoType = bu_algo_type.map((n, i) => {
+        const labels = n?.label?.split("-")
+        const algoType = labels[0];
+        const sort = labels[1];
+        const options = JSON.parse(n?.enumvalue);
+        return {
+          sort: sort,
+          algoType: algoType,
+          remark: n?.remark,
+          options: options
+        }
+      }).sort((a, b) => a.sort - b.sort);
+      
       wx.setStorage({
         key: "dict",
         data: JSON.stringify({
           bu_question: buQuestion,
-          bu_algo_type
+          bu_algo_type: buAlgoType
         })
       })
     }

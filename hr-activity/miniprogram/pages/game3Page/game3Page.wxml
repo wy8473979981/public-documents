@@ -38,10 +38,10 @@
     </view>
     <view class="style-content">
       <view class="header-tab">
-        <view wx:for="{{ tabList }}" wx:for-item="tab" wx:key="index" class="tab-item {{activeTabIndex === index ? 'tab-item-active' : ''}}" data-tab="{{tab}}" bindtap="onTabItemTap">{{tab.name}}</view>
+        <view wx:for="{{ tabList }}" wx:for-item="tab" wx:key="index" class="tab-item {{algoType === tab.algoType ? 'tab-item-active' : ''}}" data-tab="{{tab}}" bindtap="onTabItemTap">{{tab.remark}}</view>
       </view>
       <view class="style-img">
-        <view class="img-item {{activeImgIndex === index ? 'img-item-active' : ''}}" wx:for="{{ currentImgList }}" wx:for-item="img" wx:key="index" data-img="{{img}}" bindtap="onImgItemTap">
+        <view wx:for="{{ currentImgList }}" wx:for-item="img" wx:key="index" class="img-item img-item-{{img.templateId}} {{templId === img.templateId ? 'img-item-active' : ''}}" data-img="{{img}}" bindtap="onImgItemTap">
           <image class="template-img" src="{{img.src}}" mode="aspectFit"></image>
         </view>
       </view>

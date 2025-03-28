@@ -2,41 +2,23 @@
 import { postRequest, uploadFile } from '../../utils/request.js';
 import { delayFn, showToast, refreshPage } from '../../utils/index';
 
-// 定义接口
-interface ImgItem {
-  index: number;
-  templateId: string; // 添加 templateId 属性
-  src: string; // 添加 src 属性
-}
-
 interface TabItem {
-  index: number;
-  name: string;
-  label: string;
-  imgList: ImgItem[]; // 确保 imgList 符合 ImgItem[]
+  algoType: string;
+  options: ImgItem[]; // 明确 options 是 ImgItem 数组
 }
 
-// 定义 BuAlgoTypeItem 接口，添加 label 属性
-interface BuAlgoTypeItem {
-  remark: string;
-  enumvalue: ''; // 修改 enumvalue 的结构以匹配实际数据
-  label: keyof typeof names; // 确保 label 是 names 对象的合法键
+interface ImgItem {
+  templateId: string;
+  src: string;
 }
-
-// 定义 names 对象
-const names = {
-  original: '原图',
-  claborate: '国画风',
-  animation3d: '动画3D',
-  handdrawn: '手绘',
-  anime: '日漫',
-} as const; // 使用 as const 确保 names 的键和值是固定的
 
 interface PageOptions {
   id?: string;
   status?: string;
   tarImage?: string;
   taskId?: string;
+  algoType?: string;
+  templateId?: string;
 }
 
 import { promptCameraAuthorization } from '../../utils/index';
@@ -49,11 +31,9 @@ Page({
    */
   data: {
     currentStep: 0,
-    activeTabIndex: 0, // 当前选中的 tab
-    activeImgIndex: 0, // 当前选中的图片索引
     currentPhoto: '', // 当前选择的图片或拍照的图片
-    tabList: [] as TabItem[], // 明确类型
-    currentImgList: [] as ImgItem[], // 明确类型
+    tabList: [] as TabItem[],
+    currentImgList: [] as ImgItem[],
     cameraReady: false, // 相机是否渲染
     cameraContext: null as WechatMiniprogram.CameraContext | null,
     resultantPictureUrl: '', // 合成图片的地址
@@ -70,12 +50,13 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options: PageOptions) {
-    const { id, status, tarImage, taskId } = options;
+  async onLoad(options: PageOptions) {
+    const { id, status, tarImage, taskId, algoType, templateId } = options;
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
     const compoundGif = wx.getStorageSync('compoundGif');
     this.setData({ token, openId, compoundGif });
+
     this.init();
 
     if (status === '1') {
@@ -83,10 +64,13 @@ Page({
       this.setData({ currentStep: 3, resultantPictureUrl: tarImage });
     } else if (status === '0' && id && taskId) {
       // 没有通过闯关，再次进入页面时，查询图片合成进度
+      this.getTemplate(algoType, templateId);
       this.setDataAsync({
         currentStep: 2,
         createPosterId: id,
         taskCode: taskId,
+        algoType: algoType, // 漫画类型
+        templId: templateId, // 模板编码
       })
         .then(async () => {
           await delayFn(2000);
@@ -96,6 +80,8 @@ Page({
           console.error('Failed to set data or update progress:', err);
           showToast(err);
         });
+    } else {
+
     }
   },
   /**
@@ -103,69 +89,33 @@ Page({
    */
   onReady() { },
   init() {
-    wx.getStorage({
-      key: 'dict',
-      success: (res) => {
-        let dict: any;
-
-        try {
-          dict = JSON.parse(res.data);
-        } catch (error) {
-          showToast('数据解析失败');
-          return;
-        }
-
-        const bu_algo_type: BuAlgoTypeItem[] = dict.bu_algo_type || [];
-
-        const namesKeys = Object.keys(names);
-        const tabList = bu_algo_type
-          .map((item: BuAlgoTypeItem, index: number) => {
-            let enumvalueArray: any[] = [];
-            try {
-              enumvalueArray = JSON.parse(item.enumvalue);
-            } catch (error) {
-              console.error('enumvalue 解析失败', error);
-            }
-
-            return {
-              index,
-              name: names[item.label],
-              label: item.label,
-              imgList: enumvalueArray.map((imgItem: any, imgIndex: number) => ({
-                index: imgIndex,
-                templateId: imgItem.templateId,
-                src: imgItem.src,
-              })),
-            } as TabItem;
-          })
-          .sort(
-            (a, b) => namesKeys.indexOf(a.label) - namesKeys.indexOf(b.label)
-          )
-          .map((tab, i) => ({ ...tab, index: i }));
-
-        const currentImgList = tabList[0]?.imgList || [];
-        this.setData({
-          tabList,
-          algoType: tabList[0]?.label || '',
-          templId: currentImgList[0]?.templateId || '',
-          currentImgList,
-        });
-      },
-      fail: (err) => {
-        showToast(`获取存储失败:${err}`);
-      },
+    try {
+      const dict = wx.getStorageSync('dict');
+      const parseData = JSON.parse(dict);
+      const tabList = parseData.bu_algo_type;
+      this.setData({ tabList: tabList });
+    } catch (error) {
+      showToast(`获取存储失败:${error}`);
+    }
+  },
+  getTemplate(algoType = 'original', templId = '79') {
+    const { tabList } = this.data;
+    const item: any = tabList.find((n) => {
+      return n.algoType === algoType;
+    });
+    const currentImgList = item?.options || [];
+    this.setData({
+      algoType: algoType ? algoType : item[0]?.algoType || '',
+      templId: templId ? templId : currentImgList[0]?.templateId || '',
+      currentImgList: currentImgList,
     });
   },
   onTabItemTap(e: any) {
     // 处理 tab 切换逻辑
     const { tab } = e.currentTarget.dataset;
-    const { tabList } = this.data;
-    const currentImgList = tabList[tab.index].imgList;
-
+    const currentImgList = tab?.options;
     this.setData({
-      activeTabIndex: tab.index,
-      activeImgIndex: 0,
-      algoType: tab.label,
+      algoType: tab?.algoType,
       templId: currentImgList[0]?.templateId,
       currentImgList: currentImgList, // 同步更新 currentImgList
     });
@@ -173,18 +123,18 @@ Page({
   onImgItemTap(e: any) {
     // 处理图片点击逻辑
     const { img } = e.currentTarget.dataset;
-    this.setData({
-      activeImgIndex: img.index,
-      templId: img.templateId,
-    });
+    this.setData({ templId: img.templateId });
   },
   onReselectImg() {
     // 重新选择图片
+    const { tabList } = this.data;
+    const currentImgList = tabList[0]?.options || [];
     this.setData({
       currentStep: 0,
       currentPhoto: '',
-      activeTabIndex: 0,
-      activeImgIndex: 0,
+      currentImgList: currentImgList,
+      algoType: tabList[0]?.algoType || '',
+      templId: currentImgList[0]?.templateId || '',
       showCountDownText: false,
     });
     refreshPage();
@@ -270,6 +220,7 @@ Page({
       success: (res) => {
         const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
         this.setData({ currentPhoto: tempFilePaths[0], currentStep: 1 });
+        this.getTemplate();
       },
       fail: (err) => {
         console.error('选择图片失败', err);
@@ -365,7 +316,7 @@ Page({
       // 限制 countdown 最大值为 180 秒
       countdown = countdown > 180 ? 180 : countdown;
     }
-    
+
 
     countdownInterval = setInterval(() => {
       const minutes = Math.floor(countdown / 60);

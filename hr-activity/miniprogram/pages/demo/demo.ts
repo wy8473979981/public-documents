@@ -5,7 +5,9 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {},
+  data: {
+    algoType: 'original',
+  },
 
   /**
    * 生命周期函数--监听页面加载
@@ -30,20 +32,39 @@ Page({
       // 获取图片信息
       const imgInfo: any = await this.getImageInfo(tempFilePath);
       console.log('图片信息', imgInfo);
-      // 判断是否为竖屏
-      if (imgInfo.height > imgInfo.width) {
-        // 竖屏图片，继续处理
-        this.compressImage(tempFilePath); // 选择图片成功后，调用压缩函数
-      } else {
-        // 横屏图片，不处理或提示
-        wx.showToast({ title: '请上传竖屏图片', icon: 'none' });
-      }
+      const { width, height, orientation } = imgInfo
+      const isRotated = !['up', 'up-mirrored'].includes(orientation);
+      const realWidth = isRotated ? height : width;
+      const realHeight = isRotated ? width : height;
+
+      console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
+
+      this.handleImageByAlgoType(tempFilePath, imgInfo);
+      // // 判断是否为竖屏
+      // if (realHeight > realWidth) {
+      //   // 竖屏图片，继续处理
+      //   console.log('竖屏图片，继续处理');
+      //   this.handleImageByAlgoType(tempFilePath, imgInfo);
+      // } else {
+      //   // 横屏图片，不处理或提示
+      //   wx.showToast({ title: '请上传竖屏图片', icon: 'none' })
+      // }
+
     } catch (err) {
       console.error('处理图片失败', err);
       wx.showToast({ title: '处理图片失败', icon: 'none' });
     }
   },
-
+  // 根据算法类型处理图片
+  async handleImageByAlgoType(tempFilePath: any, imgInfo: any) {
+    // 检查像素尺寸
+    if (imgInfo.width < 32 || imgInfo.height < 32) {
+      wx.showToast({ title: '图片尺寸太小，请上传大于32×32像素的图片', icon: 'none' })
+      return
+    }
+    this.compressImage(tempFilePath);
+  },
+  
   // 获取图片信息
   getImageInfo(tempFilePath: string) {
     return new Promise((resolve, reject) => {
@@ -60,10 +81,10 @@ Page({
       src: src,
       quality: 80, // 质量压缩
       compressedWidth: compressedWidth,
-      // compressedHeight: 2208,
       success: (res) => {
         const url = res.tempFilePath;
         this.saveImage(url);
+        this.getFileSize(url);
       },
       fail() {
         wx.showToast({ title: '压缩失败', icon: 'none' });
@@ -94,7 +115,22 @@ Page({
       },
     });
   },
-
+  getFileSize: function (filePath: string) {
+    const fs = wx.getFileSystemManager();
+    fs.stat({
+      path: filePath,
+      success: (res: any) => {
+        const fileSizeInBytes = res.stats.size; // 文件大小，单位字节
+        const fileSizeInKB = (fileSizeInBytes / 1024); // 转换为 KB 并保留两位小数
+        const fileSizeInMB = (fileSizeInKB / 1024).toFixed(2); // 转换为 MB 并保留两位小数
+        console.log('文件大小：', fileSizeInBytes, '字节，', fileSizeInKB, 'KB');
+        console.log(`文件大小：${fileSizeInBytes}字节，${fileSizeInKB.toFixed(2)}KB，${fileSizeInMB}MB`);
+      },
+      fail: (err) => {
+        console.error('获取文件大小失败：', err);
+      }
+    });
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
