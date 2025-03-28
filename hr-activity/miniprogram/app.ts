@@ -1,11 +1,10 @@
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
-import { getOpenId, getDict, getToken } from './utils/request'
+import { getOpenId, getDict, getToken, getCompoundGif } from './utils/request'
 
 App<IAppOption>({
   globalData: {
     isVersionLow: false, // 初始化为 false
-    platform: ''
   },
   onLaunch() {
     this.checkForUpdates();
@@ -14,6 +13,7 @@ App<IAppOption>({
     getDict();
     getToken();
     printVersion();
+    getCompoundGif();
   },
   checkWeChatVersion(minVersion) {
     try {
@@ -30,15 +30,6 @@ App<IAppOption>({
         });
       } else {
         console.log(`当前微信版本 ${currentVersion} 满足最低版本要求 ${minVersion}`);
-      }
-      const platform = systemInfo.platform; // 获取平台信息
-      this.globalData.platform = platform;
-      if (platform === 'ios') {
-        console.log('这是 iOS 设备');
-      } else if (platform === 'android') {
-        console.log('这是 Android 设备');
-      } else {
-        console.log('其他设备：', platform);
       }
     } catch (error) {
       console.error('获取微信版本信息失败:', error);

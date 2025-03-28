@@ -14,6 +14,58 @@ Page({
   onLoad() {
 
   },
+  onClick() {
+    wx.chooseMedia({
+      count: 1, // 最多可以选择的图片张数，默认9
+      mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
+      sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
+      success: (res) => {
+        const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
+        wx.compressImage({
+          src: tempFilePaths[0],
+          quality: 80, // 质量压缩
+          compressedWidth: 1204,
+          // compressedHeight: 2208,
+          success: (res) => {
+            const url = res.tempFilePath;
+            this.saveImage(url);
+          },
+          fail() {
+            wx.showToast({ title: '压缩失败', icon: 'none' })
+          }
+        })
+
+
+      },
+      fail: (err) => {
+        console.error('选择图片失败', err);
+      },
+    });
+  },
+  // 下载裁剪后的图片
+  saveImage(url: any) {
+    wx.saveImageToPhotosAlbum({
+      filePath: url,
+      success() {
+        wx.showToast({ title: '保存成功', icon: 'success' });
+      },
+      fail(err) {
+        if (
+          err.errMsg.includes('auth deny') ||
+          err.errMsg.includes('auth denied')
+        ) {
+          wx.showModal({
+            title: '提示',
+            content: '请授权微信访问相册，以便保存图片。',
+            showCancel: false,
+            success() {
+              wx.openSetting(); // 打开设置引导用户授权
+            },
+          });
+        }
+      },
+    });
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成

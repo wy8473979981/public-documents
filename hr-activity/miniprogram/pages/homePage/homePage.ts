@@ -59,7 +59,7 @@ Page({
         gameGif:
           'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.gif',
         gameImg:
-          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
+          'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3.png',
         isPassed: false,
         className: 'game game-3',
       },
@@ -116,6 +116,7 @@ Page({
               // ];
               if (results.every((n) => n?.data && n?.data?.status === 1)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
+                this.onClickShow();
               } else {
                 // 查找没有过关的 关卡
                 const currentStep = results.findIndex(

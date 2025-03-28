@@ -69,9 +69,11 @@ Page({
         goods: images[2].path,
         cart: images[3].path,
         guideTitle: images[4].path,
-        loading: false,
       });
-      await delayFn(100);
+      await delayFn(1000);
+      this.setData({
+        loading: false
+      });
       this.guideTitleAnmate();
       this.swiper1Animation();
     } catch (error) {
@@ -125,7 +127,7 @@ Page({
     this.discussGirl2Animate(); // 500
     await delayFn(550);
     this.swiperLabelAnimate('swiper-label-3'); // 1000
-    await delayFn(1100);
+    await delayFn(1500);
     this.startBtnAnimate();
   },
   guideTitleAnmate() {
@@ -450,26 +452,25 @@ Page({
         { translateX: '-50%', opacity: 1, scale: [1], ease: 'ease-in-out', offset: 1 },
       ],
       500,
-      () => {
-        this.animate(
-          '.swiper-text-3',
-          [
-            { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 0 },
-            { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 1 },
-          ],
-          500,
-          () => { }
-        );
-        this.animate(
-          '.custom-indicator',
-          [
-            { opacity: 1, scale: [1], ease: 'ease-in-out', offset: 0 },
-            { opacity: 0, scale: [0], ease: 'ease-in-out', offset: 1 },
-          ],
-          500,
-          () => { }
-        );
-      }
+      () => { }
+    );
+    this.animate(
+      '.swiper-text-3',
+      [
+        { opacity: 1 },
+        { opacity: 0 },
+      ],
+      1,
+      () => { }
+    );
+    this.animate(
+      '.custom-indicator',
+      [
+        { opacity: 1 },
+        { opacity: 0 },
+      ],
+      1,
+      () => { }
     );
   },
   swiperLabelAnimate(className: string) {
@@ -487,11 +488,6 @@ Page({
             { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
             { transformOrigin: 'bottom right', rotateZ: 0.8, ease: 'ease-in-out' },
             { transformOrigin: 'bottom right', rotateZ: -0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'bottom right', rotateZ: 0.6, ease: 'ease-in-out' },
-            { transformOrigin: 'bottom right', rotateZ: -0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'bottom right', rotateZ: 0.4, ease: 'ease-in-out' },
-            { transformOrigin: 'bottom right', rotateZ: -0.2, ease: 'ease-in-out' },
-            { transformOrigin: 'bottom right', rotateZ: 0.2, ease: 'ease-in-out' },
             { transformOrigin: 'bottom right', rotateZ: 0, ease: 'ease-in-out' },
           ],
           500,

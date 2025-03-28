@@ -1,2 +1,2 @@
 <!--pages/demo/demo.wxml-->
-<text>pages/demo/demo.wxml</text>
+<view class="btn" bind:tap="onClick">选择图片</view>

@@ -43,7 +43,6 @@ import { promptCameraAuthorization } from '../../utils/index';
 
 let countdownInterval = 0;
 let updateProgressTimer = 0;
-const gifUrl = 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/compound.gif'
 Page({
   /**
    * 页面的初始数据
@@ -63,10 +62,10 @@ Page({
     templId: '', // 模板编码
     algoType: '', // 漫画类型
     taskCode: '', // 海报合成任务编码
-    countDownText: '60秒',
-    showCountDownText: true,
+    countDownText: '0', // 倒计时
+    showCountDownText: false, // 是否显示倒计时
     createPosterId: '',
-    compoundGif: '',
+    compoundGif: '', // 倒计时gif
   },
   /**
    * 生命周期函数--监听页面加载
@@ -75,26 +74,27 @@ Page({
     const { id, status, tarImage, taskId } = options;
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
-    this.setData({ token, openId });
+    const compoundGif = wx.getStorageSync('compoundGif');
+    this.setData({ token, openId, compoundGif });
     this.init();
-    this.getImageInfo(gifUrl);
 
     if (status === '1') {
       // 闯关成功，再次进入页面时，直接展示海报图片
       this.setData({ currentStep: 3, resultantPictureUrl: tarImage });
     } else if (status === '0' && id && taskId) {
-      // 再次进入第三关 查询图片合成进度
+      // 没有通过闯关，再次进入页面时，查询图片合成进度
       this.setDataAsync({
         currentStep: 2,
         createPosterId: id,
         taskCode: taskId,
       })
         .then(async () => {
+          await delayFn(2000);
           await this.updateProgress();
         })
         .catch((err) => {
           console.error('Failed to set data or update progress:', err);
-          showToast('初始化失败，请重试');
+          showToast(err);
         });
     }
   },
@@ -185,7 +185,7 @@ Page({
       currentPhoto: '',
       activeTabIndex: 0,
       activeImgIndex: 0,
-      showCountDownText: true,
+      showCountDownText: false,
     });
     refreshPage();
   },
@@ -231,10 +231,7 @@ Page({
             header: { Authorization: token, type: 2 },
           };
 
-          const res = await postRequest(
-            '/forward/nova-poster/mini-program/composite-poster',
-            params
-          );
+          const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
           const { code, result, message } = res;
           if (code === '0') {
             const taskCode = result;
@@ -283,7 +280,7 @@ Page({
     const { cameraContext } = this.data;
     if (cameraContext) {
       cameraContext.takePhoto({
-        quality: 'low',
+        quality: 'original',
         success: (res) => {
           this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
         },
@@ -334,6 +331,7 @@ Page({
       updateProgressTimer = setTimeout(() => this.updateProgress(), 10000);
     } else if (status === 2) {
       showToast('合成成功');
+      await delayFn(1000);
       this.setData({
         showCountDownText: false,
         currentStep: 3,
@@ -342,7 +340,7 @@ Page({
       this.updatePosterImageF(result?.posterPath, '');
     } else if (status === 3) {
       const failMsg = result?.failMsg;
-      this.setData({ compoundProgress: { progress: 0, text: '倒计时' } });
+      this.setData({ showCountDownText: false });
       this.updatePosterImageF('', failMsg);
       wx.showModal({
         title: '提示',
@@ -356,6 +354,7 @@ Page({
     }
   },
   startCountdown(currentIndex: any) {
+
     clearInterval(countdownInterval);
     const timePerTask = 60 / 100; // 60秒内完成100个任务
     let countdown = Math.ceil(timePerTask * currentIndex); // 计算倒计时时间
@@ -366,6 +365,7 @@ Page({
       // 限制 countdown 最大值为 180 秒
       countdown = countdown > 180 ? 180 : countdown;
     }
+    
 
     countdownInterval = setInterval(() => {
       const minutes = Math.floor(countdown / 60);
@@ -376,10 +376,11 @@ Page({
       } else {
         this.setData({ countDownText: `${countdown}秒` });
       }
-
+      this.setData({ showCountDownText: true });
       countdown--;
 
       if (countdown <= 0) {
+        this.setData({ showCountDownText: false });
         clearInterval(countdownInterval);
       }
     }, 1000);

@@ -164,3 +164,19 @@ export const getToken = async () => {
     console.log('getDict', error);
   }
 }
+
+export const getCompoundGif = async () => {
+  // 预加载的gif
+  try {
+    const gifUrl = 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/compound.gif'
+    const res = await wx.getImageInfo({
+      src: gifUrl
+    });
+    wx.setStorage({
+      key: "compoundGif",
+      data: res.path
+    });
+  } catch (err) {
+    console.error(err); // 处理错误情况
+  }
+}
