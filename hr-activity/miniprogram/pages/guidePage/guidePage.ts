@@ -68,9 +68,9 @@ Page({
         shopMan: images[1].path,
         goods: images[2].path,
         cart: images[3].path,
-        guideTitle: images[4].path,
+        guideTitle: images[4].path
       });
-      await delayFn(1500);
+      await delayFn(1200);
       this.setData({
         loading: false
       });

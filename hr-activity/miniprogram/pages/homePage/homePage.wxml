@@ -21,7 +21,7 @@
       <view class="overlay-container">
         <view class="text-box">
           <view class="title">恭喜您</view>
-          <view class="sub-title">完成弹福星旅探索多</view>
+          <view class="sub-title">完成弹福星旅探索</view>
         </view>
         <image class="gift-box-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-2.png" mode="aspectFit"></image>
         <view class="tip">请您联系现场工作人员并出示此界面领取您的专属精美好礼吧！</view>
