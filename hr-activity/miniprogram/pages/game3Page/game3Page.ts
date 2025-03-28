@@ -213,6 +213,7 @@ Page({
     wx.redirectTo({ url: '/pages/homePage/homePage' });
   },
   chooseImage() {
+    this.getTemplate();
     wx.chooseMedia({
       count: 1, // 最多可以选择的图片张数，默认9
       mediaType: ['image'], // 可以指定是图片还是视频，默认二者都有
@@ -220,7 +221,6 @@ Page({
       success: (res) => {
         const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
         this.setData({ currentPhoto: tempFilePaths[0], currentStep: 1 });
-        this.getTemplate();
       },
       fail: (err) => {
         console.error('选择图片失败', err);
@@ -229,6 +229,7 @@ Page({
   },
   onClickPhoto() {
     const { cameraContext } = this.data;
+    this.getTemplate();
     if (cameraContext) {
       cameraContext.takePhoto({
         quality: 'original',
