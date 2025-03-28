@@ -70,7 +70,7 @@ Page({
         cart: images[3].path,
         guideTitle: images[4].path,
       });
-      await delayFn(1000);
+      await delayFn(1500);
       this.setData({
         loading: false
       });
