@@ -2,7 +2,7 @@
 <view class="home-wrapper">
   <view class="header-wrapper">
     <view class="text-1">弹福星旅探索</view>
-    <view class="text-2">赢取福气好礼</view>
+    <view class="text-2" bind:tap="handleTap">赢取福气好礼</view>
   </view>
   <view class="rule-flow"></view>
   <view class="flow-wrapper">
@@ -24,7 +24,8 @@
           <view class="sub-title">完成弹福星旅探索</view>
         </view>
         <image class="gift-box-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-2.png" mode="aspectFit"></image>
-        <view class="tip">请您联系现场工作人员并出示此界面领取您的专属精美好礼吧！</view>
+        <view class="tip-1" wx:if="{{!alreadyReceived}}">请您联系现场工作人员并出示此界面领取您的专属精美好礼吧！</view>
+        <view class="tip-2" wx:else>已领取</view>
         <view class="bg-1"></view>
         <view class="bg-2"></view>
       </view>

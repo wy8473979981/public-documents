@@ -26,6 +26,8 @@ Page({
     elementWidth: 100, // rpx
     elementHeight: 100, // rpx
     rpxRatio: 1, // px到rpx的转换比例
+    alreadyReceived: false,
+    lastTapTime: 0,
     gameList: [
       {
         count: 1,
@@ -70,6 +72,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
+    this.queryPrize();
     this.init();
     wx.getSystemInfo({
       success: (res) => {
@@ -92,7 +95,6 @@ Page({
       title: '加载中...',
       mask: true, // 是否显示透明蒙层，防止触摸穿透
     });
-
     wx.getStorage({
       key: 'openId',
       success: (res) => {
@@ -101,19 +103,9 @@ Page({
           Promise.all([
             this.getGameResult(1, openId),
             this.getGame2Result(2, openId),
-            this.getGameResult(2, openId),
+            this.getGameResult(2, openId)
           ])
             .then((results) => {
-              // results = [
-              //   { code: '200', msg: '成功', data: { status: 1 } },
-              //   { code: '200', msg: '成功', data: { status: 1 } },
-              //   { "code": "200", "msg": "成功", "data": { "id": "1904440241939288066", "appUserId": null, "openId": "oeY5s7Rf4NGQFhfPW-xZBPokFVH8", "templateId": 79, "status": 0, "taskId": "tJhSyXcwRcpZQ0i34ClR", "type": 2, "srcImage": "https://nav-uat.aia.com.cn/fan/sail/resource/poster/20250325/4e16cf76-94a0-4128-86d2-4c51e056411c.png", "tarImage": null, "msg": null, "algoType": "original", "createdAt": "2025-03-25T07:48:31.000+00:00", "updatedAt": "2025-03-25T07:48:31.000+00:00" } },
-              // ];
-              // results = [
-              //   { code: '200', msg: '成功', data: { status: 1 } },
-              //   { code: '200', msg: '成功', data: { status: 1 } },
-              //   { code: '200', msg: '成功', data: null },
-              // ];
               if (results.every((n) => n?.data && n?.data?.status === 1)) {
                 this.setData({ currentStep: 4 }); // 如果所有游戏都通过了，设置 currentStep 为 4
                 this.onClickShow();
@@ -267,6 +259,52 @@ Page({
       startX: currentX,
       startY: currentY
     });
+  },
+  handleTap() {
+    const currentTime = new Date().getTime()
+    const lastTime = this.data.lastTapTime
+
+    if (currentTime - lastTime < 300) { // 300ms内算双击
+      console.log('双击事件触发')
+      // 你的双击逻辑
+      this.setData({ lastTapTime: 0 });
+      this.getPrize();
+      return;
+    }
+    this.setData({ lastTapTime: currentTime })
+  },
+  async getPrize() {
+    const { alreadyReceived } = this.data;
+    if (alreadyReceived) {
+      return;
+    }
+    const openId = wx.getStorageSync('openId');
+    const token = wx.getStorageSync('token');
+    const params = {
+      data: {
+        status: 1,
+        type: 3,
+        openId: openId,
+        token: token
+      },
+    }
+    const result = await postRequest('/activity/record', params);
+    if (result.code === '200') {
+      this.setData({ alreadyReceived: true });
+      this.onClickShow();
+    } else {
+      showToast('领取失败，请重试！');
+    }
+  },
+  async queryPrize() {
+    // 查询奖品是否已经领取
+    const openId = wx.getStorageSync('openId');
+    const result = await this.getGame2Result(3, openId);
+    if (result.code === "200") {
+      this.setData({ alreadyReceived: true });
+    } else {
+      showToast('查询失败，请重试！');
+    }
   },
   /**
    * 根据 currentStep 和 game.isPassed 返回对应的类名
