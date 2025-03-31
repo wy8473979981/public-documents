@@ -470,7 +470,7 @@ Page({
       success: (res) => {
         const url = res.tempFilePath;
         this.compositePoster(url);
-        saveImage(url);
+        // saveImage(url);
         getFileSize(url);
       },
       fail() {
