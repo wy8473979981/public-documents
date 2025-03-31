@@ -4,49 +4,11 @@ import { compareVersion, printVersion } from './utils/index';
 App<IAppOption>({
   globalData: {
     isVersionLow: false, // 初始化为 false
-    envVersion: '',
-    platform: ''
   },
   onLaunch() {
-    // this.checkForUpdates();
-    // this.checkWeChatVersion("3.7.3");
-    // this.onLoadFont();
-    // this.getEnvironmentVersion();
-    // printVersion();
-  },
-  onLoadFont: function () {
-    // 加载字体
-    const fonts = [
-      {
-        family: 'DingTalk',
-        scopes: ['webview', 'native'],
-        source: 'url("https://tda-static.aia.com.cn/fan/sail/ar-treasure/font/DingTalkJinBuTi.ttf")'
-      },
-      {
-        family: 'HYQiHei',
-        scopes: ['webview', 'native'],
-        source: 'url("https://tda-static.aia.com.cn/fan/sail/ar-treasure/font/HYQiHei-60J.ttf")'
-      },
-    ];
-    const loadFont = (font: { family: any; source: any; scopes: any; }) =>
-      new Promise((resolve, reject) => {
-        wx.loadFontFace({
-          family: font.family,
-          source: font.source,
-          scopes: font.scopes,
-          global: true,
-          success: resolve,
-          fail: reject
-        });
-      });
-
-    Promise.all(fonts.map(loadFont))
-      .then((results) => {
-        console.log('All fonts loaded successfully:', results);
-      })
-      .catch((err) => {
-        console.error('Some fonts failed to load:', err);
-      });
+    this.checkForUpdates();
+    this.checkWeChatVersion("3.7.3");
+    printVersion();
   },
   checkWeChatVersion(minVersion) {
     try {
@@ -64,24 +26,9 @@ App<IAppOption>({
       } else {
         console.log(`当前微信版本 ${currentVersion} 满足最低版本要求 ${minVersion}`);
       }
-
-      const platform = systemInfo.platform; // 获取平台信息
-      this.globalData.platform = platform;
-      if (platform === 'ios') {
-        console.log('这是 iOS 设备');
-      } else if (platform === 'android') {
-        console.log('这是 Android 设备');
-      } else {
-        console.log('其他设备：', platform);
-      }
     } catch (error) {
       console.error('获取微信版本信息失败:', error);
     }
-  },
-  getEnvironmentVersion() {
-    // 获取当前是什么版本；develop:开发版；trial：体验版；release：正式版
-    const accountInfo = wx.getAccountInfoSync();
-    this.globalData.envVersion = accountInfo.miniProgram.envVersion;
   },
   checkForUpdates() {
     if (wx.canIUse('getUpdateManager')) {
