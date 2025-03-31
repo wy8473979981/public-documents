@@ -1,6 +1,6 @@
 // pages/game3Page/game3Page.ts
 import { postRequest, uploadFile } from '../../utils/request.js';
-import { delayFn, showToast, refreshPage, readFileAsBase64, getFileSize } from '../../utils/index';
+import { delayFn, showToast, refreshPage, readFileAsBase64, getFileSize, saveImage } from '../../utils/index';
 
 interface TabItem {
   algoType: string;

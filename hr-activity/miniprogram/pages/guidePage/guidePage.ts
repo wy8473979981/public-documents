@@ -508,8 +508,10 @@ Page({
     );
   },
   goLogin() {
+    
     const openId = wx.getStorageSync('openId');
     const ntCode = wx.getStorageSync('ntCode');
+    console.log(openId, ntCode);
 
     if (openId && ntCode) {
       wx.redirectTo({ url: '/pages/homePage/homePage' });

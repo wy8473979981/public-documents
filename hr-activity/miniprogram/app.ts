@@ -1,3 +1,10 @@
+/*
+ * @Description: Description
+ * @Author: wangyang
+ * @Date: 2025-03-18 13:46:04
+ * @LastEditors: wangyang
+ * @LastEditTime: 2025-03-31 17:15:49
+ */
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
 import { getOpenId, getDict, getToken, getCompoundGif } from './utils/request'
@@ -6,9 +13,10 @@ App<IAppOption>({
   globalData: {
     isVersionLow: false, // 初始化为 false
   },
-  onLaunch() {
+  onShow() {
+    console.log('App onShow');
     this.checkForUpdates();
-    this.checkWeChatVersion("3.7.3");
+    this.checkWeChatVersion('3.7.3');
     getOpenId();
     getDict();
     getToken();
@@ -29,7 +37,9 @@ App<IAppOption>({
           confirmText: '我知道了',
         });
       } else {
-        console.log(`当前微信版本 ${currentVersion} 满足最低版本要求 ${minVersion}`);
+        console.log(
+          `当前微信版本 ${currentVersion} 满足最低版本要求 ${minVersion}`
+        );
       }
     } catch (error) {
       console.error('获取微信版本信息失败:', error);
@@ -71,4 +81,4 @@ App<IAppOption>({
       });
     }
   },
-})
+});

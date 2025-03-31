@@ -106,7 +106,7 @@ export function getOpenId() {
           code,
           data
         } = result;
-
+        console.log('/wx/user/login', result);
         if (code === "200") {
           wx.setStorage({
             key: "openId",
