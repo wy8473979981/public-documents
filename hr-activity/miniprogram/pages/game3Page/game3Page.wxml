@@ -24,7 +24,6 @@
   <view class="flow-wrapper flow-wrapper-2" wx:if="{{currentStep===1 || currentStep===2}}">
     <view class="photo-content" wx:if="{{currentStep===1}}">
       <image wx:if="{{currentPhoto}}" class="current-photo" src="{{currentPhoto}}" mode="aspectFit"></image>
-      <canvas wx:if="{{currentPhoto}}" id="cropCanvas" class="crop-canvas" type="2d" style="width: 1242px; height: 2208px;"></canvas>
       <view class="afresh" bind:tap="onReselectImg">
         <view class="text">重新选择图片</view>
       </view>
