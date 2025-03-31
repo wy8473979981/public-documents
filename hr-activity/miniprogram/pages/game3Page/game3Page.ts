@@ -467,9 +467,11 @@ Page({
       src: src,
       quality: 80, // 质量压缩
       compressedWidth: compressedWidth,
-      success: (res) => {
+      success: async (res) => {
         const url = res.tempFilePath;
         this.compositePoster(url);
+        const imgInfo: any = await wx.getImageInfo({ src: url });
+        console.log('imgInfo', imgInfo);
         // saveImage(url);
         getFileSize(url);
       },
