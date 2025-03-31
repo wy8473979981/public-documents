@@ -9,9 +9,9 @@ Page({
   data: {
     bubbles: [] as Bubble[], // 明确指定类型
     bubbleImg1:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubble-1.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
     bubbleImg2:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubble-2.png',
+      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-2.png',
   },
   onLoad() {
     this.initCanvas();

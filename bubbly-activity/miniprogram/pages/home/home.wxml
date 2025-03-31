@@ -1,4 +1,4 @@
 <!--pages/home/home.wxml-->
 <view class="home-wrapper">
-  <canvas class="beerCanvas" id="beerCanvas" type="2d" disable-scroll></canvas>
+  <canvas class="beerCanvas" id="beerCanvas" type="2d" disable-scroll bindtouchstart="onCanvasTouch"></canvas>
 </view>
