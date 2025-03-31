@@ -143,7 +143,7 @@ export function refreshPage() {
   const currentPage = getCurrentPages().pop(); // 获取当前页面实例
   const url = currentPage?.route ? '/' + currentPage.route : '/';
   console.log(url, 'url');
-  
+
   wx.reLaunch({
     url,
     success: () => {
@@ -162,5 +162,67 @@ export function showToast(msg: string, icon: ToastIconType = 'none', duration = 
     title: msg,
     icon: icon,
     duration: duration,
+  });
+}
+
+// 下载裁剪后的图片
+export function saveImage(url: any) {
+  wx.saveImageToPhotosAlbum({
+    filePath: url,
+    success() {
+      wx.showToast({ title: '保存成功', icon: 'success' });
+    },
+    fail(err) {
+      if (
+        err.errMsg.includes('auth deny') ||
+        err.errMsg.includes('auth denied')
+      ) {
+        wx.showModal({
+          title: '提示',
+          content: '请授权微信访问相册，以便保存图片。',
+          showCancel: false,
+          success() {
+            wx.openSetting(); // 打开设置引导用户授权
+          },
+        });
+      }
+    },
+  });
+}
+
+export function readFileAsBase64(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fs = wx.getFileSystemManager();
+    fs.readFile({
+      filePath: filePath,
+      encoding: 'base64', // 明确指定编码为 base64，确保返回值为字符串
+      success: (res) => {
+        if (typeof res.data === 'string') {
+          const base64 = `data:image/jpeg;base64,${res.data}`;
+          return resolve(base64); // 确保传递给 resolve 的是字符串
+        } else {
+          return reject(new Error('读取的数据不是字符串类型')); // 如果数据类型不符合预期，抛出错误
+        }
+      },
+      fail: (err) => {
+        return reject(err); // 捕获并传递错误
+      },
+    });
+  });
+}
+
+export function getFileSize(filePath: string) {
+  const fs = wx.getFileSystemManager();
+  fs.stat({
+    path: filePath,
+    success: (res: any) => {
+      const fileSizeInBytes = res.stats.size; // 文件大小，单位字节
+      const fileSizeInKB = (fileSizeInBytes / 1024); // 转换为 KB 并保留两位小数
+      const fileSizeInMB = (fileSizeInKB / 1024).toFixed(2); // 转换为 MB 并保留两位小数
+      console.log(`文件大小：${fileSizeInBytes}字节，${fileSizeInKB.toFixed(2)}KB，${fileSizeInMB}MB`);
+    },
+    fail: (err) => {
+      console.error('获取文件大小失败：', err);
+    }
   });
 }

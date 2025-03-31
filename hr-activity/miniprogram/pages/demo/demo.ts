@@ -40,16 +40,15 @@ Page({
       console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
 
       this.handleImageByAlgoType(tempFilePath, imgInfo);
-      // // 判断是否为竖屏
-      // if (realHeight > realWidth) {
-      //   // 竖屏图片，继续处理
-      //   console.log('竖屏图片，继续处理');
-      //   this.handleImageByAlgoType(tempFilePath, imgInfo);
-      // } else {
-      //   // 横屏图片，不处理或提示
-      //   wx.showToast({ title: '请上传竖屏图片', icon: 'none' })
-      // }
-
+      // 判断是否为竖屏
+      if (realHeight > realWidth) {
+        // 竖屏图片，继续处理
+        console.log('竖屏图片，继续处理');
+        this.handleImageByAlgoType(tempFilePath, imgInfo);
+      } else {
+        // 横屏图片，不处理或提示
+        wx.showToast({ title: '请上传竖屏图片', icon: 'none' })
+      }
     } catch (err) {
       console.error('处理图片失败', err);
       wx.showToast({ title: '处理图片失败', icon: 'none' });

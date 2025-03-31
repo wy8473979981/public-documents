@@ -1,6 +1,6 @@
 // pages/game3Page/game3Page.ts
 import { postRequest, uploadFile } from '../../utils/request.js';
-import { delayFn, showToast, refreshPage } from '../../utils/index';
+import { delayFn, showToast, refreshPage, saveImage, readFileAsBase64, getFileSize } from '../../utils/index';
 
 interface TabItem {
   algoType: string;
@@ -141,71 +141,9 @@ Page({
   },
   onToGenerate() {
     // 去生成
-    const { currentPhoto, algoType, templId, token } = this.data;
+    const { currentPhoto } = this.data;
     if (currentPhoto) {
-      // 使用 wx.getImageInfo 获取图片信息，然后进行裁剪并转换为 base64
-      wx.getImageInfo({
-        src: currentPhoto,
-        success: async (imgInfo) => {
-          console.log(imgInfo);
-          // TODO 下周优化裁剪功能
-
-          // 裁剪图片
-          // const croppedImagePath = await this.cropImage(
-          //   currentPhoto,
-          //   imgInfo.width,
-          //   imgInfo.height
-          // );
-
-          // 验证图片大小
-          // const maxSizeInMB = algoType === 'original' ? 15 : 3;
-          // const isValidSize = await this.validateImageSize(
-          //   croppedImagePath,
-          //   maxSizeInMB
-          // );
-          // if (!isValidSize) {
-          //   showToast(`图片大小超过限制，最大允许 ${maxSizeInMB}MB`);
-          //   return;
-          // }
-
-          // 转成 base64 字符串
-          const base64Data = await this.readFileAsBase64(currentPhoto);
-
-          // 调用海报合成接口
-          const params = {
-            data: {
-              imageBase64: base64Data,
-              algoType: algoType === 'original' ? undefined : algoType,
-              templId: templId,
-            },
-            header: { Authorization: token, type: 2 },
-          };
-
-          const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
-          const { code, result, message } = res;
-          if (code === '0') {
-            const taskCode = result;
-            this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
-              () => {
-                this.createPosterImageF();
-                this.updateProgress(); // 调用更新进度函数
-              }
-            );
-          } else {
-            wx.showModal({
-              title: '提示',
-              content: message,
-              showCancel: false, // 禁用取消按钮
-              confirmText: '确定',
-              success: (res) => {
-                if (res.confirm) {
-                  this.onReselectImg();
-                }
-              },
-            });
-          }
-        },
-      });
+      this.directionJudgment(currentPhoto);
     }
   },
   onBackHome() {
@@ -237,6 +175,7 @@ Page({
           this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
         },
         fail: (err) => {
+          console.error('拍照失败：', err);
           showToast(`拍照失败：${err}`);
         },
       });
@@ -489,141 +428,100 @@ Page({
     const cameraContext = wx.createCameraContext();
     this.setData({ cameraContext: cameraContext });
   },
-  /**
-   * 裁剪图片
-   * @param imagePath 图片路径 (string)
-   * @param imgWidth 原始图片宽度 (number)
-   * @param imgHeight 原始图片高度 (number)
-   */
-  cropImage(
-    imagePath: string,
-    imgWidth: number,
-    imgHeight: number
-  ): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const targetWidth = 1242;
-      const targetHeight = 2208;
-      const query = wx.createSelectorQuery();
-      query
-        .select('#cropCanvas')
-        .node()
-        .exec((res) => {
-          // 检查 res[0] 是否存在并且包含 node 属性
-          if (res[0] && res[0].node) {
-            const canvas = res[0].node;
-            const ctx = canvas.getContext('2d');
 
-            // 设置 Canvas 尺寸
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-
-            // 绘制图片到 Canvas
-            const img = canvas.createImage();
-            img.src = imagePath;
-            img.onload = () => {
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                imgWidth,
-                imgHeight,
-                0,
-                0,
-                targetWidth,
-                targetHeight
-              );
-
-              // 将 Canvas 转为图片
-              wx.canvasToTempFilePath({
-                canvas: canvas,
-                fileType: 'jpg',
-                quality: 0.7, // 设置图片质量
-                success: (res) => {
-                  // this.saveImage(res.tempFilePath);
-                  return resolve(res.tempFilePath);
-                },
-                fail(err) {
-                  showToast(`裁剪失败：${err}`);
-                  return reject(err);
-                },
-              });
-            };
-          } else {
-            console.error('Canvas node not found');
-            return reject(new Error('Canvas node not found'));
-          }
-        });
-    });
-  },
-  validateImageSize(filePath: string, maxSizeInMB: number): Promise<boolean> {
-    // 验证图片大小
-    return new Promise((resolve, reject) => {
-      const fs = wx.getFileSystemManager();
-      fs.getFileInfo({
-        filePath: filePath,
-        success: (res) => {
-          const fileSizeInMB = res.size / (1024 * 1024);
-          return resolve(fileSizeInMB <= maxSizeInMB);
-        },
-        fail: (err) => {
-          return reject(err);
-        },
-      });
-    });
-  },
-  // 下载裁剪后的图片
-  saveImage(url: any) {
-    wx.saveImageToPhotosAlbum({
-      filePath: url,
-      success() {
-        wx.showToast({ title: '保存成功', icon: 'success' });
-      },
-      fail(err) {
-        if (
-          err.errMsg.includes('auth deny') ||
-          err.errMsg.includes('auth denied')
-        ) {
-          wx.showModal({
-            title: '提示',
-            content: '请授权微信访问相册，以便保存图片。',
-            showCancel: false,
-            success() {
-              wx.openSetting(); // 打开设置引导用户授权
-            },
-          });
-        }
-      },
-    });
-  },
-  // 封装文件读取逻辑到一个返回 Promise 的函数
-  readFileAsBase64(filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const fs = wx.getFileSystemManager();
-      fs.readFile({
-        filePath: filePath,
-        encoding: 'base64', // 明确指定编码为 base64，确保返回值为字符串
-        success: (res) => {
-          if (typeof res.data === 'string') {
-            const base64 = `data:image/jpeg;base64,${res.data}`;
-            return resolve(base64); // 确保传递给 resolve 的是字符串
-          } else {
-            return reject(new Error('读取的数据不是字符串类型')); // 如果数据类型不符合预期，抛出错误
-          }
-        },
-        fail: (err) => {
-          return reject(err); // 捕获并传递错误
-        },
-      });
-    });
-  },
-  async getImageInfo(src: string) {
+  async directionJudgment(tempFilePath: string) {
     try {
-      const res = await wx.getImageInfo({ src });
-      this.setData({ compoundGif: res.path });
+      // 获取图片信息
+      const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
+      const { width, height, orientation } = imgInfo
+      const isRotated = !['up', 'up-mirrored'].includes(orientation);
+      const realWidth = isRotated ? height : width;
+      const realHeight = isRotated ? width : height;
+      console.log('图片信息：', imgInfo);
+      console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
+
+      // 判断是否为竖屏
+      if (realHeight > realWidth) {
+        // 竖屏图片，继续处理
+        console.log('竖屏图片，继续处理');
+
+        if (realHeight < 32 || realWidth < 32) {
+          showToast('图片尺寸太小，请上传大于32×32像素的图片')
+          return
+        }
+
+        this.compressImage(tempFilePath);
+
+      } else {
+        // 横屏图片，不处理或提示
+        showToast('请上传竖屏图片');
+      }
     } catch (err) {
-      console.error(err); // 处理错误情况
+      console.error('处理图片失败', err);
+      showToast('处理图片失败');
     }
   },
+  //  压缩图片
+  compressImage(src: string, compressedWidth = 1204) {
+    wx.compressImage({
+      src: src,
+      quality: 80, // 质量压缩
+      compressedWidth: compressedWidth,
+      success: (res) => {
+        const url = res.tempFilePath;
+        this.compositePoster(url);
+        saveImage(url);
+        getFileSize(url);
+      },
+      fail() {
+        showToast('压缩失败');
+      },
+    });
+  },
+  async compositePoster(imgUrl: string) {
+    try {
+      const { algoType, templId, token } = this.data;
+      // 转成 base64 字符串
+      const base64Data = await readFileAsBase64(imgUrl);
+
+      // 调用海报合成接口
+      const params = {
+        data: {
+          imageBase64: base64Data,
+          algoType: algoType === 'original' ? undefined : algoType,
+          templId: templId,
+        },
+        header: { Authorization: token, type: 2 },
+      };
+
+      const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
+      const { code, result, message } = res;
+      if (code === '0') {
+        const taskCode = result;
+        this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
+          () => {
+            this.createPosterImageF();
+            this.updateProgress(); // 调用更新进度函数
+          }
+        );
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: message,
+          showCancel: false, // 禁用取消按钮
+          confirmText: '确定',
+          success: (res) => {
+            if (res.confirm) {
+              this.onReselectImg();
+            }
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
   /**
    * 生命周期函数--监听页面显示
    */
