@@ -1,6 +1,6 @@
 // pages/game3Page/game3Page.ts
 import { postRequest, uploadFile } from '../../utils/request.js';
-import { delayFn, showToast, refreshPage, saveImage, readFileAsBase64, getFileSize } from '../../utils/index';
+import { delayFn, showToast, refreshPage, readFileAsBase64, getFileSize } from '../../utils/index';
 
 interface TabItem {
   algoType: string;
@@ -98,7 +98,7 @@ Page({
       showToast(`获取存储失败:${error}`);
     }
   },
-  getTemplate(algoType = 'original', templId = '79') {
+  getTemplate(algoType = 'original', templId = '84') {
     const { tabList } = this.data;
     const item: any = tabList.find((n) => {
       return n.algoType === algoType;
