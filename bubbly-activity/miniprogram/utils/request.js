@@ -65,4 +65,16 @@ export async function postRequest(url, options = {}) {
     });
   });
 }
-
+export function preloadVideo() {
+  wx.downloadFile({
+    url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
+    success: (res) => {
+      if (res.statusCode === 200) {
+        wx.setStorage({
+          key: "videoSrc",
+          data: res.tempFilePath
+        });
+      }
+    }
+  });
+}

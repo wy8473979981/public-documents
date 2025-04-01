@@ -1,0 +1,12 @@
+<view class="container">
+  <view class="movable-box" style="transform: translateY({{translateY}}px)">
+    <text>demo甩动手机上下移动我</text>
+  </view>
+  
+  <view class="info">
+    <text>当前位置: {{translateY.toFixed(2)}}px</text>
+    <text>当前速度: {{speed.toFixed(2)}}px/frame</text>
+  </view>
+  
+  <button bindtap="resetPosition" class="reset-btn">重置位置</button>
+</view>

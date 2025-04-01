@@ -1,0 +1,9 @@
+<view class="shake-wrapper">
+  <image class="liquid-bg" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/liquid-bg.png" mode="aspectFit"></image>
+  <image class="handle-shake" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/handle-shake.png" mode="aspectFit"></image>
+  <image class="shake-text" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/shake-text.png" mode="aspectFit"></image>
+  <image id="bottle" class="bottle" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png" mode="aspectFit"></image>
+
+  <!-- 添加视频组件 -->
+  <video id="myVideo" class="my-video hidden-video {{autoplay? 'show-video' : ''}}" src="{{videoSrc}}" controls="{{false}}" autoplay="{{autoplay}}" loop="{{false}}" muted="{{true}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
+</view>

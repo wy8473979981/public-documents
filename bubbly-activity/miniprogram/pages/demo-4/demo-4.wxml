@@ -1,0 +1,39 @@
+<view class="container">
+  <!-- 可移动的元素 -->
+  <view class="movable-element" style="transform: translateY({{elementPosition}}px)">
+    <text>摇动手机控制移动</text>
+  </view>
+  
+  <!-- 控制按钮 -->
+  <view class="control-panel">
+    <button bindtap="toggleMovement" type="primary" size="mini">
+      {{isMoving ? '停止' : '开始'}}移动
+    </button>
+    <button bindtap="resetPosition" type="default" size="mini">重置位置</button>
+  </view>
+  
+  <!-- 三轴加速度显示 -->
+  <view class="acceleration-display">
+    <view class="axis">
+      <text class="axis-label">X轴:</text>
+      <text class="axis-value">{{debugInfo.acceleration.x}}</text>
+    </view>
+    <view class="axis">
+      <text class="axis-label">Y轴:</text>
+      <text class="axis-value">{{debugInfo.acceleration.y}}</text>
+    </view>
+    <view class="axis">
+      <text class="axis-label">Z轴:</text>
+      <text class="axis-value">{{debugInfo.acceleration.z}}</text>
+    </view>
+    <view class="axis">
+      <text class="axis-label">滤波Y:</text>
+      <text class="axis-value">{{debugInfo.filtered}}</text>
+    </view>
+  </view>
+  
+  <!-- 调试信息 -->
+  <view class="debug-info">
+    <text>当前位置: {{debugInfo.position}}px</text>
+  </view>
+</view>

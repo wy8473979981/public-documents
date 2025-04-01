@@ -1,12 +1,12 @@
 {
   "pages": [
+    "pages/sd1/sd1",
+    "pages/sd2/sd2",
     "pages/guidance/guidance",
     "pages/demo/demo",
     "pages/sensor/sensor",
     "pages/shuidi/shuidi",
     "pages/sd3/sd3",
-    "pages/sd1/sd1",
-    "pages/sd2/sd2",
     "pages/gyroscope/gyroscope"
   ],
   "window": {

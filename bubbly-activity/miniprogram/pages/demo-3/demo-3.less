@@ -1,0 +1,30 @@
+/* pages/shake/shake.wxss */
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f7f7;
+}
+
+.movable-element {
+  width: 200rpx;
+  height: 200rpx;
+  background: linear-gradient(135deg, #07C160, #09BB07);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 24rpx;
+  box-shadow: 0 10rpx 30rpx rgba(7, 193, 96, 0.3);
+  transform: translateZ(0); /* 启用GPU加速 */
+  will-change: transform;   /* 提示浏览器优化 */
+}
+
+.tip {
+  margin-top: 60rpx;
+  font-size: 28rpx;
+  color: #999;
+}

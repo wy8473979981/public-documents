@@ -1,0 +1,7 @@
+<!-- pages/shake/shake.wxml -->
+<view class="container">
+  <view animation="{{animationData}}" class="movable-element" style="will-change: transform;">
+    <text>甩动我！</text>
+  </view>
+  <view class="tip">上下甩动手机试试</view>
+</view>

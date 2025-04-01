@@ -36,10 +36,10 @@ Page({
   pollingInterface() {
     const poll = async () => {
       try {
-        await delayFn(1000);
-        console.log(111);
-        
+        await delayFn(5000);
         // 实际业务逻辑
+        console.log(111);
+        // wx.redirectTo({ url: '/pages/shakePage/shakePage' });
       } catch (error) {
         console.error('Polling error:', error);
       }

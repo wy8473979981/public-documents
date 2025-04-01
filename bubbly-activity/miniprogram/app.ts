@@ -1,5 +1,6 @@
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
+import {preloadVideo } from './utils/request'
 
 App<IAppOption>({
   globalData: {
@@ -9,6 +10,7 @@ App<IAppOption>({
     this.checkForUpdates();
     this.checkWeChatVersion("3.7.3");
     printVersion();
+    preloadVideo();
   },
   checkWeChatVersion(minVersion) {
     try {

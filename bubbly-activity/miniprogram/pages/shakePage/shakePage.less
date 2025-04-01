@@ -1,0 +1,52 @@
+/* pages/shakePage/shakePage.wxss */
+.shake-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: url(https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-bg.png) no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+  box-sizing: border-box;
+  .liquid-bg{
+    width: 100%;
+    height: 100%;
+  }
+
+  .handle-shake {
+    width: 143.38rpx;
+    height: 175.55rpx;
+    position: absolute;
+    left: 133.27rpx;
+    top: 117.19rpx;
+  }
+
+  .shake-text {
+    width: 309.74rpx;
+    height: 96.65rpx;
+    position: absolute;
+    left: 277.57rpx;
+    top: 161.31rpx;
+  }
+
+  .bottle {
+    width: 240.63rpx;
+    height: 870.73rpx;
+    position: absolute;
+    left: 50%;
+    top: 322.61rpx;
+    transform: translateX(-50%);
+  }
+
+  .hidden-video,
+  .my-video {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    object-fit: cover; // 添加此行以确保视频填充整个视口
+  }
+  .show-video{
+    z-index: 0;
+  }
+}

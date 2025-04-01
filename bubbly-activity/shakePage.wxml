@@ -1,0 +1,24 @@
+<view class="shake-wrapper">
+  <image class="handle-shake" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/handle-shake.png" mode="aspectFit"></image>
+  <image class="shake-text" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/shake-text.png" mode="aspectFit"></image>
+  <image 
+    class="bottle" 
+    src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png" 
+    mode="aspectFit" 
+  ></image>
+  
+  <!-- 添加视频组件 -->
+  <video 
+    id="myVideo" 
+    src="https://example.com/your-video.mp4" 
+    controls="{{false}}" 
+    autoplay="{{true}}" 
+    loop="{{true}}" 
+    muted="{{true}}" 
+    playsinline="{{true}}" 
+    show-progress-bar="{{false}}" 
+    show-play-btn="{{false}}" 
+    show-fullscreen-btn="{{false}}" 
+    class="hidden-video"
+  ></video>
+</view>

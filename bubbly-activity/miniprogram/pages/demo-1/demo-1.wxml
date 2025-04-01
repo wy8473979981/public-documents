@@ -1,0 +1,13 @@
+<view class="container">
+  <!-- 使用animation属性绑定动画 -->
+  <view class="movable-box" animation="{{animationData}}">
+    <text>甩动手机上下移动我1</text>
+  </view>
+  
+  <view class="info">
+    <text>当前位置: {{currentPosition.toFixed(2)}}px</text>
+    <text>当前速度: {{currentSpeed.toFixed(2)}}px/frame</text>
+  </view>
+  
+  <button bindtap="resetPosition" class="reset-btn">重置位置</button>
+</view>

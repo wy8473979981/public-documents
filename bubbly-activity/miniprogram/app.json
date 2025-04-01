@@ -1,6 +1,13 @@
 {
   "pages": [
-    "pages/home/home"
+    "pages/shakePage/shakePage",
+    "pages/demo-4/demo-4",
+    "pages/demo-1/demo-1",
+    "pages/demo-3/demo-3",
+    "pages/home/home",
+    "pages/demo-2/demo-2",
+    "pages/cheersPage/cheersPage",
+    "pages/demo/demo"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -21,6 +28,9 @@
   "requiredBackgroundModes": [
     "audio",
     "accelerometer"
+  ],
+  "requiredPrivateInfos": [
+    "getLocation"
   ],
   "permissions": {}
 }
