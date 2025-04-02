@@ -98,15 +98,13 @@ Page({
       showToast(`获取存储失败:${error}`);
     }
   },
-  getTemplate(algoType = 'original', templId: any) {
+  getTemplate(algoType: string = 'original', templId: string = '') {
     const { tabList } = this.data;
-    const item: any = tabList.find((n) => {
-      return n.algoType === algoType;
-    });
+    const item = tabList.find((n) => n.algoType === algoType);
     const currentImgList = item?.options || [];
     this.setData({
-      algoType: algoType ? algoType : item[0]?.algoType || '',
-      templId: templId ? templId : currentImgList[0]?.templateId || '',
+      algoType: algoType || item?.algoType || 'original',
+      templId: templId || currentImgList[0]?.templateId || '',
       currentImgList: currentImgList,
     });
   },
