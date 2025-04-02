@@ -98,7 +98,7 @@ Page({
       showToast(`获取存储失败:${error}`);
     }
   },
-  getTemplate(algoType = 'original', templId = '84') {
+  getTemplate(algoType = 'original', templId: any) {
     const { tabList } = this.data;
     const item: any = tabList.find((n) => {
       return n.algoType === algoType;
@@ -441,7 +441,7 @@ Page({
       console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
 
       // 判断是否为竖屏
-      if (realHeight > realWidth) {
+      if (realHeight >= realWidth) {
         // 竖屏图片，继续处理
         console.log('竖屏图片，继续处理');
 
