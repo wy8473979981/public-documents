@@ -11,7 +11,6 @@ Page({
   },
 
   async onLoad() {
-    this.createRecord();
     const videoSrc = wx.getStorageSync('videoSrc');
     this.setData({ videoSrc: videoSrc });
     this.startShakeListener();
@@ -74,7 +73,7 @@ Page({
         openId: openId,
         type: 1,
         status: 0,
-        source: 0,
+        score: 0,
         createdAt: new Date()
       }
     }
@@ -94,9 +93,9 @@ Page({
         openId: openId,
         type: 1,
         status: 1,
-        source: 10,
+        score: 10,
         id: this.data.recordId,
-        createdAt: new Date()
+        updatedAt: new Date()
       }
     }
     const result = await postRequest('/activity/record', params);

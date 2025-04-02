@@ -105,18 +105,45 @@ export function getOpenId() {
           data
         } = result;
         if (code === "200") {
+          const openId = data?.openId ? data?.openId : '';
           wx.setStorage({
             key: "openId",
-            data: data?.openId ? data?.openId : ''
+            data: openId
           });
           wx.setStorage({
             key: "ntCode",
             data: data?.ntCode ? data?.ntCode : ''
-          })
+          });
+          activityGet(openId);
         }
       } else {
         console.log('登录失败！' + res.errMsg)
       }
     }
   })
+}
+
+export async function activityGet(openId) {
+  const params = {
+    data: {
+      openId: openId,
+      type: 1,
+    }
+  }
+  const result = await postRequest('/activity/get', params);
+  const {
+    code,
+    msg,
+    data
+  } = result;
+  if (code === "200") {
+    console.log('activityGet', data)
+    if (data?.status == 1) {
+      wx.redirectTo({
+        url: '/pages/cheersPage/cheersPage'
+      });
+    }
+  } else {
+    console.error(msg);
+  }
 }
