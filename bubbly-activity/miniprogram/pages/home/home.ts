@@ -1,5 +1,6 @@
-// import { postRequest } from '../../utils/request.js';
-import { delayFn } from '../../utils/index';
+import { postRequest } from '../../utils/request.js';
+import { showToast } from '../../utils/index';
+
 
 interface Bubble {
   x: number;
@@ -36,15 +37,30 @@ Page({
   pollingInterface() {
     const poll = async () => {
       try {
-        await delayFn(5000);
-        // 实际业务逻辑
-        console.log(111);
-        // wx.redirectTo({ url: '/pages/shakePage/shakePage' });
+        const params = {
+          data: {
+            'category': 'cheers_config',
+            'label': 'start_game'
+          }
+        }
+        const result = await postRequest('/sys/dict/list', params);
+        const { code, msg, data } = result;
+        if (code === "200") {
+          const enumvalue = data.cheers_config[0]?.enumvalue;
+          if (enumvalue === "1") {
+            clearTimeout(this.touchTimer);
+            clearTimeout(this.drawBubblesTimer);
+            clearInterval(this.createBubbleTimer);
+            clearInterval(this.pollingTimer);
+            wx.redirectTo({ url: '/pages/shakePage/shakePage' });
+          }
+        } else {
+          showToast(msg);
+        }
       } catch (error) {
         console.error('Polling error:', error);
       }
     };
-
     poll();
     this.pollingTimer = setInterval(poll, 4000);
   },

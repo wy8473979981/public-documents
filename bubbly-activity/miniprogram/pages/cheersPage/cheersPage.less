@@ -24,4 +24,19 @@
     top: 1125.92rpx;
     transform: translateX(-50%);
   }
+
+  .hidden-video,
+  .my-video {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    object-fit: cover; // 添加此行以确保视频填充整个视口
+  }
+
+  .show-video {
+    z-index: 0;
+  }
 }

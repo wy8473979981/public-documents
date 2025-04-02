@@ -5,16 +5,23 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    autoplay: false,
+    videoCheersSrc: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-
+    const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
+    this.setData({ videoCheersSrc: videoCheersSrc });
   },
-
+  cheersPlay() {
+    this.setData({ autoplay: true }); // 播放视频
+  },
+  videoPlayed() {
+    console.log('播放完毕');
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

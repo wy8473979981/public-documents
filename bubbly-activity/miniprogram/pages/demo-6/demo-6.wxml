@@ -1,0 +1,13 @@
+<view class="container">
+  <!-- 原有的canvas -->
+  <canvas id="liquidCanvas" type="2d"></canvas>
+  
+  <!-- 显示进度文本 -->
+  <view class="progress-text">{{progressText}}</view>
+  
+  <!-- 新增的控制按钮 -->
+  <view class="button-group">
+    <button bindtap="increaseStep">增加一步</button>
+    <button bindtap="decreaseStep">减少一步</button>
+  </view>
+</view>

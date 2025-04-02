@@ -65,7 +65,7 @@ export async function postRequest(url, options = {}) {
     });
   });
 }
-export function preloadVideo() {
+export function preloadVideo1() {
   wx.downloadFile({
     url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
     success: (res) => {
@@ -77,4 +77,46 @@ export function preloadVideo() {
       }
     }
   });
+}
+export function preloadVideo2() {
+  wx.downloadFile({
+    url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+    success: (res) => {
+      if (res.statusCode === 200) {
+        wx.setStorage({
+          key: "videoCheersSrc",
+          data: res.tempFilePath
+        });
+      }
+    }
+  });
+}
+export function getOpenId() {
+  wx.login({
+    success: async (res) => {
+      if (res.code) {
+        const result = await getRequest('/wx/user/login', {
+          data: {
+            code: res.code
+          }
+        })
+        const {
+          code,
+          data
+        } = result;
+        if (code === "200") {
+          wx.setStorage({
+            key: "openId",
+            data: data?.openId ? data?.openId : ''
+          });
+          wx.setStorage({
+            key: "ntCode",
+            data: data?.ntCode ? data?.ntCode : ''
+          })
+        }
+      } else {
+        console.log('登录失败！' + res.errMsg)
+      }
+    }
+  })
 }

@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="canvas-container">
+    <canvas id="liquidCanvas" canvas-id="liquidCanvas" type="2d" class="liquid-canvas"></canvas>
+    <view class="progress-text">{{progressText}}</view>
+  </view>
+</view>

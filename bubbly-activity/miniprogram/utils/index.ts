@@ -150,5 +150,12 @@ export function printVersion() {
   console.log(`当前应用版本号: ${config.version}`);
 }
 
-
+type ToastIconType = 'error' | 'success' | 'loading' | 'none';
+export function showToast(msg: string, icon: ToastIconType = 'none', duration = 2000) {
+  wx.showToast({
+    title: msg,
+    icon: icon,
+    duration: duration,
+  });
+}
 
