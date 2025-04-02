@@ -34,37 +34,60 @@ Page({
     clearInterval(this.createBubbleTimer);
     clearInterval(this.pollingTimer);
   },
-  pollingInterface() {
-    const poll = async () => {
-      try {
-        const params = {
-          data: {
-            'category': 'cheers_config',
-            'label': 'start_game'
-          }
-        }
-        const result = await postRequest('/sys/dict/list', params);
-        const { code, msg, data } = result;
-        if (code === "200") {
-          const enumvalue = data.cheers_config[0]?.enumvalue;
-          if (enumvalue === "1") {
-            clearTimeout(this.touchTimer);
-            clearTimeout(this.drawBubblesTimer);
-            clearInterval(this.createBubbleTimer);
-            clearInterval(this.pollingTimer);
-            wx.redirectTo({ url: '/pages/shakePage/shakePage' });
-          }
-        } else {
-          showToast(msg);
-        }
-      } catch (error) {
-        console.error('Polling error:', error);
+  async pollingInterface() {
+    const openId = wx.getStorageSync('openId');
+    const params = {
+      data: {
+        openId: openId,
+        type: 1,
       }
-    };
-    poll();
-    this.pollingTimer = setInterval(poll, 4000);
+    }
+    const result = await postRequest('/activity/get', params);
+    const {
+      code,
+      msg,
+      data
+    } = result;
+    if (code === "200") {
+      console.log('activityGet', data)
+      if (data?.status == 1) {
+        wx.redirectTo({
+          url: '/pages/cheersPage/cheersPage'
+        });
+      } else {
+        this.poll();
+        this.pollingTimer = setInterval(this.poll, 4000);
+      }
+    } else {
+      console.error(msg);
+    }
   },
-
+  async poll() {
+    try {
+      const params = {
+        data: {
+          'category': 'cheers_config',
+          'label': 'start_game'
+        }
+      }
+      const result = await postRequest('/sys/dict/list', params);
+      const { code, msg, data } = result;
+      if (code === "200") {
+        const enumvalue = data.cheers_config[0]?.enumvalue;
+        if (enumvalue === "1") {
+          clearTimeout(this.touchTimer);
+          clearTimeout(this.drawBubblesTimer);
+          clearInterval(this.createBubbleTimer);
+          clearInterval(this.pollingTimer);
+          wx.redirectTo({ url: '/pages/shakePage/shakePage' });
+        }
+      } else {
+        showToast(msg);
+      }
+    } catch (error) {
+      console.error('Polling error:', error);
+    }
+  },
   initCanvas() {
     const query = wx.createSelectorQuery();
     query

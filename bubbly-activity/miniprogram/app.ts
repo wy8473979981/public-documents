@@ -1,6 +1,6 @@
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
-import {preloadVideo1,preloadVideo2,getOpenId } from './utils/request'
+import { preloadVideo1, preloadVideo2, getOpenId } from './utils/request'
 
 App<IAppOption>({
   globalData: {
