@@ -9,14 +9,18 @@ Page({
     videoSrc: '',
     recordId: '',
 
-    bubbles: [],
+    bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
     time: 0,
-    animationId: null,
+    animationId: 0,
     count: 0,
-    progressText: "填充中: 0%",
+    progressText: '填充中: 0%',
     targetHeight: 0, // 新增目标高度
     currentHeight: 0, // 当前实际高度
     lastTime: 0, // 用于计算deltaTime
+    maxHeight: 0,
+    canvasWidth: 0,
+    canvasHeight: 0,
+    fillSpeed: 0,
   },
 
   async onLoad() {
@@ -26,10 +30,8 @@ Page({
   },
   onReady() {
     this.initCanvas();
-    this.lastTime = Date.now();
-    // setInterval(() => {
-    //   this.setCount(this.data.count + 1)
-    // }, 1000)
+    const lastTime = Date.now();
+    this.setData({ lastTime: lastTime });
   },
 
   async animation() {
@@ -46,7 +48,8 @@ Page({
       500,
       () => {
         this.setData({ animationFlag: false });
-      });
+      }
+    );
   },
 
   startShakeListener() {
@@ -74,7 +77,6 @@ Page({
               wx.stopAccelerometer(); // 停止监听
             }
           }
-
         }
       }
     });
@@ -91,12 +93,12 @@ Page({
         type: 1,
         status: 0,
         score: 0,
-        createdAt: new Date()
-      }
-    }
+        createdAt: new Date(),
+      },
+    };
     const result = await postRequest('/activity/record', params);
     const { code, msg, data } = result;
-    if (code === "200") {
+    if (code === '200') {
       console.log(data);
       this.setData({ recordId: data.id });
     } else {
@@ -112,12 +114,12 @@ Page({
         status: 1,
         score: 10,
         id: this.data.recordId,
-        updatedAt: new Date()
-      }
-    }
+        updatedAt: new Date(),
+      },
+    };
     const result = await postRequest('/activity/record', params);
     const { code, msg, data } = result;
-    if (code === "200") {
+    if (code === '200') {
       console.log(data);
     } else {
       showToast(msg);
@@ -126,7 +128,8 @@ Page({
 
   initCanvas() {
     const query = wx.createSelectorQuery();
-    query.select('#liquidCanvas')
+    query
+      .select('#liquidCanvas')
       .fields({ node: true, size: true })
       .exec((res) => {
         if (!res[0]) return;
@@ -148,32 +151,42 @@ Page({
         });
 
         // 初始化气泡
-        const bubbles = Array.from({ length: 8 }, () => ({
-          x: Math.random() * res[0].width,
-          y: res[0].height + Math.random() * 50,
-          radius: Math.random() * 4 + 3,
-          speed: Math.random() * 0.3 + 0.2,
-        }));
+        // const bubbles = Array.from({ length: 8 }, () => ({
+        //   x: Math.random() * res[0].width,
+        //   y: res[0].height + Math.random() * 50,
+        //   radius: Math.random() * 4 + 3,
+        //   speed: Math.random() * 0.3 + 0.2,
+        // }));
 
-        this.setData({ bubbles }, () => {
-          this.liquidCanvasAnimate();
-        });
+        // this.setData({ bubbles }, () => {
+        //   this.liquidCanvasAnimate();
+        // });
+
+        this.liquidCanvasAnimate();
       });
   },
 
   // 设置count值，每次+1都会触发高度变化
-  setCount(count) {
+  setCount(count: any) {
     const maxHeight = this.data.maxHeight;
-    const targetHeight = Math.min(count / 10 * maxHeight, maxHeight);
+    const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
 
-    this.setData({
-      count,
-      targetHeight,
-    }, () => {
-      // 更新进度文本
-      const progress = Math.min(100, Math.floor((targetHeight / maxHeight) * 100));
-      this.setData({ progressText: count >= 10 ? `填充完成: 100%` : `填充中: ${progress}%` });
-    });
+    this.setData(
+      {
+        count,
+        targetHeight,
+      },
+      () => {
+        // 更新进度文本
+        const progress = Math.min(
+          100,
+          Math.floor((targetHeight / maxHeight) * 100)
+        );
+        this.setData({
+          progressText: count >= 10 ? `填充完成: 100%` : `填充中: ${progress}%`,
+        });
+      }
+    );
   },
 
   liquidCanvasAnimate() {
@@ -182,7 +195,8 @@ Page({
     this.setData({ lastTime: now });
 
     const query = wx.createSelectorQuery();
-    query.select('#liquidCanvas')
+    query
+      .select('#liquidCanvas')
       .fields({ node: true, size: true })
       .exec((res) => {
         if (!res[0]) return;
@@ -192,7 +206,7 @@ Page({
         const width = this.data.canvasWidth;
         const height = this.data.canvasHeight;
         let time = this.data.time;
-        const bubbles = this.data.bubbles;
+        // const bubbles = this.data.bubbles;
 
         // 平滑过渡到目标高度
         let currentHeight = this.data.currentHeight;
@@ -221,7 +235,8 @@ Page({
         // 底层波浪
         ctx.beginPath();
         for (let x = 0; x <= width; x += 8) {
-          const waveY = height - currentHeight + Math.sin(x * 0.025 + time * 0.9) * 8 + 6;
+          const waveY =
+            height - currentHeight + Math.sin(x * 0.025 + time * 0.9) * 8 + 6;
           const y = Math.min(waveY, height);
           ctx.lineTo(x, y);
         }
@@ -242,7 +257,12 @@ Page({
         ctx.lineTo(0, height);
         ctx.closePath();
 
-        const waveGradient = ctx.createLinearGradient(0, height - currentHeight, 0, height);
+        const waveGradient = ctx.createLinearGradient(
+          0,
+          height - currentHeight,
+          0,
+          height
+        );
         waveGradient.addColorStop(0, 'rgba(255,240,180,0.7)');
         waveGradient.addColorStop(1, 'rgba(230,210,140,0.9)');
         ctx.fillStyle = waveGradient;

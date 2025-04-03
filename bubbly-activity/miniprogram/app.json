@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/home/home",
     "pages/shakePage/shakePage",
+    "pages/home/home",
     "pages/demo-5/demo-5",
     "pages/demo-9/demo-9",
     "pages/demo-8/demo-8",
