@@ -71,7 +71,6 @@ Page({
       this.pollingTimer = setInterval(this.poll, 4000);
       this.setData({ loading: false });
     }
-
   },
   async poll() {
     try {
@@ -124,8 +123,8 @@ Page({
           const newBubble: Bubble = {
             x: Math.random() * (canvas.width - 20),
             y: canvas.height,
-            radius: 4 + Math.random() * 7.5,
-            speed: 0.8 + Math.random() * 1.2,
+            radius: 16 + Math.random() * 15,
+            speed: 1.6 + Math.random() * 1.4,
             drift: Math.random() * 2 - 1,
             img: 1,
           };
@@ -171,7 +170,7 @@ Page({
         };
 
         bubbleImage1.onload = () => {
-          this.createBubbleTimer = setInterval(() => createBubble(), 100);
+          this.createBubbleTimer = setInterval(() => createBubble(), 300);
           drawBubbles();
         };
       });
@@ -187,7 +186,7 @@ Page({
     // 启动定时器，持续生成气泡
     this.touchTimer = setInterval(() => {
       this.createBubble(pageX, pageY);
-    }, 50); // 每 100ms 生成一个气泡
+    }, 200); // 每 100ms 生成一个气泡
   },
 
   /** 处理触摸结束 */
@@ -203,8 +202,8 @@ Page({
     const newBubble: Bubble = {
       x,
       y,
-      radius: 4 + Math.random() * 7.5,
-      speed: 0.8 + Math.random() * 1.2,
+      radius: 16 + Math.random() * 15,
+      speed: 1.6 + Math.random() * 1.4,
       drift: Math.random() * 2 - 1,
       img: 2, // 随机使用两种泡泡图片
     };
