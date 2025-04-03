@@ -14,6 +14,7 @@ interface Bubble {
 Page({
   data: {
     loading: true,
+    first: true,
     bubbles: [] as Bubble[],
     bubbleImg1:
       'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
@@ -26,8 +27,10 @@ Page({
   createBubbleTimer: 0,
   pollingTimer: 0,
 
-  onLoad() {
-    this.pollingInterface();
+
+  onReady() {
+    this.getList();
+    this.pollingTimer = setInterval(this.getList, 4000);
   },
   onUnload() {
     clearTimeout(this.touchTimer);
@@ -50,7 +53,6 @@ Page({
       }
     };
 
-    // 使用Promise.all并行执行两个请求
     const [result1, result2] = await Promise.all([
       postRequest('/activity/get', params1),
       postRequest('/activity/get', params2)
@@ -67,12 +69,10 @@ Page({
         url: `/pages/cheersPage/cheersPage?type=${type}`
       });
     } else {
-      this.initCanvas();
-      this.pollingTimer = setInterval(this.poll, 4000);
-      this.setData({ loading: false });
+      wx.redirectTo({ url: '/pages/shakePage/shakePage' });
     }
   },
-  async poll() {
+  async getList() {
     try {
       const params = {
         data: {
@@ -85,11 +85,15 @@ Page({
       if (code === "200") {
         const enumvalue = data.cheers_config[0]?.enumvalue;
         if (enumvalue === "1") {
+          // 开始了
           clearTimeout(this.touchTimer);
           clearTimeout(this.drawBubblesTimer);
           clearInterval(this.createBubbleTimer);
           clearInterval(this.pollingTimer);
-          wx.redirectTo({ url: '/pages/shakePage/shakePage' });
+          this.pollingInterface();
+        } else {
+          this.initCanvas(this.data.first);
+          this.setData({ loading: false });
         }
       } else {
         showToast(msg);
@@ -98,84 +102,88 @@ Page({
       console.error('Polling error:', error);
     }
   },
-  initCanvas() {
-    const query = wx.createSelectorQuery();
-    query
-      .select('#beerCanvas')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        if (!res[0] || !res[0].node) return;
+  initCanvas(first: boolean) {
+    if (first) {
+      console.log('first', first);
+      this.setData({ first: false });
+      const query = wx.createSelectorQuery();
+      query
+        .select('#beerCanvas')
+        .fields({ node: true, size: true })
+        .exec((res) => {
+          if (!res[0] || !res[0].node) return;
 
-        const { bubbleImg1, bubbleImg2 } = this.data;
-        const canvas = res[0].node;
-        const ctx = canvas.getContext('2d');
+          const { bubbleImg1, bubbleImg2 } = this.data;
+          const canvas = res[0].node;
+          const ctx = canvas.getContext('2d');
 
-        canvas.width = res[0]?.width;
-        canvas.height = res[0]?.height;
+          canvas.width = res[0]?.width;
+          canvas.height = res[0]?.height;
 
-        const bubbleImage1 = canvas.createImage();
-        const bubbleImage2 = canvas.createImage();
-        bubbleImage1.src = bubbleImg1;
-        bubbleImage2.src = bubbleImg2;
+          const bubbleImage1 = canvas.createImage();
+          const bubbleImage2 = canvas.createImage();
+          bubbleImage1.src = bubbleImg1;
+          bubbleImage2.src = bubbleImg2;
 
-        const createBubble = () => {
-          const { bubbles } = this.data;
-          const newBubble: Bubble = {
-            x: Math.random() * (canvas.width - 20),
-            y: canvas.height,
-            radius: 16 + Math.random() * 15,
-            speed: 1.6 + Math.random() * 1.4,
-            drift: Math.random() * 2 - 1,
-            img: 1,
+          const createBubble = () => {
+            const { bubbles } = this.data;
+            const newBubble: Bubble = {
+              x: Math.random() * (canvas.width - 20),
+              y: canvas.height,
+              radius: 16 + Math.random() * 15,
+              speed: 1.6 + Math.random() * 1.4,
+              drift: Math.random() * 2 - 1,
+              img: 1,
+            };
+            this.setData({
+              bubbles: [...bubbles, newBubble],
+            });
           };
-          this.setData({
-            bubbles: [...bubbles, newBubble],
-          });
-        };
 
-        const drawBubbles = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const { bubbles } = this.data;
+          const drawBubbles = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const { bubbles } = this.data;
 
-          bubbles.forEach((bubble) => {
-            bubble.y -= bubble.speed;
-            bubble.x += Math.sin(bubble.y * 0.03) * bubble.drift;
-            bubble.x = Math.max(
-              0,
-              Math.min(canvas.width - bubble.radius, bubble.x)
+            bubbles.forEach((bubble) => {
+              bubble.y -= bubble.speed;
+              bubble.x += Math.sin(bubble.y * 0.03) * bubble.drift;
+              bubble.x = Math.max(
+                0,
+                Math.min(canvas.width - bubble.radius, bubble.x)
+              );
+            });
+
+            const newBubbles = bubbles.filter(
+              (bubble) => bubble.y + bubble.radius > 0
             );
-          });
+            this.setData({ bubbles: newBubbles });
 
-          const newBubbles = bubbles.filter(
-            (bubble) => bubble.y + bubble.radius > 0
-          );
-          this.setData({ bubbles: newBubbles });
+            newBubbles.forEach((bubble) => {
+              const bubbleImage = bubble.img === 1 ? bubbleImage1 : bubbleImage2;
+              ctx.drawImage(
+                bubbleImage,
+                bubble.x,
+                bubble.y,
+                bubble.radius,
+                bubble.radius
+              );
+            });
 
-          newBubbles.forEach((bubble) => {
-            const bubbleImage = bubble.img === 1 ? bubbleImage1 : bubbleImage2;
-            ctx.drawImage(
-              bubbleImage,
-              bubble.x,
-              bubble.y,
-              bubble.radius,
-              bubble.radius
-            );
-          });
+            if (bubbles.length <= 0) {
+              clearTimeout(this.drawBubblesTimer);
+            }
 
-          if (bubbles.length <= 0) {
-            clearTimeout(this.drawBubblesTimer);
-          }
+            this.drawBubblesTimer = setTimeout(drawBubbles, 16);
+          };
 
-          this.drawBubblesTimer = setTimeout(drawBubbles, 16);
-        };
+          bubbleImage1.onload = () => {
+            this.createBubbleTimer = setInterval(() => createBubble(), 300);
+            drawBubbles();
+          };
+        });
+    }
 
-        bubbleImage1.onload = () => {
-          this.createBubbleTimer = setInterval(() => createBubble(), 300);
-          drawBubbles();
-        };
-      });
   },
-
   /** 处理触摸开始 */
   onTouchStart(event: any) {
     const { pageX, pageY } = event.touches[0];
