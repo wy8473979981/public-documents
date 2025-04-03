@@ -1,14 +1,5 @@
-
-import { postRequest } from '../../utils/request.js';
-import { showToast } from '../../utils/index';
 Page({
   data: {
-    animationFlag: false,
-    animationCount: 0,
-    autoplay: false,
-    videoSrc: '',
-    recordId: '',
-
     bubbles: [],
     time: 0,
     animationId: null,
@@ -19,108 +10,17 @@ Page({
     lastTime: 0, // 用于计算deltaTime
   },
 
-  async onLoad() {
-    const videoSrc = wx.getStorageSync('videoSrc');
-    this.setData({ videoSrc: videoSrc });
-    this.startShakeListener();
-  },
   onReady() {
     this.initCanvas();
     this.lastTime = Date.now();
-    // setInterval(() => {
-    //   this.setCount(this.data.count + 1)
-    // }, 1000)
+    setInterval(()=>{
+      this.setCount(this.data.count+1)
+    },1000)
   },
 
-  async animation() {
-    console.log('animation', this.data.animationCount);
-    this.setData({ animationCount: this.data.animationCount + 1 });
-    this.setCount(this.data.animationCount + 1);
-    this.animate(
-      '.bottle',
-      [
-        { translateX: '-50%', top: '178px', ease: 'ease-out' },
-        { translateX: '-50%', top: '350px', ease: 'ease-out' },
-        { translateX: '-50%', top: '178px', ease: 'ease-out' },
-      ],
-      500,
-      () => {
-        this.setData({ animationFlag: false });
-      });
-  },
-
-  startShakeListener() {
-    let lastTime = 0;
-    const threshold = 1; // 设置阈值
-    wx.onAccelerometerChange(async (res) => {
-      let curTime = new Date().getTime();
-      if (curTime - lastTime > 10) {
-        // 限制触发频率
-        lastTime = curTime;
-        if (res.y < -threshold || res.y > threshold) {
-          console.log('y：', res.y);
-          const { animationFlag, animationCount } = this.data;
-          if (!animationFlag) {
-            if (animationCount < 10) {
-              if (animationCount === 0) {
-                this.createRecord();
-              }
-              this.setData({ animationFlag: true });
-              this.animation();
-            } else {
-              console.log('animationCount', animationCount);
-              this.updateRecord();
-              this.setData({ autoplay: true }); // 播放视频
-              wx.stopAccelerometer(); // 停止监听
-            }
-          }
-
-        }
-      }
-    });
-  },
-  videoPlayed() {
-    console.log('播放完毕');
-    wx.redirectTo({ url: '/pages/cheersPage/cheersPage' });
-  },
-  async createRecord() {
-    const openId = wx.getStorageSync('openId');
-    const params = {
-      data: {
-        openId: openId,
-        type: 1,
-        status: 0,
-        score: 0,
-        createdAt: new Date()
-      }
-    }
-    const result = await postRequest('/activity/record', params);
-    const { code, msg, data } = result;
-    if (code === "200") {
-      console.log(data);
-      this.setData({ recordId: data.id });
-    } else {
-      showToast(msg);
-    }
-  },
-  async updateRecord() {
-    const openId = wx.getStorageSync('openId');
-    const params = {
-      data: {
-        openId: openId,
-        type: 1,
-        status: 1,
-        score: 10,
-        id: this.data.recordId,
-        updatedAt: new Date()
-      }
-    }
-    const result = await postRequest('/activity/record', params);
-    const { code, msg, data } = result;
-    if (code === "200") {
-      console.log(data);
-    } else {
-      showToast(msg);
+  onUnload() {
+    if (this.data.animationId) {
+      clearTimeout(this.data.animationId);
     }
   },
 
@@ -134,11 +34,11 @@ Page({
         const canvas = res[0].node;
         const ctx = canvas.getContext('2d');
         const dpr = wx.getSystemInfoSync().pixelRatio;
-
+        
         canvas.width = res[0].width * dpr;
         canvas.height = res[0].height * dpr;
         ctx.scale(dpr, dpr);
-
+        
         // 初始化配置
         this.setData({
           canvasWidth: res[0].width,
@@ -154,9 +54,9 @@ Page({
           radius: Math.random() * 4 + 3,
           speed: Math.random() * 0.3 + 0.2,
         }));
-
+        
         this.setData({ bubbles }, () => {
-          this.liquidCanvasAnimate();
+          this.animate();
         });
       });
   },
@@ -165,8 +65,8 @@ Page({
   setCount(count) {
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min(count / 10 * maxHeight, maxHeight);
-
-    this.setData({
+    
+    this.setData({ 
       count,
       targetHeight,
     }, () => {
@@ -176,7 +76,7 @@ Page({
     });
   },
 
-  liquidCanvasAnimate() {
+  animate() {
     const now = Date.now();
     const deltaTime = now - this.data.lastTime;
     this.setData({ lastTime: now });
@@ -193,12 +93,12 @@ Page({
         const height = this.data.canvasHeight;
         let time = this.data.time;
         const bubbles = this.data.bubbles;
-
+        
         // 平滑过渡到目标高度
         let currentHeight = this.data.currentHeight;
         const targetHeight = this.data.targetHeight;
         const fillSpeed = this.data.fillSpeed * (deltaTime / 16);
-
+        
         if (currentHeight < targetHeight) {
           currentHeight = Math.min(currentHeight + fillSpeed, targetHeight);
           this.setData({ currentHeight });
@@ -212,7 +112,7 @@ Page({
         // 如果count为0，则不绘制任何内容
         if (this.data.count === 0) {
           const animationId = setTimeout(() => {
-            this.liquidCanvasAnimate();
+            this.animate();
           }, 16);
           this.setData({ animationId });
           return;
@@ -248,21 +148,25 @@ Page({
         ctx.fillStyle = waveGradient;
         ctx.fill();
 
+        // 高光
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += 5) {
+          const waveY = height - currentHeight + Math.sin(x * 0.03 + time) * 10 - 2;
+          const y = Math.min(waveY, height);
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
         time += 0.08;
         this.setData({ time });
 
         const animationId = setTimeout(() => {
-          this.liquidCanvasAnimate();
+          this.animate();
         }, 16);
 
         this.setData({ animationId });
       });
-  },
-
-  onUnload() {
-    wx.stopAccelerometer(); // 退出页面时停止监听
-    if (this.data.animationId) {
-      clearTimeout(this.data.animationId);
-    }
-  },
+  }
 });

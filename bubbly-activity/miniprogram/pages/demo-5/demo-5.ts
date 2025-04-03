@@ -44,12 +44,6 @@ Page({
     // 开始动画循环
     this.lastTime = Date.now();
     this.animate();
-    // setInterval(() => {
-    //   const step = this.data.step + 1;
-    //   console.log('step', step);
-    //   this.setData({ step: step });
-    //   this.animate(step);
-    // }, 5000);
   },
 
   animate(step) {
@@ -73,17 +67,6 @@ Page({
     // 更新液体高度
     if (!this.config.fillComplete) {
       // 基于时间差的速度控制
-
-
-      // const height = this.config.maxHeight / 10 * step;
-      // console.log('height', height);
-
-      // if (this.config.currentHeight >= height) {
-      //   this.stopAnimation = true;
-      //   if (this.animationTimer) {
-      //     clearTimeout(this.animationTimer);
-      //   }
-      // }
 
       this.config.currentHeight += this.config.fillSpeed * (deltaTime / 16);
       console.log('this.config.currentHeight', this.config.currentHeight);

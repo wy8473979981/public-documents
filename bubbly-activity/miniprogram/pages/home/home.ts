@@ -42,6 +42,8 @@ Page({
         type: 1,
       }
     }
+    // const result = await postRequest('/sys/data/rdg?key=cheers_config-start_game');
+    // console.log(result);
     const result = await postRequest('/activity/get', params);
     const {
       code,

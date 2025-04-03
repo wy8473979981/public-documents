@@ -1,0 +1,4 @@
+<!--pages/demo-7/demo-7.wxml-->
+<view class="wrapper">
+  <canvas id="liquidCanvas" canvas-id="liquidCanvas" type="2d" class="liquidCanvas"></canvas>
+</view>
