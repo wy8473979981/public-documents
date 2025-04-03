@@ -11,8 +11,8 @@ App<IAppOption>({
     this.checkWeChatVersion("3.7.3");
     printVersion();
     getOpenId();
-    preloadVideo1();
-    preloadVideo2();
+    // preloadVideo1();
+    // preloadVideo2();
   },
   checkWeChatVersion(minVersion) {
     try {

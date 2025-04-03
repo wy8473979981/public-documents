@@ -66,30 +66,38 @@ export async function postRequest(url, options = {}) {
   });
 }
 export function preloadVideo1() {
-  wx.downloadFile({
-    url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
-    success: (res) => {
-      if (res.statusCode === 200) {
-        wx.setStorage({
-          key: "videoSrc",
-          data: res.tempFilePath
-        });
+  const videoSrc = wx.getStorageSync('videoSrc');
+  if (!videoSrc) {
+    wx.downloadFile({
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
+      success: (res) => {
+        if (res.statusCode === 200) {
+          console.log('video');
+          wx.setStorage({
+            key: "videoSrc",
+            data: res.tempFilePath
+          });
+        }
       }
-    }
-  });
+    });
+  }
 }
 export function preloadVideo2() {
-  wx.downloadFile({
-    url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
-    success: (res) => {
-      if (res.statusCode === 200) {
-        wx.setStorage({
-          key: "videoCheersSrc",
-          data: res.tempFilePath
-        });
+  const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
+  if (!videoCheersSrc) {
+    wx.downloadFile({
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+      success: (res) => {
+        if (res.statusCode === 200) {
+          console.log('cheers');
+          wx.setStorage({
+            key: "videoCheersSrc",
+            data: res.tempFilePath
+          });
+        }
       }
-    }
-  });
+    });
+  }
 }
 export function getOpenId() {
   wx.login({
@@ -106,6 +114,7 @@ export function getOpenId() {
         } = result;
         if (code === "200") {
           const openId = data?.openId ? data?.openId : '';
+          console.log('openId', openId)
           wx.setStorage({
             key: "openId",
             data: openId

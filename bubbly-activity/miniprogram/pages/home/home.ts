@@ -1,5 +1,5 @@
 import { postRequest } from '../../utils/request.js';
-import { showToast } from '../../utils/index';
+import { showToast, delayFn } from '../../utils/index';
 
 
 interface Bubble {
@@ -13,11 +13,13 @@ interface Bubble {
 
 Page({
   data: {
+    loading: true,
     bubbles: [] as Bubble[],
     bubbleImg1:
       'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
     bubbleImg2:
       'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-2.png',
+    infinite: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/infinite.gif',
   },
   touchTimer: 0,
   drawBubblesTimer: 0,
@@ -25,7 +27,6 @@ Page({
   pollingTimer: 0,
 
   onLoad() {
-    this.initCanvas();
     this.pollingInterface();
   },
   onUnload() {
@@ -36,33 +37,41 @@ Page({
   },
   async pollingInterface() {
     const openId = wx.getStorageSync('openId');
-    const params = {
+    const params1 = {
       data: {
         openId: openId,
-        type: 1,
+        type: 1, // 1：有没有摇  3：有没有点击cheers
       }
-    }
-    // const result = await postRequest('/sys/data/rdg?key=cheers_config-start_game');
-    // console.log(result);
-    const result = await postRequest('/activity/get', params);
-    const {
-      code,
-      msg,
-      data
-    } = result;
-    if (code === "200") {
-      console.log('activityGet', data)
-      if (data?.status == 1) {
-        wx.redirectTo({
-          url: '/pages/cheersPage/cheersPage'
-        });
+    };
+    const params2 = {
+      data: {
+        openId: openId,
+        type: 3, // 1：有没有摇  3：有没有点击cheers
+      }
+    };
+
+    // 使用Promise.all并行执行两个请求
+    const [result1, result2] = await Promise.all([
+      postRequest('/activity/get', params1),
+      postRequest('/activity/get', params2)
+    ]);
+
+    if (result1.data?.status === 1) {
+      let type = 0;
+      if (result2.data?.status === 1) {
+        type = result2.data?.type;
       } else {
-        this.poll();
-        this.pollingTimer = setInterval(this.poll, 4000);
+        type = result1.data?.type;
       }
+      wx.redirectTo({
+        url: `/pages/cheersPage/cheersPage?type=${type}`
+      });
     } else {
-      console.error(msg);
+      this.initCanvas();
+      this.pollingTimer = setInterval(this.poll, 4000);
+      this.setData({ loading: false });
     }
+
   },
   async poll() {
     try {

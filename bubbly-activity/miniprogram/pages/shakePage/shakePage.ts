@@ -3,17 +3,14 @@ import { postRequest } from '../../utils/request.js';
 import { showToast } from '../../utils/index';
 Page({
   data: {
-    animationFlag: false,
-    animationCount: 0,
-    autoplay: false,
-    videoSrc: '',
+    showVideo: false,
+    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
     recordId: '',
 
     bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
     time: 0,
     animationId: 0,
     count: 0,
-    progressText: '填充中: 0%',
     targetHeight: 0, // 新增目标高度
     currentHeight: 0, // 当前实际高度
     lastTime: 0, // 用于计算deltaTime
@@ -21,65 +18,133 @@ Page({
     canvasWidth: 0,
     canvasHeight: 0,
     fillSpeed: 0,
+
+    shakeCount: 0,
+    shakeThreshold: 4, // 摇晃阈值（敏感度）
+    lastX: 0,
+    lastY: 0,
+    lastZ: 0,
+    shakeLastTime: 0,
+
+    firstReady: true,
+    bottleAnimationFlag: false,
+    bottleStopAnimationFlag: false,
   },
+  videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad() {
-    const videoSrc = wx.getStorageSync('videoSrc');
-    this.setData({ videoSrc: videoSrc });
-    this.startShakeListener();
+
   },
   onReady() {
+    this.startShakeListener();
     this.initCanvas();
     const lastTime = Date.now();
     this.setData({ lastTime: lastTime });
+    this.videoContext = wx.createVideoContext('myVideo');
   },
+  startShakeListener() {
+    // 监听加速度计数据
+    wx.onAccelerometerChange(async (res) => {
+      const { x, y, z } = res;
 
-  async animation() {
-    console.log('animation', this.data.animationCount);
-    this.setData({ animationCount: this.data.animationCount + 1 });
-    this.setCount(this.data.animationCount + 1);
+      // 计算加速度差值
+      const deltaX = Math.abs(x - this.data.lastX);
+      const deltaY = Math.abs(y - this.data.lastY);
+      const deltaZ = Math.abs(z - this.data.lastZ);
+
+      // 判断是否达到摇晃阈值
+      if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
+        this.setData({ firstReady: false });
+        this.bottleAnimation();
+        this.triggerShake();
+      } else {
+        const { firstReady, bottleAnimationFlag, bottleStopAnimationFlag } = this.data;
+
+        if (!firstReady && !bottleAnimationFlag && !bottleStopAnimationFlag) {
+          this.setData({ bottleStopAnimationFlag: true });
+          this.bottleStopAnimation();
+        }
+      }
+      // 记录当前加速度值
+      this.setData({
+        lastX: x,
+        lastY: y,
+        lastZ: z,
+      });
+    });
+  },
+  bottleAnimation() {
+    const { bottleAnimationFlag, shakeCount } = this.data;
+    if (!bottleAnimationFlag && shakeCount <= 10) {
+      this.setData({ bottleAnimationFlag: true });
+      this.animate(
+        '.bottle',
+        [
+          { translateX: '-50%', top: '178px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '168px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '186px', rotateZ: 10, ease: 'ease-out' },
+          { translateX: '-50%', top: '178px', rotateZ: 10, ease: 'ease-out' },
+        ],
+        100,
+        () => {
+          this.setData({ bottleAnimationFlag: false, bottleStopAnimationFlag: false });
+        }
+      );
+    }
+  },
+  bottleStopAnimation() {
     this.animate(
       '.bottle',
       [
-        { translateX: '-50%', top: '178px', ease: 'ease-out' },
-        { translateX: '-50%', top: '350px', ease: 'ease-out' },
-        { translateX: '-50%', top: '178px', ease: 'ease-out' },
+        { translateX: '-50%', top: '178px', rotateZ: 10, ease: 'ease-out' },
+        { translateX: '-50%', top: '178px', rotateZ: 0, ease: 'ease-out' },
       ],
-      500,
-      () => {
-        this.setData({ animationFlag: false });
-      }
+      200,
+      () => { }
     );
   },
+  triggerShake() {
+    const { shakeCount } = this.data;
+    const newCount = shakeCount + 1;
+    this.setCount(newCount);
 
-  startShakeListener() {
-    let lastTime = 0;
-    const threshold = 1; // 设置阈值
-    wx.onAccelerometerChange(async (res) => {
-      let curTime = new Date().getTime();
-      if (curTime - lastTime > 10) {
-        // 限制触发频率
-        lastTime = curTime;
-        if (res.y < -threshold || res.y > threshold) {
-          console.log('y：', res.y);
-          const { animationFlag, animationCount } = this.data;
-          if (!animationFlag) {
-            if (animationCount < 10) {
-              if (animationCount === 0) {
-                this.createRecord();
-              }
-              this.setData({ animationFlag: true });
-              this.animation();
-            } else {
-              console.log('animationCount', animationCount);
-              this.updateRecord();
-              this.setData({ autoplay: true }); // 播放视频
-              wx.stopAccelerometer(); // 停止监听
-            }
-          }
-        }
-      }
-    });
+    if (newCount === 1) {
+      this.createRecord();
+    } else if (newCount >= 10) {
+      // 播放视频
+      this.setData({ showVideo: true });
+      this.videoContext?.play();
+
+      // 调接口保存
+      this.updateRecord();
+
+      // 退出页面时停止监听
+      wx.stopAccelerometer();
+      return;
+    }
+    console.log('shakeCount1', newCount);
+
+    this.setData({ shakeCount: newCount });
   },
   videoPlayed() {
     console.log('播放完毕');
@@ -99,7 +164,6 @@ Page({
     const result = await postRequest('/activity/record', params);
     const { code, msg, data } = result;
     if (code === '200') {
-      console.log(data);
       this.setData({ recordId: data.id });
     } else {
       showToast(msg);
@@ -118,14 +182,13 @@ Page({
       },
     };
     const result = await postRequest('/activity/record', params);
-    const { code, msg, data } = result;
+    const { code, msg } = result;
     if (code === '200') {
-      console.log(data);
+      // console.log(data);
     } else {
       showToast(msg);
     }
   },
-
   initCanvas() {
     const query = wx.createSelectorQuery();
     query
@@ -149,19 +212,6 @@ Page({
           maxHeight: res[0].height * 0.5, // 最大高度为画布一半
           fillSpeed: 1.5, // 填充速度
         });
-
-        // 初始化气泡
-        // const bubbles = Array.from({ length: 8 }, () => ({
-        //   x: Math.random() * res[0].width,
-        //   y: res[0].height + Math.random() * 50,
-        //   radius: Math.random() * 4 + 3,
-        //   speed: Math.random() * 0.3 + 0.2,
-        // }));
-
-        // this.setData({ bubbles }, () => {
-        //   this.liquidCanvasAnimate();
-        // });
-
         this.liquidCanvasAnimate();
       });
   },
@@ -171,22 +221,10 @@ Page({
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
 
-    this.setData(
-      {
-        count,
-        targetHeight,
-      },
-      () => {
-        // 更新进度文本
-        const progress = Math.min(
-          100,
-          Math.floor((targetHeight / maxHeight) * 100)
-        );
-        this.setData({
-          progressText: count >= 10 ? `填充完成: 100%` : `填充中: ${progress}%`,
-        });
-      }
-    );
+    this.setData({
+      count,
+      targetHeight,
+    });
   },
 
   liquidCanvasAnimate() {
@@ -206,7 +244,6 @@ Page({
         const width = this.data.canvasWidth;
         const height = this.data.canvasHeight;
         let time = this.data.time;
-        // const bubbles = this.data.bubbles;
 
         // 平滑过渡到目标高度
         let currentHeight = this.data.currentHeight;

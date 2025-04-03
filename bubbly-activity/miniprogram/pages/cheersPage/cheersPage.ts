@@ -1,34 +1,61 @@
 // pages/cheersPage/cheersPage.ts
+import { postRequest } from '../../utils/request.js';
+import { showToast } from '../../utils/index';
+interface PageOptions {
+  type?: number;
+}
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    autoplay: false,
-    videoCheersSrc: '',
+    showVideo: false,
+    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+    showCheers: true,
   },
+  videoContext: null as WechatMiniprogram.VideoContext | null,
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad() {
-    const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
-    this.setData({ videoCheersSrc: videoCheersSrc });
+  onLoad(options: PageOptions) {
+    // const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
+    // this.setData({ videoCheersSrc: videoCheersSrc });
+    if (options?.type == 3) {
+      // 播放过cheers视频显示最后一个画面
+      this.setData({ showCheers: false });
+    }
+  },
+  onReady() {
+    this.videoContext = wx.createVideoContext('myVideo');
   },
   cheersPlay() {
-    this.setData({ autoplay: true }); // 播放视频
+    this.setData({ showVideo: true }); // 播放视频
+    this.videoContext?.play();
+    this.updateRecord();
+  },
+  async updateRecord() {
+    const openId = wx.getStorageSync('openId');
+    const params = {
+      data: {
+        openId: openId,
+        type: 3,
+        status: 1,
+      },
+    };
+    const result = await postRequest('/activity/record', params);
+    const { code, msg, data } = result;
+    if (code === '200') {
+      console.log(data);
+    } else {
+      showToast(msg);
+    }
   },
   videoPlayed() {
     console.log('播放完毕');
   },
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
+  
   /**
    * 生命周期函数--监听页面显示
    */

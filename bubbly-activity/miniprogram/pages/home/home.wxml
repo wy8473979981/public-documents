@@ -1,4 +1,7 @@
 <!--pages/home/home.wxml-->
 <view class="home-wrapper">
+  <view wx:if="{{ loading }}" class="loding-wrapper">
+    <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
+  </view>
   <canvas class="beerCanvas" id="beerCanvas" type="2d" disable-scroll bindtouchstart="onTouchStart" bindtouchend="onTouchEnd"></canvas>
 </view>
