@@ -142,6 +142,8 @@ Page({
     const { currentPhoto } = this.data;
     if (currentPhoto) {
       this.directionJudgment(currentPhoto);
+    }else{
+      showToast('请选择图片');
     }
   },
   onBackHome() {
