@@ -56,9 +56,11 @@ Page({
       const deltaX = Math.abs(x - this.data.lastX);
       const deltaY = Math.abs(y - this.data.lastY);
       const deltaZ = Math.abs(z - this.data.lastZ);
+     
 
       // 判断是否达到摇晃阈值
       if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
+        console.log(deltaX, deltaY, deltaZ);
         this.setData({ firstReady: false });
         this.bottleAnimation();
         this.triggerShake();
