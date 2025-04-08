@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/guidePage/guidePage",
     "pages/homePage/homePage",
     "pages/shakePage/shakePage",
     "pages/bubblyHome/bubblyHome",
-    "pages/guidePage/guidePage",
     "pages/game3Page/game3Page",
     "pages/loginPage/loginPage",
     "pages/game1Page/game1Page",
