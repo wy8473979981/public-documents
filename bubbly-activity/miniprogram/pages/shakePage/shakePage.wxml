@@ -3,6 +3,7 @@
   <image class="shake-text" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/shake-text.png" mode="aspectFit"></image>
   <canvas id="liquidCanvas" canvas-id="liquidCanvas" type="2d" class="liquidCanvas"></canvas>
   <image id="bottle" class="bottle" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png" mode="aspectFit"></image>
+  <view class="progress-text">{{progressNum}}%</view>
 
   <!-- 添加视频组件 -->
   <video id="myVideo" class="my-video  {{showVideo? 'show-video' : ''}}" src="{{videoSrc}}" autoplay="{{showVideo}}" controls="{{false}}" loop="{{false}}" muted="{{true}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" show-bottom-progress="{{false}}" object-fit="cover" bindended="videoPlayed"></video>

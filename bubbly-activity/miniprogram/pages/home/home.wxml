@@ -3,5 +3,5 @@
   <view wx:if="{{ loading }}" class="loding-wrapper">
     <image class="loader" src="{{infinite}}" mode="aspectFit"></image>
   </view>
-  <canvas class="beerCanvas" id="beerCanvas" type="2d" disable-scroll bindtouchstart="onTouchStart" bindtouchend="onTouchEnd"></canvas>
+  <canvas class="beerCanvas" id="beerCanvas" type="2d" disable-scroll bind:tap="onClickCanvas"></canvas>
 </view>

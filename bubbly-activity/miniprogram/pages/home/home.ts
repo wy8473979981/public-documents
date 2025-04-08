@@ -16,10 +16,8 @@ Page({
     loading: true,
     first: true,
     bubbles: [] as Bubble[],
-    bubbleImg1:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
-    bubbleImg2:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-2.png',
+    bubbleImg1: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
+    bubbleImg2: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-2.png',
     infinite: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/infinite.gif',
   },
   touchTimer: 0,
@@ -57,6 +55,7 @@ Page({
       postRequest('/activity/get', params1),
       postRequest('/activity/get', params2)
     ]);
+    console.log(result1, result2);
 
     if (result1.data?.status === 1) {
       let type = 0;
@@ -104,7 +103,6 @@ Page({
   },
   initCanvas(first: boolean) {
     if (first) {
-      console.log('first', first);
       this.setData({ first: false });
       const query = wx.createSelectorQuery();
       query
@@ -183,6 +181,11 @@ Page({
         });
     }
 
+  },
+  onClickCanvas(event: any) {
+    const { pageX, pageY } = event.touches[0];
+    // 先生成一个泡泡
+    this.createBubble(pageX, pageY);
   },
   /** 处理触摸开始 */
   onTouchStart(event: any) {

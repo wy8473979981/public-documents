@@ -4,7 +4,7 @@ import { showToast } from '../../utils/index';
 Page({
   data: {
     showVideo: false,
-    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
+    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.MP4',
     recordId: '',
 
     bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
@@ -29,11 +29,13 @@ Page({
     firstReady: true,
     bottleAnimationFlag: false,
     bottleStopAnimationFlag: false,
+
+    progressNum: 0,
   },
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad() {
-
+    console.log('香槟摇一摇！');
   },
   onReady() {
     this.startShakeListener();
@@ -140,10 +142,8 @@ Page({
 
       // 退出页面时停止监听
       wx.stopAccelerometer();
-      return;
     }
-    console.log('shakeCount1', newCount);
-
+    console.log('triggerShake', newCount);
     this.setData({ shakeCount: newCount });
   },
   videoPlayed() {
@@ -164,6 +164,7 @@ Page({
     const result = await postRequest('/activity/record', params);
     const { code, msg, data } = result;
     if (code === '200') {
+      console.log('createRecord', data);
       this.setData({ recordId: data.id });
     } else {
       showToast(msg);
@@ -182,9 +183,9 @@ Page({
       },
     };
     const result = await postRequest('/activity/record', params);
-    const { code, msg } = result;
+    const { code, msg, data } = result;
     if (code === '200') {
-      // console.log(data);
+      console.log('updateRecord', data);
     } else {
       showToast(msg);
     }
@@ -218,12 +219,14 @@ Page({
 
   // 设置count值，每次+1都会触发高度变化
   setCount(count: any) {
+
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
 
     this.setData({
       count,
       targetHeight,
+      progressNum: count * 10
     });
   },
 

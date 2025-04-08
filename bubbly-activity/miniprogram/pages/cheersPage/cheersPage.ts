@@ -11,7 +11,7 @@ Page({
    */
   data: {
     showVideo: false,
-    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.MP4',
     showCheers: true,
   },
   videoContext: null as WechatMiniprogram.VideoContext | null,
@@ -54,8 +54,9 @@ Page({
   },
   videoPlayed() {
     console.log('播放完毕');
+    this.setData({ showVideo: false, showCheers: false });
   },
-  
+
   /**
    * 生命周期函数--监听页面显示
    */
