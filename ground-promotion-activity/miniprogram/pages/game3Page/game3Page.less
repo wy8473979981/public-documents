@@ -1,0 +1,317 @@
+/* pages/game3Page/game3Page.wxss */
+.game-3-wrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 1625rpx;
+  background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3-bg.png) no-repeat;
+  background-size: 100% 1625rpx;
+  background-attachment: scroll;
+  overflow: auto;
+  position: relative;
+  box-sizing: border-box;
+
+  .header-wrapper {
+    font-family: PingFangSC;
+    font-weight: 600;
+    font-size: 51rpx;
+    line-height: 66rpx;
+    font-style: normal;
+    position: absolute;
+    left: 52rpx;
+    top: 122rpx;
+
+    .text-1 {
+      color: #540016;
+    }
+
+    .text-2 {
+      color: #d01145;
+    }
+  }
+
+  .game-title {
+    width: 506rpx;
+    height: 50rpx;
+    position: absolute;
+    left: 123rpx;
+    top: 335rpx;
+    background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3-title.png) no-repeat;
+    background-size: cover;
+  }
+
+  .btn {
+    width: 318rpx;
+    height: 83rpx;
+    border-radius: 42rpx;
+    border: 2rpx solid #E02C5D;
+    font-family: PingFang-SC, PingFang-SC;
+    font-weight: 500;
+    font-size: 36rpx;
+    color: #E02C5D;
+    line-height: 50rpx;
+    font-style: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .flow-wrapper {
+    .afresh {
+      width: 690rpx;
+      height: 89rpx;
+      background: rgba(211, 17, 69, 0.43); // 使用 rgba 设置背景色透明度
+      position: absolute;
+      left: 0rpx;
+      bottom: 0rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .text {
+        font-family: PingFang-SC, PingFang-SC;
+        font-weight: 500;
+        font-size: 28rpx;
+        color: #FFFFFF;
+        line-height: 40rpx;
+        font-style: normal;
+      }
+    }
+  }
+
+  .flow-wrapper-1 {
+    margin: 423rpx auto 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .photo-content {
+      width: 690rpx;
+      height: 760rpx;
+      position: relative;
+
+
+      .camera {
+        width: 100%;
+        height: 100%;
+      }
+
+      .photo-guide {
+        width: 100%;
+        height: 100%;
+        background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/photo-guide.png) no-repeat;
+        background-size: contain;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+
+
+    }
+
+    .photo-title {
+      font-family: PingFang-SC, PingFang-SC;
+      font-weight: 500;
+      font-size: 24rpx;
+      color: #6A6063;
+      line-height: 33rpx;
+      font-style: normal;
+      margin: 36rpx 0 41rpx;
+    }
+
+    .operate-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+      margin-bottom: 56rpx;
+
+      .choose-image {
+        position: absolute;
+        left: 123rpx;
+        top: 20rpx;
+
+        .text {
+          margin-top: 12rpx;
+          font-family: PingFang-SC, PingFang-SC;
+          font-weight: 500;
+          font-size: 24rpx;
+          color: #6A6063;
+          line-height: 33rpx;
+          font-style: normal;
+        }
+      }
+
+      .photograph {
+        .photograph-img {
+          width: 124rpx;
+          height: 124rpx;
+        }
+      }
+    }
+  }
+
+  .flow-wrapper-2 {
+    margin: 423rpx auto 0;
+    padding-bottom: 101rpx;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    .photo-content {
+      width: 690rpx;
+      height: 760rpx;
+      position: relative;
+
+      .current-photo {
+        width: 100%;
+        height: 100%;
+      }
+
+    }
+
+    .generate {
+      width: 690rpx;
+      height: 760rpx;
+      position: relative;
+
+      .compound-gif {
+        width: 100%;
+        height: 100%;
+      }
+
+      .progress-content {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        font-size: 30rpx;
+        color: #FFFFFF;
+        line-height: 40rpx;
+        font-style: normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: absolute;
+        top: 320rpx;
+        left: 50%;
+        transform: translateX(-50%);
+
+        .text {
+          margin-bottom: 10rpx;
+        }
+      }
+    }
+
+    .style-content {
+      .header-tab {
+        display: flex;
+        align-items: center;
+
+        .tab-item {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0rpx 28rpx;
+          margin: 33rpx 0 37rpx;
+          height: 37rpx;
+          border-radius: 19rpx;
+          font-family: PingFang-SC, PingFang-SC;
+          font-weight: 500;
+          font-size: 26rpx;
+          color: rgba(106, 96, 99, 1);
+          line-height: 37rpx;
+          font-style: normal;
+        }
+
+        .tab-item-active {
+          color: #FFFFFF;
+          background: #D31145;
+        }
+      }
+
+      .style-img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 66rpx;
+        margin-bottom: 49rpx;
+
+        .img-item {
+          width: 136rpx;
+          height: 236rpx;
+          // background-color: #ccc;
+          border-radius: 20rpx;
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .template-img {
+            width: 132rpx;
+            height: 232rpx;
+            border-radius: 20rpx;
+            box-sizing: border-box;
+          }
+        }
+
+        .img-item-active {
+          border: 2rpx solid #E02C5D;
+        }
+      }
+    }
+  }
+
+}
+
+.game-3-wrapper-3 {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-3-bg.png) no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  background-attachment: fixed; // 背景图固定
+
+  .flow-wrapper-3 {
+    width: 100vw;
+    height: 100vh;
+    margin: 423rpx auto 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    .compound-content {
+      width: 690rpx;
+      height: calc(100% - 624rpx);
+      position: relative;
+      // background-color: #000000;
+
+      .resultant-picture {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .btn-content {
+      display: flex;
+      gap: 54rpx;
+      margin: 59rpx 0rpx;
+
+      .btn {
+        .download {
+          width: 38rpx;
+          height: 38rpx;
+          margin-left: 18rpx;
+          background: url(https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/download.png) no-repeat;
+          background-size: contain;
+        }
+      }
+    }
+  }
+}

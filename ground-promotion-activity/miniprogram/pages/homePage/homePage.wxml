@@ -1,0 +1,35 @@
+<!--pages/homePage/homePage.wxml-->
+<view class="home-wrapper">
+  <view class="header-wrapper">
+    <view class="text-1">弹福星旅探索</view>
+    <view class="text-2" bind:tap="handleDoubleTap">赢取福气好礼</view>
+  </view>
+  <view class="rule-flow"></view>
+  <view class="flow-wrapper">
+    <view wx:for="{{ gameList }}" wx:for-item="game" wx:key="index" class="{{game.className}}" data-game="{{game}}" bindtap="onClickGame">
+      <view class="game-num game-num-{{index+1}}">{{game.gameNum}}</view>
+      <view class="title title-{{index+1}}">{{game.gameTitle}}</view>
+      <view class="explain explain-{{index+1}}">{{game.gameExplain}}</view>
+      <image class="gif-{{index+1}}" src="{{currentStep === index + 1 ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
+    </view>
+  </view>
+  <view wx:if="{{currentStep === 4}}" class="gift-box draggable" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="left:{{x}}rpx; top:{{y}}rpx;">
+    <image bindtap="onClickShow" class="gift-box-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-1.png" mode="aspectFit"></image>
+  </view>
+  <van-overlay show="{{ show }}">
+    <view class="overlay-wrapper">
+      <view class="overlay-container">
+        <view class="text-box">
+          <view class="title">恭喜您</view>
+          <view class="sub-title">完成弹福星旅探索</view>
+        </view>
+        <image class="gift-box-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-2.png" mode="aspectFit"></image>
+        <view class="tip-1" wx:if="{{!alreadyReceived}}">请您联系现场工作人员并出示此界面领取您的专属精美好礼吧！</view>
+        <view class="tip-2" wx:else>已领取</view>
+        <view class="bg-1"></view>
+        <view class="bg-2"></view>
+      </view>
+      <van-icon name="cross" custom-class="my-cross" bind:click="onClickHide" />
+    </view>
+  </van-overlay>
+</view>

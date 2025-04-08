@@ -1,0 +1,66 @@
+<!--pages/game2Page/game2Page.wxml-->
+<view class="game-2-wrapper">
+  <view class="header-wrapper">
+    <view class="text-1">第二关</view>
+    <view class="text-2">福利破驿站</view>
+  </view>
+  <view class="game-title"></view>
+
+  <view class="qa-wrapper">
+    <view class="header-content">
+      <text class="cur-num">{{currentIndex+1}}</text>
+      <text>/5</text>
+    </view>
+    <view class="question-content">{{currentIndex+1}}、{{currentQuestion.question}}</view>
+    <view class="answer-content">
+      <view wx:for="{{ currentQuestion.answerList }}" wx:for-item="answer" wx:key="index" class="answer answer-{{index}}" data-answer="{{answer}}" bindtap="onClickAnswer">
+        <view class="circle-out circle-out-{{answer.icon}}">
+          <view class="circle-inner"></view>
+        </view>
+        <view class="text text-{{answer.icon}}">{{answer.text}}</view>
+        <view class="icon-content">
+          <van-icon name="cross" wx:if="{{answer.icon === 1}}" color="#d72555" />
+          <van-icon name="success" wx:if="{{answer.icon === 2}}" color="#25d7b3" />
+        </view>
+      </view>
+    </view>
+    <view class="previous-next-content">
+      <view class="previous" wx:if="{{currentIndex > 0}}" bindtap="onPrevious">上一题</view>
+      <view class="next" wx:if="{{currentIndex < 4}}" bindtap="onNext">下一题</view>
+      <view class="next" wx:if="{{currentIndex === 4 && allAnswersCompleted}}" bindtap="onSubmit">提交</view>
+    </view>
+    <view class="right-answers-content" wx:if="{{currentQuestion.isAnswerWrong}}">
+      <view class="title">正确答案：</view>
+      <view class="right-answers">{{currentQuestion.rightAnswer}}</view>
+    </view>
+  </view>
+  <van-overlay show="{{ show }}">
+    <view class="overlay-wrapper">
+      <view class="overlay-container {{answerResult.pass ? 'overlay-bg-pass' : ''}}">
+        <view class="header-content">
+          <view class="text-1">{{answerResult.pass ? '恭喜你！' : '好可惜！'}}</view>
+          <view class="text-2">您的正确率是 <text class="accuracy-rate">{{answerResult.accuracyRate}}%</text></view>
+        </view>
+        <view class="pass-content" wx:if="{{answerResult.pass}}">
+          <image class="game-2-overlay-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2-overlay-1.png" mode="aspectFit"></image>
+          <view class="overlay-btn" bindtap="onContinue">继续闯关</view>
+        </view>
+        <view class="not-pass-content" wx:else>
+          <image class="game-2-overlay-2" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2-overlay-2.png" mode="aspectFit"></image>
+          <view class="result-content">
+            <view class="result-item">
+              <view class="num">{{answerResult.wrongNum}}</view>
+              <view class="text">错题数</view>
+            </view>
+            <view class="result-item">
+              <view class="num">{{answerResult.correctNum}}</view>
+              <view class="text">正确题数</view>
+            </view>
+          </view>
+          <view class="overlay-btn" bindtap="onAgain">重新答题</view>
+        </view>
+      </view>
+    </view>
+  </van-overlay>
+
+</view>

@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/bubblyHome/bubblyHome",
+    "pages/guidePage/guidePage",
+    "pages/game3Page/game3Page",
+    "pages/homePage/homePage",
+    "pages/demo/demo",
+    "pages/demo-1/demo-1",
+    "pages/loginPage/loginPage",
+    "pages/game1Page/game1Page",
+    "pages/game2Page/game2Page",
+    "pages/shakePage/shakePage",
+    "pages/cheersPage/cheersPage"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "style": "v2",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "disableABTest": true,
+      "sdkVersionBegin": "3.0.0",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "requiredBackgroundModes": [
+    "audio",
+    "accelerometer"
+  ],
+  "permissions": {
+    "vibrate": {
+      "desc": "您的小程序需要使用振动功能"
+    },
+    "scope.camera": {
+      "desc": "您的小程序需要使用摄像头功能"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "您的小程序需要保存图片到相册"
+    },
+    "scope.userLocation": {
+      "desc": "获取您的地理位置用于检测倾斜"
+    },
+    "scope.userInfo": {
+      "desc": "用于完善用户资料"
+    }
+  }
+}
