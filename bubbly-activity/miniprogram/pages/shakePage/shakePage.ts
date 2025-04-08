@@ -34,8 +34,11 @@ Page({
   },
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
-  async onLoad() {
-    console.log('香槟摇一摇！');
+  async onLoad(options: any) {
+    console.log('香槟摇一摇！', options);
+    if (options?.recordId) {
+      this.setData({ recordId: options?.recordId })
+    }
   },
   onReady() {
     this.startShakeListener();
@@ -126,11 +129,11 @@ Page({
     );
   },
   triggerShake() {
-    const { shakeCount } = this.data;
+    const { shakeCount, recordId } = this.data;
     const newCount = shakeCount + 1;
     this.setCount(newCount);
 
-    if (newCount === 1) {
+    if (newCount === 1 && !recordId) {
       this.createRecord();
     } else if (newCount >= 10) {
       // 播放视频

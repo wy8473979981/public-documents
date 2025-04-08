@@ -56,17 +56,16 @@ Page({
       postRequest('/activity/get', params2)
     ]);
     console.log(result1, result2);
-
-    if (result1.data?.status === 1) {
-      let type = 0;
-      if (result2.data?.status === 1) {
-        type = result2.data?.type;
+    if (result1.data) {
+      if (result1.data?.status === 1) {
+        let type = result2.data?.status === 1 ? result2.data?.type : 0;
+        wx.redirectTo({
+          url: `/pages/cheersPage/cheersPage?type=${type}`
+        });
       } else {
-        type = result1.data?.type;
+        const recordId = result1.data.id;
+        wx.redirectTo({ url: `/pages/shakePage/shakePage?recordId=${recordId}` });
       }
-      wx.redirectTo({
-        url: `/pages/cheersPage/cheersPage?type=${type}`
-      });
     } else {
       wx.redirectTo({ url: '/pages/shakePage/shakePage' });
     }
