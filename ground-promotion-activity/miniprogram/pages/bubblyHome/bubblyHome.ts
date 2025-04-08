@@ -40,13 +40,13 @@ Page({
     const params1 = {
       data: {
         openId: openId,
-        type: 1, // 1：有没有摇  3：有没有点击cheers
+        type: 1, // 1：有没有摇  4：有没有点击cheers
       }
     };
     const params2 = {
       data: {
         openId: openId,
-        type: 3, // 1：有没有摇  3：有没有点击cheers
+        type: 4, // 1：有没有摇  4：有没有点击cheers
       }
     };
 

@@ -22,7 +22,7 @@ Page({
   onLoad(options: PageOptions) {
     // const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
     // this.setData({ videoCheersSrc: videoCheersSrc });
-    if (options?.type == 3) {
+    if (options?.type == 4) {
       // 播放过cheers视频显示最后一个画面
       this.setData({ showCheers: false });
     }
@@ -40,7 +40,7 @@ Page({
     const params = {
       data: {
         openId: openId,
-        type: 3,
+        type: 4,
         status: 1,
       },
     };

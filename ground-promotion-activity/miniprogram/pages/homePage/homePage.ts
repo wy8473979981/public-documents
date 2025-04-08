@@ -258,13 +258,13 @@ Page({
     const lastTime = this.data.lastTapTime
 
     if (currentTime - lastTime < 300) { // 300ms内算双击
-      console.log('双击事件触发')
+      console.log('双击事件触发', this.data.alreadyReceived);
       // 你的双击逻辑
       this.setData({ lastTapTime: 0 });
       this.getPrize();
       return;
     }
-    this.setData({ lastTapTime: currentTime })
+    this.setData({ lastTapTime: currentTime });
   },
   async getPrize() {
     const { alreadyReceived } = this.data;
@@ -293,15 +293,12 @@ Page({
     // 查询奖品是否已经领取
     const openId = wx.getStorageSync('openId');
     const result = await this.getGame2Result(3, openId);
-    if (result.code === "200") {
+    if (result.code === "200" && result?.data?.status === 1) {
       this.setData({ alreadyReceived: true });
     } else {
-      showToast('查询失败，请重试！');
+      this.setData({ alreadyReceived: false });
     }
   },
-  /**
-   * 根据 currentStep 和 game.isPassed 返回对应的类名
-   */
   /**
    * 生命周期函数--监听页面显示
    */
