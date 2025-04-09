@@ -126,7 +126,7 @@ Page({
             const newBubble: Bubble = {
               x: Math.random() * (canvas.width - 20),
               y: canvas.height,
-              radius: 16 + Math.random() * 15,
+              radius: 20 + Math.random() * 15,
               speed: 1.6 + Math.random() * 1.4,
               drift: Math.random() * 2 - 1,
               img: 1,
@@ -211,7 +211,7 @@ Page({
     const newBubble: Bubble = {
       x,
       y,
-      radius: 16 + Math.random() * 15,
+      radius: 40 + Math.random() * 10,
       speed: 1.6 + Math.random() * 1.4,
       drift: Math.random() * 2 - 1,
       img: 2, // 随机使用两种泡泡图片

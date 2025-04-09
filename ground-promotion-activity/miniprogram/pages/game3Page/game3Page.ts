@@ -80,8 +80,6 @@ Page({
           console.error('Failed to set data or update progress:', err);
           showToast(err);
         });
-    } else {
-
     }
   },
   /**
@@ -437,13 +435,13 @@ Page({
       const isRotated = !['up', 'up-mirrored'].includes(orientation);
       const realWidth = isRotated ? height : width;
       const realHeight = isRotated ? width : height;
-      console.log('图片信息：', imgInfo);
-      console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
+      // console.log('图片信息：', imgInfo);
+      // console.log(`realWidth：${realWidth}, realHeight：${realHeight}`);
 
       // 判断是否为竖屏
       if (realHeight >= realWidth) {
         // 竖屏图片，继续处理
-        console.log('竖屏图片，继续处理');
+        // console.log('竖屏图片，继续处理');
 
         if (realHeight < 32 || realWidth < 32) {
           showToast('图片尺寸太小，请上传大于32×32像素的图片')

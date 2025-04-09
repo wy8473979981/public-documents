@@ -1,10 +1,10 @@
 
 import { postRequest } from '../../utils/request.js';
-import { showToast } from '../../utils/index';
+import { showToast, delayFn } from '../../utils/index';
 Page({
   data: {
     showVideo: false,
-    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.MP4',
+    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
     recordId: '',
 
     bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
@@ -24,7 +24,6 @@ Page({
     lastX: 0,
     lastY: 0,
     lastZ: 0,
-    shakeLastTime: 0,
 
     firstReady: true,
     bottleAnimationFlag: false,
@@ -32,6 +31,7 @@ Page({
 
     progressNum: 0,
   },
+  handleShakeAnimationTimer:0,
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad(options: any) {
@@ -42,10 +42,13 @@ Page({
   },
   onReady() {
     this.startShakeListener();
+
     this.initCanvas();
     const lastTime = Date.now();
     this.setData({ lastTime: lastTime });
+
     this.videoContext = wx.createVideoContext('myVideo');
+    this.handleShakeAnimation();
   },
   startShakeListener() {
     // 监听加速度计数据
@@ -56,21 +59,11 @@ Page({
       const deltaX = Math.abs(x - this.data.lastX);
       const deltaY = Math.abs(y - this.data.lastY);
       const deltaZ = Math.abs(z - this.data.lastZ);
-     
 
       // 判断是否达到摇晃阈值
       if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
-        console.log(deltaX, deltaY, deltaZ);
-        this.setData({ firstReady: false });
+        wx.vibrateLong();
         this.bottleAnimation();
-        this.triggerShake();
-      } else {
-        const { firstReady, bottleAnimationFlag, bottleStopAnimationFlag } = this.data;
-
-        if (!firstReady && !bottleAnimationFlag && !bottleStopAnimationFlag) {
-          this.setData({ bottleStopAnimationFlag: true });
-          this.bottleStopAnimation();
-        }
       }
       // 记录当前加速度值
       this.setData({
@@ -81,8 +74,9 @@ Page({
     });
   },
   bottleAnimation() {
-    const { bottleAnimationFlag, shakeCount } = this.data;
-    if (!bottleAnimationFlag && shakeCount <= 10) {
+    const { bottleAnimationFlag } = this.data;
+    if (!bottleAnimationFlag) {
+      this.triggerShake();
       this.setData({ bottleAnimationFlag: true });
       this.animate(
         '.bottle',
@@ -114,7 +108,8 @@ Page({
         ],
         100,
         () => {
-          this.setData({ bottleAnimationFlag: false, bottleStopAnimationFlag: false });
+          this.setData({ bottleAnimationFlag: false });
+          this.bottleStopAnimation();
         }
       );
     }
@@ -130,7 +125,7 @@ Page({
       () => { }
     );
   },
-  triggerShake() {
+  async triggerShake() {
     const { shakeCount, recordId } = this.data;
     const newCount = shakeCount + 1;
     this.setCount(newCount);
@@ -138,6 +133,8 @@ Page({
     if (newCount === 1 && !recordId) {
       this.createRecord();
     } else if (newCount >= 10) {
+
+      await delayFn(1000);
       // 播放视频
       this.setData({ showVideo: true });
       this.videoContext?.play();
@@ -215,7 +212,7 @@ Page({
         this.setData({
           canvasWidth: res[0].width,
           canvasHeight: res[0].height,
-          maxHeight: res[0].height * 0.5, // 最大高度为画布一半
+          maxHeight: res[0].height, // 最大高度为画布的高度
           fillSpeed: 1.5, // 填充速度
         });
         this.liquidCanvasAnimate();
@@ -227,6 +224,7 @@ Page({
 
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
+    console.log(targetHeight, 'targetHeight');
 
     this.setData({
       count,
@@ -322,6 +320,31 @@ Page({
 
         this.setData({ animationId });
       });
+  },
+  handleShakeAnimation() {
+    this.animate(
+      '.handle-shake',
+      [
+        { scale: [0], ease: 'ease', offset: 0 },
+        { scale3d: [0.9, 0.9, 0.9], rotate: -3, ease: 'ease', offset: 0.1 },
+        { scale3d: [0.9, 0.9, 0.9], rotate: -3, ease: 'ease', offset: 0.2 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.3 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.4 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.5 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.6 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.7 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.8 },
+        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.9 },
+        { scaleX: 1, ease: 'ease', offset: 1 },
+      ],
+      500,
+      () => {
+        this.handleShakeAnimationTimer = setTimeout(() => {
+          this.handleShakeAnimation();
+          clearTimeout(this.handleShakeAnimationTimer);
+        }, 1000)
+      }
+    );
   },
 
   onUnload() {

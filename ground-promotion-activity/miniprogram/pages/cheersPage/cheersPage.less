@@ -7,23 +7,39 @@
   position: relative;
   box-sizing: border-box;
 
-  .glass {
-    width: 230.24rpx;
-    height: 774.36rpx;
-    position: absolute;
-    left: 50%;
-    top: 260.11rpx;
-    transform: translateX(-50%);
+  .cheers-first {
+    position: relative;
+    box-sizing: border-box;
+
+    .glass {
+      width: 230.24rpx;
+      height: 774.36rpx;
+      position: absolute;
+      left: 50%;
+      top: 260.11rpx;
+      transform: translateX(-50%);
+    }
+
+    .cheers {
+      width: 363.05rpx;
+      height: 86.86rpx;
+      position: absolute;
+      left: 50%;
+      top: 1125.92rpx;
+      transform: translateX(-50%);
+    }
   }
 
-  .cheers {
-    width: 363.05rpx;
-    height: 86.86rpx;
-    position: absolute;
-    left: 50%;
-    top: 1125.92rpx;
-    transform: translateX(-50%);
+  .cheers-last {
+    width: 100%;
+    height: 100vh;
+    background: url(https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-last.png) no-repeat;
+    background-size: contain;
+    position: relative;
+    box-sizing: border-box;
   }
+
+
 
   .my-video {
     position: absolute;
@@ -32,7 +48,8 @@
     width: 100vw;
     height: 100vh;
   }
-  .show-video{
+
+  .show-video {
     left: 0;
     bottom: 0;
   }

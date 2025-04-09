@@ -11,7 +11,7 @@ Page({
    */
   data: {
     showVideo: false,
-    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.MP4',
+    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
     showCheers: true,
   },
   videoContext: null as WechatMiniprogram.VideoContext | null,
@@ -22,6 +22,8 @@ Page({
   onLoad(options: PageOptions) {
     // const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
     // this.setData({ videoCheersSrc: videoCheersSrc });
+    console.log(options, 'options');
+
     if (options?.type == 4) {
       // 播放过cheers视频显示最后一个画面
       this.setData({ showCheers: false });
