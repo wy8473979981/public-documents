@@ -1,5 +1,5 @@
 // pages/bubblyHome/bubblyHome.ts
-import { postRequest } from '../../utils/request.js';
+import { postRequest, getRequest } from '../../utils/request.js';
 import { showToast } from '../../utils/index';
 interface Bubble {
   x: number;
@@ -72,16 +72,12 @@ Page({
   async getList() {
     try {
       const params = {
-        data: {
-          'category': 'cheers_config',
-          'label': 'start_game'
-        }
+        data: {}
       }
-      const result = await postRequest('/sys/dict/list', params);
+      const result = await getRequest('/activity/getStart', params);
       const { code, msg, data } = result;
       if (code === "200") {
-        const enumvalue = data.cheers_config[0]?.enumvalue;
-        if (enumvalue === "1") {
+        if (data === "1") {
           // 开始了
           clearTimeout(this.touchTimer);
           clearTimeout(this.drawBubblesTimer);
