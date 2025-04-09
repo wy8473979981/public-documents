@@ -1,6 +1,15 @@
 // pages/game3Page/game3Page.ts
 import { postRequest, uploadFile } from '../../utils/request.js';
-import { delayFn, showToast, refreshPage, readFileAsBase64, getFileSize, saveImage } from '../../utils/index';
+import {
+  delayFn,
+  showToast,
+  refreshPage,
+  readFileAsBase64,
+  getFileSize,
+  saveImage,
+  onDownload,
+  savePosterToServer,
+} from '../../utils/index';
 
 interface TabItem {
   algoType: string;
@@ -46,6 +55,9 @@ Page({
     showCountDownText: false, // 是否显示倒计时
     createPosterId: '',
     compoundGif: '', // 倒计时gif
+    errorImg:
+      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
+    matting: false,// 是否抠图模版
   },
   /**
    * 生命周期函数--监听页面加载
@@ -88,9 +100,12 @@ Page({
   onReady() { },
   initDict() {
     try {
+      const { matting } = this.data;
       const dict = wx.getStorageSync('dict');
       const parseData = JSON.parse(dict);
-      const tabList = parseData.bu_algo_type;
+      const { un_matting_template, matting_template } = parseData;
+      const tabList = matting ? matting_template : un_matting_template;
+      console.log('tabList', tabList);
       this.setData({ tabList: tabList });
     } catch (error) {
       showToast(`获取存储失败:${error}`);
@@ -139,8 +154,11 @@ Page({
     // 去生成
     const { currentPhoto } = this.data;
     if (currentPhoto) {
-      this.directionJudgment(currentPhoto);
-      // this.compositePoster(currentPhoto);
+      wx.showLoading({
+        title: '加载中...',
+        mask: true // 添加遮罩层，防止触摸穿透
+      });
+      this.verifyResizeFunc(currentPhoto);
     } else {
       showToast('请选择图片');
     }
@@ -171,7 +189,6 @@ Page({
       cameraContext.takePhoto({
         quality: 'original',
         success: (res) => {
-          // saveImage(res.tempImagePath);
           this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
         },
         fail: (err) => {
@@ -183,8 +200,107 @@ Page({
       showToast('cameraContext 未初始化');
     }
   },
+  startCountdown(currentIndex: any) {
+    clearInterval(countdownInterval);
+    const timePerTask = 60 / 100; // 60秒内完成100个任务
+    let countdown = Math.ceil(timePerTask * currentIndex); // 计算倒计时时间
+
+    if (currentIndex < 0) {
+      countdown = 10;
+    } else {
+      // 限制 countdown 最大值为 180 秒
+      countdown = countdown > 180 ? 180 : countdown;
+    }
+
+    countdownInterval = setInterval(() => {
+      const minutes = Math.floor(countdown / 60);
+      const seconds = countdown % 60;
+
+      if (countdown > 60) {
+        this.setData({ countDownText: `${minutes}分${seconds}秒` });
+      } else {
+        this.setData({ countDownText: `${countdown}秒` });
+      }
+      this.setData({ showCountDownText: true });
+      countdown--;
+
+      if (countdown <= 0) {
+        this.setData({ showCountDownText: false });
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
+  },
+  async verifyResizeFunc(currentPhoto: string) {
+    try {
+      const { openId } = this.data;
+      const params = {
+        data: {
+          type: 5,
+          openId: openId,
+          srcImage: currentPhoto,
+        },
+        header: {
+          'content-type': 'multipart/form-data', // 默认值
+        },
+      };
+      const res = await uploadFile('/poster/verifyResize', params);
+      const { code, data, msg } = JSON.parse(res.data);
+      if (code === '200' && data?.imageBase64) {
+        const base64Data = `data:image/jpeg;base64,${data.imageBase64}`;
+        this.compositePoster(base64Data);
+      } else {
+        showToast(msg);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  async compositePoster(base64Data: string) {
+    try {
+      const { algoType, templId, token } = this.data;
+
+      // 调用海报合成接口
+      const params = {
+        data: {
+          imageBase64: base64Data,
+          algoType: algoType === 'original' ? null : algoType,
+          templId: templId,
+          isMtting: false,
+        },
+        header: { Authorization: token, type: 2 },
+      };
+
+      const res = await postRequest(
+        '/forward/nova-poster/mini-program/composite-poster',
+        params
+      );
+      const { code, result, message } = res;
+      if (code === '0') {
+        const taskCode = result;
+        wx.hideLoading();
+        this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(() => {
+          this.createPosterImageF();
+          this.updateProgress(); // 调用更新进度函数
+        });
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: message,
+          showCancel: false, // 禁用取消按钮
+          confirmText: '确定',
+          success: (res) => {
+            if (res.confirm) {
+              this.onReselectImg();
+            }
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
   async updateProgress() {
-    const { taskCode, token } = this.data;
+    const { taskCode, token, errorImg } = this.data;
     if (!taskCode) {
       showToast('taskCode 为空，无法查询进度');
       return;
@@ -228,11 +344,11 @@ Page({
         currentStep: 3,
         resultantPictureUrl: result?.posterPath,
       });
-      this.updatePosterImageF(result?.posterPath, '');
+      this.updatePosterImageF(result?.posterPath, '', 2);
     } else if (status === 3) {
       const failMsg = result?.failMsg;
       this.setData({ showCountDownText: false });
-      this.updatePosterImageF('', failMsg);
+      this.updatePosterImageF(errorImg, failMsg, 3);
       wx.showModal({
         title: '提示',
         content: failMsg,
@@ -243,38 +359,6 @@ Page({
         },
       });
     }
-  },
-  startCountdown(currentIndex: any) {
-
-    clearInterval(countdownInterval);
-    const timePerTask = 60 / 100; // 60秒内完成100个任务
-    let countdown = Math.ceil(timePerTask * currentIndex); // 计算倒计时时间
-
-    if (currentIndex < 0) {
-      countdown = 10;
-    } else {
-      // 限制 countdown 最大值为 180 秒
-      countdown = countdown > 180 ? 180 : countdown;
-    }
-
-
-    countdownInterval = setInterval(() => {
-      const minutes = Math.floor(countdown / 60);
-      const seconds = countdown % 60;
-
-      if (countdown > 60) {
-        this.setData({ countDownText: `${minutes}分${seconds}秒` });
-      } else {
-        this.setData({ countDownText: `${countdown}秒` });
-      }
-      this.setData({ showCountDownText: true });
-      countdown--;
-
-      if (countdown <= 0) {
-        this.setData({ showCountDownText: false });
-        clearInterval(countdownInterval);
-      }
-    }, 1000);
   },
   async createPosterImageF() {
     const { algoType, templId, currentPhoto, openId, taskCode } = this.data;
@@ -300,84 +384,29 @@ Page({
       showToast(msg);
     }
   },
-  async updatePosterImageF(posterPath: string | null, failMsg: string) {
+  async updatePosterImageF(
+    posterPath: string,
+    failMsg: string,
+    status: number
+  ) {
     const { createPosterId } = this.data;
-    let params;
-    const header = {
-      'content-type': 'multipart/form-data',
+    const tempFilePath = await savePosterToServer(posterPath);
+    const params = {
+      data: {
+        status: status === 2 ? 1 : -1,
+        srcImage: tempFilePath,
+        id: createPosterId,
+        failMsg: failMsg
+      },
+      header: {
+        'content-type': 'multipart/form-data',
+      },
     };
-    if (posterPath) {
-      const tempFilePath = await this.savePosterToServer(posterPath);
-      params = {
-        data: {
-          status: 1,
-          srcImage: tempFilePath,
-          id: createPosterId,
-        },
-        header: header,
-      };
-    } else {
-      params = {
-        data: {
-          status: -1,
-          srcImage: '',
-          id: createPosterId,
-          failMsg: failMsg,
-        },
-        header: header,
-      };
-    }
     const res = await uploadFile('/poster/updatePosterImageF', params);
     const { code, msg } = JSON.parse(res.data);
     if (code !== '200') {
       showToast(msg);
     }
-  },
-  // 将在线地址转为文件
-  savePosterToServer(posterPath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      wx.downloadFile({
-        url: posterPath,
-        success: (res) => {
-          if (res.statusCode === 200) {
-            const tempFilePath = res.tempFilePath;
-            return resolve(tempFilePath);
-          } else {
-            return reject(new Error('下载海报失败'));
-          }
-        },
-        fail: (err) => {
-          console.error('下载图片失败', err);
-          return reject(new Error('下载图片失败'));
-        },
-      });
-    });
-  },
-  onDownload() {
-    const { resultantPictureUrl } = this.data;
-    wx.downloadFile({
-      url: resultantPictureUrl,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          wx.saveImageToPhotosAlbum({
-            filePath: res.tempFilePath,
-            success: () => {
-              showToast('保存成功', 'success', 2000);
-            },
-            fail: (err) => {
-              if (err.errMsg.includes('auth denied')) {
-                showToast('请授权保存图片到相册');
-              }
-            },
-          });
-        } else {
-          showToast(`下载图片失败：${res}`);
-        }
-      },
-      fail: (err) => {
-        showToast(`下载图片失败：${err}`);
-      },
-    });
   },
   setDataAsync(data: any) {
     return new Promise((resolve: any) => {
@@ -428,12 +457,17 @@ Page({
     const cameraContext = wx.createCameraContext();
     this.setData({ cameraContext: cameraContext });
   },
-
+  onDownloadImg() {
+    const { resultantPictureUrl } = this.data;
+    if (resultantPictureUrl) {
+      onDownload(resultantPictureUrl);
+    }
+  },
   async directionJudgment(tempFilePath: string) {
     try {
       // 获取图片信息
       const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
-      const { width, height, orientation } = imgInfo
+      const { width, height, orientation } = imgInfo;
       const isRotated = !['up', 'up-mirrored'].includes(orientation);
       const realWidth = isRotated ? height : width;
       const realHeight = isRotated ? width : height;
@@ -446,12 +480,11 @@ Page({
         // console.log('竖屏图片，继续处理');
 
         if (realHeight < 32 || realWidth < 32) {
-          showToast('图片尺寸太小，请上传大于32×32像素的图片')
-          return
+          showToast('图片尺寸太小，请上传大于32×32像素的图片');
+          return;
         }
 
         this.compressImage(tempFilePath);
-
       } else {
         // 横屏图片，不处理或提示
         showToast('请上传竖屏图片');
@@ -479,57 +512,6 @@ Page({
         showToast('压缩失败');
       },
     });
-  },
-  async getStartFunc() {
-    try {
-
-    } catch (error) {
-      console.error(error);
-
-    }
-  },
-  async compositePoster(imgUrl: string) {
-    try {
-      const { algoType, templId, token } = this.data;
-      // 转成 base64 字符串
-      const base64Data = await readFileAsBase64(imgUrl);
-
-      // 调用海报合成接口
-      const params = {
-        data: {
-          imageBase64: base64Data,
-          algoType: algoType === 'original' ? undefined : algoType,
-          templId: templId
-        },
-        header: { Authorization: token, type: 2 },
-      };
-
-      const res = await postRequest('/forward/nova-poster/mini-program/composite-poster', params);
-      const { code, result, message } = res;
-      if (code === '0') {
-        const taskCode = result;
-        this.setDataAsync({ taskCode: taskCode, currentStep: 2 }).then(
-          () => {
-            this.createPosterImageF();
-            this.updateProgress(); // 调用更新进度函数
-          }
-        );
-      } else {
-        wx.showModal({
-          title: '提示',
-          content: message,
-          showCancel: false, // 禁用取消按钮
-          confirmText: '确定',
-          success: (res) => {
-            if (res.confirm) {
-              this.onReselectImg();
-            }
-          },
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
   },
 
   /**

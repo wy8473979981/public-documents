@@ -129,7 +129,8 @@ export const getDict = async () => {
     if (result.code === "200") {
       const {
         bu_question,
-        bu_algo_type
+        bu_algo_type,
+        bu_algo_type1
       } = result.data;
 
       const buQuestion = bu_question.map((n, i) => {
@@ -150,12 +151,25 @@ export const getDict = async () => {
           options: options
         }
       }).sort((a, b) => a.sort - b.sort);
+      const buAlgoType1 = bu_algo_type1.map((n, i) => {
+        const labels = n?.label?.split("-")
+        const algoType = labels[0];
+        const sort = labels[1];
+        const options = JSON.parse(n?.enumvalue);
+        return {
+          sort: sort,
+          algoType: algoType,
+          remark: n?.remark,
+          options: options
+        }
+      }).sort((a, b) => a.sort - b.sort);
 
       wx.setStorage({
         key: "dict",
         data: JSON.stringify({
           bu_question: buQuestion,
-          bu_algo_type: buAlgoType
+          'un_matting_template': buAlgoType1,
+          'matting_template': buAlgoType
         })
       })
     }

@@ -174,7 +174,6 @@ Page({
           };
         });
     }
-
   },
   onClickCanvas(event: any) {
     const { pageX, pageY } = event.touches[0];

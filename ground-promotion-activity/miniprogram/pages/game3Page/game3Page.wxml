@@ -56,7 +56,7 @@
     </view>
     <view class="btn-content">
       <view class="btn" bind:tap="onBackHome">返回首页</view>
-      <view class="btn" bind:tap="onDownload">
+      <view class="btn" bind:tap="onDownloadImg">
         <view class="text">下载</view>
         <view class="download"></view>
       </view>

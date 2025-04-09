@@ -226,3 +226,57 @@ export function getFileSize(filePath: string) {
     }
   });
 }
+
+// 将在线地址转为文件
+export function savePosterToServer(posterPath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    wx.downloadFile({
+      url: posterPath,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          const tempFilePath = res.tempFilePath;
+          return resolve(tempFilePath);
+        } else {
+          return reject(new Error('下载海报失败'));
+        }
+      },
+      fail: (err) => {
+        console.error('下载图片失败', err);
+        return reject(new Error('下载图片失败'));
+      },
+    });
+  });
+}
+
+export function onDownload(imgUrl: string) {
+  wx.showLoading({
+    title: '下载中...',
+    mask: true // 添加遮罩层，防止触摸穿透
+  });
+  wx.downloadFile({
+    url: imgUrl,
+    success: (res) => {
+      if (res.statusCode === 200) {
+        wx.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success: () => {
+            showToast('保存成功', 'success', 2000);
+          },
+          fail: (err) => {
+            if (err.errMsg.includes('auth denied')) {
+              showToast('请授权保存图片到相册');
+            }
+          },
+        });
+      } else {
+        showToast(`下载图片失败：${res}`);
+      }
+    },
+    fail: (err) => {
+      showToast(`下载图片失败：${err}`);
+    },
+    complete: () => {
+      wx.hideLoading();
+    },
+  });
+}
