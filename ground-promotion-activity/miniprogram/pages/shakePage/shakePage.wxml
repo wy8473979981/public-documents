@@ -6,5 +6,5 @@
   <!-- <view class="progress-text">{{progressNum}}%</view> -->
 
   <!-- 添加视频组件 -->
-  <video id="myVideo" class="my-video  {{showVideo? 'show-video' : ''}}" src="{{videoSrc}}" autoplay="{{showVideo}}" controls="{{false}}" loop="{{false}}" muted="{{true}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" show-bottom-progress="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
+  <video id="myVideo" class="my-video  {{showVideo? 'show-video' : ''}}" src="{{videoSrc}}" controls="{{false}}" loop="{{false}}" muted="{{false}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" show-bottom-progress="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
 </view>

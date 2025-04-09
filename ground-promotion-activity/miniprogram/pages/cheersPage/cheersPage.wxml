@@ -7,5 +7,5 @@
   <view class="cheers-last" wx:else></view>
 
   <!-- 添加视频组件 -->
-  <video id="myVideo" class="my-video {{showVideo? 'show-video' : ''}}" src="{{videoCheersSrc}}" autoplay="{{showVideo}}" controls="{{false}}" loop="{{false}}" muted="{{true}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
+  <video id="myVideo" class="my-video {{showVideo? 'show-video' : ''}}" src="{{videoCheersSrc}}" controls="{{false}}" loop="{{false}}" muted="{{false}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
 </view>

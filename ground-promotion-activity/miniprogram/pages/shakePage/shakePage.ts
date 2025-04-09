@@ -4,7 +4,7 @@ import { showToast, delayFn } from '../../utils/index';
 Page({
   data: {
     showVideo: false,
-    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
+    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video-1.mp4',
     recordId: '',
 
     bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
@@ -62,7 +62,6 @@ Page({
 
       // 判断是否达到摇晃阈值
       if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
-        wx.vibrateLong();
         this.bottleAnimation();
       }
       // 记录当前加速度值
@@ -76,6 +75,7 @@ Page({
   bottleAnimation() {
     const { bottleAnimationFlag } = this.data;
     if (!bottleAnimationFlag) {
+      wx.vibrateLong();
       this.triggerShake();
       this.setData({ bottleAnimationFlag: true });
       this.animate(

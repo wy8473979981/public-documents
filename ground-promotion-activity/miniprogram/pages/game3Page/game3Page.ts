@@ -140,6 +140,7 @@ Page({
     const { currentPhoto } = this.data;
     if (currentPhoto) {
       this.directionJudgment(currentPhoto);
+      // this.compositePoster(currentPhoto);
     } else {
       showToast('请选择图片');
     }
@@ -170,6 +171,7 @@ Page({
       cameraContext.takePhoto({
         quality: 'original',
         success: (res) => {
+          // saveImage(res.tempImagePath);
           this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
         },
         fail: (err) => {
@@ -478,6 +480,14 @@ Page({
       },
     });
   },
+  async getStartFunc() {
+    try {
+
+    } catch (error) {
+      console.error(error);
+
+    }
+  },
   async compositePoster(imgUrl: string) {
     try {
       const { algoType, templId, token } = this.data;
@@ -489,7 +499,7 @@ Page({
         data: {
           imageBase64: base64Data,
           algoType: algoType === 'original' ? undefined : algoType,
-          templId: templId,
+          templId: templId
         },
         header: { Authorization: token, type: 2 },
       };
