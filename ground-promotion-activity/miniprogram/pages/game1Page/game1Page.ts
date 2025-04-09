@@ -68,12 +68,13 @@ Page({
 
       const res = await uploadFile('/poster/createPosterImageF', params);
       const { code, data, msg } = JSON.parse(res.data);
+      console.log(code, data, msg);
       if (code === '200' && data?.status === 1) {
         this.setData({ loading: false, uploadStatus: true });
       } else {
         wx.showModal({
           title: '提示',
-          content: msg ? msg : '弹福平台登陆截图不正确',
+          content: '弹福平台登陆截图不正确',
           showCancel: false, // 禁用取消按钮
           confirmText: '确定',
           success: (res) => {
