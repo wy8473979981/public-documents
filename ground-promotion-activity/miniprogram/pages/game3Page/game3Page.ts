@@ -57,7 +57,7 @@ Page({
     const compoundGif = wx.getStorageSync('compoundGif');
     this.setData({ token, openId, compoundGif });
 
-    this.init();
+    this.initDict();
 
     if (status === '1') {
       // 闯关成功，再次进入页面时，直接展示海报图片
@@ -86,7 +86,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() { },
-  init() {
+  initDict() {
     try {
       const dict = wx.getStorageSync('dict');
       const parseData = JSON.parse(dict);
