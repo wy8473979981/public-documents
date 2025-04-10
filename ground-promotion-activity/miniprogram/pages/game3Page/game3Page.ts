@@ -245,9 +245,23 @@ Page({
       };
       const res = await uploadFile('/poster/verifyResize', params);
       const { code, data, msg } = JSON.parse(res.data);
-      if (code === '200' && data?.imageBase64) {
-        const base64Data = `data:image/jpeg;base64,${data.imageBase64}`;
-        this.compositePoster(base64Data);
+      if (code === '200') {
+        if (data?.predict && data?.imageBase64) {
+          const base64Data = `data:image/jpeg;base64,${data.imageBase64}`;
+          this.compositePoster(base64Data);
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: '照片未包含人物，请重新选择图片',
+            showCancel: false, // 禁用取消按钮
+            confirmText: '确定',
+            success: (res) => {
+              if (res.confirm) {
+                this.onReselectImg();
+              }
+            },
+          });
+        }
       } else {
         showToast(msg);
       }
