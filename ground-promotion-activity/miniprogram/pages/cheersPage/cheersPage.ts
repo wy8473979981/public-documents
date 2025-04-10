@@ -11,8 +11,10 @@ Page({
    */
   data: {
     showVideo: false,
-    videoCheersSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-1.mp4',
     showCheers: true,
+    cheersAudioSrc: '',
+    glassImgSrc: '',
+    cheersLastImgSrc: ''
   },
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
@@ -20,10 +22,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options: PageOptions) {
-    // const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
-    // this.setData({ videoCheersSrc: videoCheersSrc });
-    console.log(options, 'options');
-
+    this.preloadSource();
     if (options?.type == 4) {
       // 播放过cheers视频显示最后一个画面
       this.setData({ showCheers: false });
@@ -32,8 +31,21 @@ Page({
   onReady() {
     this.videoContext = wx.createVideoContext('myVideo');
   },
+  preloadSource() {
+    const timer = setInterval(() => {
+      const cheersAudioSrc = wx.getStorageSync('cheersAudioSrc');
+      const glassImgSrc = wx.getStorageSync('glassImgSrc');
+      const cheersLastImgSrc = wx.getStorageSync('cheersLastImgSrc');
+      if (cheersAudioSrc && glassImgSrc && cheersLastImgSrc) {
+        clearInterval(timer);
+      }
+      console.log('cheersAudioSrc', cheersAudioSrc, glassImgSrc, cheersLastImgSrc);
+      this.setData({ cheersAudioSrc: cheersAudioSrc, glassImgSrc: glassImgSrc, cheersLastImgSrc: cheersLastImgSrc });
+    }, 40);
+
+  },
   cheersPlay() {
-    this.setData({ showVideo: true }, () => {
+    this.setData({ showVideo: true, showCheers: false }, () => {
       console.log('播放视频');
       wx.vibrateLong();
       this.videoContext?.play(); // 用户点击后再播放

@@ -106,7 +106,7 @@ export function getOpenId() {
           code,
           data
         } = result;
-        console.log('/wx/user/login', result);
+        // console.log('/wx/user/login', result);
         if (code === "200") {
           wx.setStorage({
             key: "openId",
@@ -207,37 +207,159 @@ export const getCompoundGif = async () => {
     console.error(err); // 处理错误情况
   }
 }
-export function preloadVideo1() {
-  const videoSrc = wx.getStorageSync('videoSrc');
-  if (!videoSrc) {
+export function preloadBubblyAudio() {
+  const bubblyAudioSrc = wx.getStorageSync('bubblyAudioSrc');
+  if (!bubblyAudioSrc) {
+    const fs = wx.getFileSystemManager(); // 获取文件系统管理器
     wx.downloadFile({
-      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video.mp4',
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly.mp4',
       success: (res) => {
         if (res.statusCode === 200) {
-          console.log('video');
-          wx.setStorage({
-            key: "videoSrc",
-            data: res.tempFilePath
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            success: (savedRes) => {
+              wx.setStorage({
+                key: "bubblyAudioSrc",
+                data: savedRes.savedFilePath,
+                success: () => {
+                  console.log('bubblyAudioSrc-数据缓存成功');
+                },
+                fail: (err) => {
+                  console.error('存储失败:', err);
+                }
+              });
+            },
+            fail: (err) => {
+              reject(new Error(`保存文件失败: ${url}, Error: ${err.errMsg}`));
+            }
           });
         }
       }
     });
   }
 }
-export function preloadVideo2() {
-  const videoCheersSrc = wx.getStorageSync('videoCheersSrc');
-  if (!videoCheersSrc) {
+export function preloadCheersAudio() {
+  const cheersAudioSrc = wx.getStorageSync('cheersAudioSrc');
+  if (!cheersAudioSrc) {
+    const fs = wx.getFileSystemManager(); // 获取文件系统管理器
     wx.downloadFile({
       url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
       success: (res) => {
         if (res.statusCode === 200) {
-          console.log('cheers');
-          wx.setStorage({
-            key: "videoCheersSrc",
-            data: res.tempFilePath
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            success: (savedRes) => {
+              wx.setStorage({
+                key: "cheersAudioSrc",
+                data: savedRes.savedFilePath,
+                success: () => {
+                  console.log('cheersAudioSrc-数据缓存成功');
+                },
+                fail: (err) => {
+                  console.error('存储失败:', err);
+                }
+              });
+            },
+            fail: (err) => {
+              reject(new Error(`保存文件失败: ${url}, Error: ${err.errMsg}`));
+            }
           });
         }
       }
     });
   }
 }
+export function preloadBottleSrc() {
+  const bottleImgSrc = wx.getStorageSync('bottleImgSrc');
+  if (!bottleImgSrc) {
+    const fs = wx.getFileSystemManager(); // 获取文件系统管理器
+    wx.downloadFile({
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png',
+      success: (res) => {
+        if (res.statusCode === 200) {
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            success: (savedRes) => {
+              wx.setStorage({
+                key: "bottleImgSrc",
+                data: savedRes.savedFilePath,
+                success: () => {
+                  console.log('bottleImgSrc-数据缓存成功');
+                },
+                fail: (err) => {
+                  console.error('存储失败:', err);
+                }
+              });
+            },
+            fail: (err) => {
+              reject(new Error(`保存文件失败: ${url}, Error: ${err.errMsg}`));
+            }
+          });
+        }
+      }
+    });
+  }
+}
+export function preloadGlassSrc() {
+  const glassImgSrc = wx.getStorageSync('glassImgSrc');
+  if (!glassImgSrc) {
+    const fs = wx.getFileSystemManager(); // 获取文件系统管理器
+    wx.downloadFile({
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/glass.png',
+      success: (res) => {
+        if (res.statusCode === 200) {
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            success: (savedRes) => {
+              wx.setStorage({
+                key: "glassImgSrc",
+                data: savedRes.savedFilePath,
+                success: () => {
+                  console.log('glassImgSrc-数据缓存成功');
+                },
+                fail: (err) => {
+                  console.error('存储失败:', err);
+                }
+              });
+            },
+            fail: (err) => {
+              reject(new Error(`保存文件失败: ${url}, Error: ${err.errMsg}`));
+            }
+          });
+        }
+      }
+    });
+  }
+}
+export function preloadCheersLastSrc() {
+  const cheersLastImgSrc = wx.getStorageSync('cheersLastImgSrc');
+  if (!cheersLastImgSrc) {
+    const fs = wx.getFileSystemManager(); // 获取文件系统管理器
+    wx.downloadFile({
+      url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-last.png',
+      success: (res) => {
+        if (res.statusCode === 200) {
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            success: (savedRes) => {
+              wx.setStorage({
+                key: "cheersLastImgSrc",
+                data: savedRes.savedFilePath,
+                success: () => {
+                  console.log('cheersLastImgSrc-数据缓存成功');
+                },
+                fail: (err) => {
+                  console.error('存储失败:', err);
+                }
+              });
+            },
+            fail: (err) => {
+              reject(new Error(`保存文件失败: ${url}, Error: ${err.errMsg}`));
+            }
+          });
+        }
+      }
+    });
+  }
+}
+

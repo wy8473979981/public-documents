@@ -1,11 +1,11 @@
 <!--pages/cheersPage/cheersPage.wxml-->
 <view class="cheers-wrapper">
   <view class="cheers-first" wx:if="{{showCheers}}">
-    <image class="glass" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/glass.png" mode="aspectFit"></image>
+    <image class="glass" src="{{glassImgSrc}}" mode="aspectFit"></image>
     <image class="cheers" src="https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.png" mode="aspectFit" bind:tap="cheersPlay"></image>
   </view>
-  <view class="cheers-last" wx:else></view>
+  <image class="cheers-last" wx:else src="{{cheersLastImgSrc}}" mode="aspectFill"></image>
 
   <!-- 添加视频组件 -->
-  <video id="myVideo" class="my-video {{showVideo? 'show-video' : ''}}" src="{{videoCheersSrc}}" controls="{{false}}" loop="{{false}}" muted="{{false}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
+  <video id="myVideo" class="my-video {{showVideo? 'show-video' : ''}}" src="{{cheersAudioSrc}}" controls="{{false}}" loop="{{false}}" muted="{{false}}" playsinline="{{true}}" show-play-btn="{{false}}" show-fullscreen-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="cover" bindended="videoPlayed"></video>
 </view>

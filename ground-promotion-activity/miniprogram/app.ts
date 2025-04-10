@@ -7,7 +7,7 @@
  */
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
-import { getOpenId, getDict, getToken, getCompoundGif } from './utils/request'
+import { getOpenId, getDict, getToken, getCompoundGif, preloadBubblyAudio, preloadBottleSrc, preloadCheersAudio, preloadGlassSrc,preloadCheersLastSrc } from './utils/request'
 
 App<IAppOption>({
   globalData: {
@@ -17,12 +17,18 @@ App<IAppOption>({
     console.log('App onShow');
     this.checkForUpdates();
     this.checkWeChatVersion('3.7.3');
-    
+
+    preloadBubblyAudio();
+    preloadCheersAudio();
+    preloadBottleSrc();
+    preloadGlassSrc();
+    preloadCheersLastSrc();
+
+    getCompoundGif();
     getOpenId();
     getDict();
     getToken();
     printVersion();
-    getCompoundGif();
   },
   checkWeChatVersion(minVersion) {
     try {

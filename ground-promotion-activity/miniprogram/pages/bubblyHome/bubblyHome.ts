@@ -54,7 +54,7 @@ Page({
       postRequest('/activity/get', params1),
       postRequest('/activity/get', params2)
     ]);
-    console.log(result1, result2);
+    // console.log(result1, result2);
     if (result1.data) {
       if (result1.data?.status === 1) {
         let type = result2.data?.status === 1 ? result2.data?.type : 0;

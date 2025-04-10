@@ -4,7 +4,8 @@ import { showToast, delayFn } from '../../utils/index';
 Page({
   data: {
     showVideo: false,
-    videoSrc: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/video-1.mp4',
+    bubblyAudioSrc: '',
+    bottleImgSrc: '',
     recordId: '',
 
     bubbles: [] as { x: number; y: number; radius: number; speed: number }[],
@@ -31,24 +32,35 @@ Page({
 
     progressNum: 0,
   },
-  handleShakeAnimationTimer:0,
+  handleShakeAnimationTimer: 0,
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad(options: any) {
     console.log('香槟摇一摇！', options);
+
+    this.preloadSource();
     if (options?.recordId) {
       this.setData({ recordId: options?.recordId })
     }
   },
   onReady() {
-    this.startShakeListener();
-
-    this.initCanvas();
     const lastTime = Date.now();
     this.setData({ lastTime: lastTime });
-
     this.videoContext = wx.createVideoContext('myVideo');
+    this.startShakeListener();
+    this.initCanvas();
     this.handleShakeAnimation();
+  },
+  preloadSource() {
+    const timer = setInterval(() => {
+      const bubblyAudioSrc = wx.getStorageSync('bubblyAudioSrc');
+      const bottleImgSrc = wx.getStorageSync('bottleImgSrc');
+      if (bubblyAudioSrc && bottleImgSrc) {
+        clearInterval(timer);
+      }
+      console.log('bubblyAudioSrc', bubblyAudioSrc, bottleImgSrc);
+      this.setData({ bubblyAudioSrc: bubblyAudioSrc, bottleImgSrc: bottleImgSrc });
+    },40);
   },
   startShakeListener() {
     // 监听加速度计数据
