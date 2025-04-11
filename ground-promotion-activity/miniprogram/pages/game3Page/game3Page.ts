@@ -519,9 +519,10 @@ Page({
         compressedWidth: compressedWidth,
         success: async (res) => {
           const tempFilePath = res.tempFilePath;
+          this.setData({ currentPhoto: tempFilePath, currentStep: 1 });
+          
           const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
           console.log('imgInfo', imgInfo);
-          this.setData({ currentPhoto: tempFilePath, currentStep: 1 });
           const sizeInfo = await getFileSize(tempFilePath);
           const { bytes, kb, mb } = sizeInfo;
           console.log(`处理后文件大小：${bytes}字节，${kb}KB，${mb}MB`);

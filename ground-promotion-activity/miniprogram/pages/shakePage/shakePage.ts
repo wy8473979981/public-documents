@@ -31,10 +31,9 @@ Page({
     bottleAnimationFlag: false,
     bottleStopAnimationFlag: false,
 
-    progressNum: 0,
     platform: '',
-    isPlaying: false
-
+    isPlaying: false,
+    initMusicStatus: false,
   },
   handleShakeAnimationTimer: 0,
   audioContext: null as WechatMiniprogram.InnerAudioContext | null,
@@ -57,14 +56,14 @@ Page({
     this.startShakeListener();
     this.initCanvas();
     this.handleShakeAnimation();
-    this.initIosAudio();
+    // this.initIosAudio();
 
   },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    this.initAndroidAudio();
+    // this.initAndroidAudio();
   },
   preloadSource() {
     const timer = setInterval(() => {
@@ -80,6 +79,7 @@ Page({
       }
       if (flowAudio) {
         flowAudioSrc = flowAudio.path;
+        this.initAudio(flowAudioSrc);
       }
       if (bottleImg) {
         bottleImgSrc = bottleImg.path;
@@ -104,7 +104,6 @@ Page({
       // 判断是否达到摇晃阈值
       if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
         this.bottleAnimation();
-        this.playMusic();
       }
       // 记录当前加速度值
       this.setData({
@@ -179,9 +178,6 @@ Page({
       await delayFn(1000);
       // 播放视频
       this.setData({ showVideo: true }, () => {
-        if (newCount === 10) {
-          this.pauseMusic();
-        }
         this.videoContext?.play();
       });
 
@@ -259,22 +255,19 @@ Page({
           canvasWidth: res[0].width,
           canvasHeight: res[0].height,
           maxHeight: res[0].height, // 最大高度为画布的高度
-          fillSpeed: 1.5, // 填充速度
+          fillSpeed: 0.8, // 填充速度
         });
         this.liquidCanvasAnimate();
       });
   },
   // 设置count值，每次+1都会触发高度变化
   setCount(count: any) {
-
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
-    console.log(targetHeight, 'targetHeight');
-
+    this.playMusic(); // 播放音频
     this.setData({
       count,
-      targetHeight,
-      progressNum: count * 10
+      targetHeight
     });
   },
   liquidCanvasAnimate() {
@@ -303,7 +296,8 @@ Page({
         if (currentHeight < targetHeight) {
           currentHeight = Math.min(currentHeight + fillSpeed, targetHeight);
           this.setData({ currentHeight });
-        } else if (currentHeight > targetHeight) {
+        } else if (currentHeight >= targetHeight) {
+          this.pauseMusic(); // 停止音频
           currentHeight = Math.max(currentHeight - fillSpeed, targetHeight);
           this.setData({ currentHeight });
         }
@@ -370,19 +364,24 @@ Page({
     this.animate(
       '.handle-shake',
       [
-        { scale: [0], ease: 'ease', offset: 0 },
-        { scale3d: [0.9, 0.9, 0.9], rotate: -3, ease: 'ease', offset: 0.1 },
-        { scale3d: [0.9, 0.9, 0.9], rotate: -3, ease: 'ease', offset: 0.2 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.3 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.4 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.5 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.6 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.7 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: -3, ease: 'ease', offset: 0.8 },
-        { scale3d: [1.1, 1.1, 1.1], rotate: 3, ease: 'ease', offset: 0.9 },
-        { scaleX: 1, ease: 'ease', offset: 1 },
+        { top: '117.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
+        { top: '117.19rpx', rotateZ: 0, ease: 'ease-in-out' },
       ],
-      500,
+      300,
       () => {
         this.handleShakeAnimationTimer = setTimeout(() => {
           this.handleShakeAnimation();
@@ -391,56 +390,60 @@ Page({
       }
     );
   },
-  initIosAudio() {
-    if (this.data.platform === 'ios') {
-      this.initAudio();
+  // initIosAudio() {
+  //   if (this.data.platform === 'ios') {
+  //     this.initAudio();
+  //   }
+  // },
+  // initAndroidAudio() {
+  //   if (this.data.platform !== 'ios') {
+  //     // 安卓系统小程序重新进入前台时，检查音频状态
+  //     if (!this.audioContext || this.audioContext.paused) {
+  //       console.log(`当前应用环境：${this.data.platform}，初始化音频`)
+  //       this.initAudio();
+  //     }
+  //   }
+  // },
+  initAudio(flowAudioSrc: string) {
+    if (!this.data.initMusicStatus) {
+      this.setData({ initMusicStatus: true });
+      // 创建音频上下文对象
+      this.audioContext = wx.createInnerAudioContext();
+      this.audioContext.src = flowAudioSrc; // 音乐资源的路径
+      this.audioContext.loop = true; // 设置循环播放
+
+      // 设置音频播放选项
+      wx.setInnerAudioOption({
+        mixWithOther: false, // 不允许与其他音频混合播放
+        obeyMuteSwitch: false, // （仅在 iOS 生效）是否遵循静音开关，设置为 false 之后，即使是在静音模式下，也能播放声音
+        success: function () {
+          console.log("音频播放选项设置成功");
+        },
+        fail: function () {
+          console.log("音频播放选项设置失败");
+        }
+      });
+
+      // 音乐加载完毕后
+      this.audioContext.onCanplay(() => {
+        this.audioContext?.offCanplay(); // 防止多次触发
+      });
+
+      // 监听音频播放结束
+      this.audioContext.onEnded(() => {
+        console.log('音频播放结束');
+      });
+
+      // 监听音频播放错误
+      this.audioContext.onError((res) => {
+        console.error('音频播放错误:', res);
+      });
     }
-  },
-  initAndroidAudio() {
-    if (this.data.platform !== 'ios') {
-      // 安卓系统小程序重新进入前台时，检查音频状态
-      if (!this.audioContext || this.audioContext.paused) {
-        console.log(`当前应用环境：${this.data.platform}，初始化音频`)
-        this.initAudio();
-      }
-    }
-  },
-  initAudio() {
-    // 创建音频上下文对象
-    this.audioContext = wx.createInnerAudioContext();
-    this.audioContext.src = 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/flowAudio.mp3'; // 音乐资源的路径
-    this.audioContext.loop = true; // 设置循环播放
-
-    // 设置音频播放选项
-    wx.setInnerAudioOption({
-      mixWithOther: false, // 不允许与其他音频混合播放
-      obeyMuteSwitch: false, // （仅在 iOS 生效）是否遵循静音开关，设置为 false 之后，即使是在静音模式下，也能播放声音
-      success: function () {
-        console.log("音频播放选项设置成功");
-      },
-      fail: function () {
-        console.log("音频播放选项设置失败");
-      }
-    });
-
-    // 音乐加载完毕后
-    this.audioContext.onCanplay(() => {
-      this.audioContext?.offCanplay(); // 防止多次触发
-    });
-
-    // 监听音频播放结束
-    this.audioContext.onEnded(() => {
-      console.log('音频播放结束');
-    });
-
-    // 监听音频播放错误
-    this.audioContext.onError((res) => {
-      console.error('音频播放错误:', res);
-    });
   },
   playMusic() {
     // 播放音乐
     if (this.audioContext && !this.data.isPlaying) {
+      console.log('playMusic');
       this.audioContext?.play();
       // 更新播放状态
       this.setData({
@@ -451,14 +454,12 @@ Page({
   pauseMusic() {
     // 暂停音乐
     if (this.audioContext && this.data.isPlaying) {
+      console.log('pauseMusic');
       this.audioContext?.stop() // 停止
-      this.audioContext?.destroy() // 释放音频资源
       // 更新播放状态
       this.setData({
         isPlaying: false,
       });
-    } else {
-      console.log('AudioContext is not available or already paused'); // 添加调试信息
     }
   },
   destroyMusic() {
