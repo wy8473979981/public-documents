@@ -33,16 +33,29 @@ Page({
   },
   preloadSource() {
     const timer = setInterval(() => {
-      const cheersAudioSrc = wx.getStorageSync('cheersAudioSrc');
-      const glassImgSrc = wx.getStorageSync('glassImgSrc');
-      const cheersLastImgSrc = wx.getStorageSync('cheersLastImgSrc');
+      const cheersAudio = wx.getStorageSync('cheersAudio');
+      const glassImg = wx.getStorageSync('glassImg');
+      const cheersLastImg = wx.getStorageSync('cheersLastImg');
+      let cheersAudioSrc = '';
+      let glassImgSrc = '';
+      let cheersLastImgSrc = '';
+
+      if (cheersAudio) {
+        cheersAudioSrc = cheersAudio.path;
+      }
+      if (glassImg) {
+        glassImgSrc = glassImg.path;
+      }
+      if (cheersLastImg) {
+        cheersLastImgSrc = cheersLastImg.path;
+      }
+
       if (cheersAudioSrc && glassImgSrc && cheersLastImgSrc) {
         clearInterval(timer);
       }
       console.log('cheersAudioSrc', cheersAudioSrc, glassImgSrc, cheersLastImgSrc);
       this.setData({ cheersAudioSrc: cheersAudioSrc, glassImgSrc: glassImgSrc, cheersLastImgSrc: cheersLastImgSrc });
     }, 40);
-
   },
   cheersPlay() {
     this.setData({ showVideo: true, showCheers: false }, () => {

@@ -3,11 +3,13 @@
  * @Author: wangyang
  * @Date: 2025-03-18 13:46:04
  * @LastEditors: wangyang
- * @LastEditTime: 2025-03-31 17:15:49
+ * @LastEditTime: 2025-04-11 10:43:57
  */
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
-import { getOpenId, getDict, getToken, getCompoundGif, preloadBubblyAudio, preloadBottleSrc, preloadCheersAudio, preloadGlassSrc,preloadCheersLastSrc } from './utils/request'
+import { getOpenId, getDict, getToken } from './utils/request';
+
+import { getCachedFile } from './utils/dataCache';
 
 App<IAppOption>({
   globalData: {
@@ -15,20 +17,57 @@ App<IAppOption>({
   },
   onShow() {
     console.log('App onShow');
+    this.preloadSource();
     this.checkForUpdates();
     this.checkWeChatVersion('3.7.3');
 
-    preloadBubblyAudio();
-    preloadCheersAudio();
-    preloadBottleSrc();
-    preloadGlassSrc();
-    preloadCheersLastSrc();
-
-    getCompoundGif();
     getOpenId();
     getDict();
     getToken();
     printVersion();
+  },
+  preloadSource() {
+    const preloadSourceList = [
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly.mp4',
+        cacheKey: 'bubblyAudio',
+        expireDays: 1,
+      },
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+        cacheKey: 'cheersAudio',
+        expireDays: 1,
+      },
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png',
+        cacheKey: 'bottleImg',
+        expireDays: 1,
+      },
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/glass.png',
+        cacheKey: 'glassImg',
+        expireDays: 1,
+      },
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-last.jpg',
+        cacheKey: 'cheersLastImg',
+        expireDays: 1,
+      },
+      {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/compound.gif',
+        cacheKey: 'compoundGif',
+        expireDays: 1,
+      },
+    ];
+    preloadSourceList.forEach((item) => {
+      getCachedFile(item.url, item.cacheKey, item.expireDays)
+        .then(() => {
+          console.log(`${item.cacheKey} 已预加载`);
+        })
+        .catch((error) => {
+          console.error(`预加载 ${item.cacheKey} 失败:`, error);
+        });
+    });
   },
   checkWeChatVersion(minVersion) {
     try {

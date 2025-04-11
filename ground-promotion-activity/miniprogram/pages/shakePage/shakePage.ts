@@ -53,8 +53,17 @@ Page({
   },
   preloadSource() {
     const timer = setInterval(() => {
-      const bubblyAudioSrc = wx.getStorageSync('bubblyAudioSrc');
-      const bottleImgSrc = wx.getStorageSync('bottleImgSrc');
+      const bubblyAudio = wx.getStorageSync('bubblyAudio');
+      const bottleImg = wx.getStorageSync('bottleImg');
+      let bubblyAudioSrc = '';
+      let bottleImgSrc = '';
+
+      if (bubblyAudio) {
+        bubblyAudioSrc = bubblyAudio.path;
+      }
+      if (bottleImg) {
+        bottleImgSrc = bottleImg.path;
+      }
       if (bubblyAudioSrc && bottleImgSrc) {
         clearInterval(timer);
       }

@@ -67,7 +67,7 @@ Page({
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
     const compoundGif = wx.getStorageSync('compoundGif');
-    this.setData({ token, openId, compoundGif });
+    this.setData({ token, openId, compoundGif:compoundGif?.path });
 
     this.initDict();
 
