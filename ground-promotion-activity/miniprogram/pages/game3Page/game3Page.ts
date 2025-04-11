@@ -67,7 +67,7 @@ Page({
     const token = wx.getStorageSync('token');
     const openId = wx.getStorageSync('openId');
     const compoundGif = wx.getStorageSync('compoundGif');
-    this.setData({ token, openId, compoundGif:compoundGif?.path });
+    this.setData({ token, openId, compoundGif: compoundGif?.path });
 
     this.initDict();
 
@@ -105,7 +105,6 @@ Page({
       const parseData = JSON.parse(dict);
       const { un_matting_template, matting_template } = parseData;
       const tabList = matting ? matting_template : un_matting_template;
-      console.log('tabList', tabList);
       this.setData({ tabList: tabList });
     } catch (error) {
       showToast(`获取存储失败:${error}`);
@@ -175,7 +174,7 @@ Page({
       sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
       success: (res) => {
         const tempFilePaths = res.tempFiles.map((file) => file.tempFilePath);
-        this.setData({ currentPhoto: tempFilePaths[0], currentStep: 1 });
+        this.compressImage(tempFilePaths[0]);
       },
       fail: (err) => {
         console.error('选择图片失败', err);
@@ -189,7 +188,7 @@ Page({
       cameraContext.takePhoto({
         quality: 'original',
         success: (res) => {
-          this.setData({ currentPhoto: res.tempImagePath, currentStep: 1 });
+          this.compressImage(res.tempImagePath);
         },
         fail: (err) => {
           console.error('拍照失败：', err);
@@ -509,23 +508,32 @@ Page({
     }
   },
   //  压缩图片
-  compressImage(src: string, compressedWidth = 1204) {
-    wx.compressImage({
-      src: src,
-      quality: 80, // 质量压缩
-      compressedWidth: compressedWidth,
-      success: async (res) => {
-        const url = res.tempFilePath;
-        this.compositePoster(url);
-        const imgInfo: any = await wx.getImageInfo({ src: url });
-        console.log('imgInfo', imgInfo);
-        // saveImage(url);
-        getFileSize(url);
-      },
-      fail() {
-        showToast('压缩失败');
-      },
-    });
+  async compressImage(currentPhoto: string, compressedWidth = 1204) {
+    const sizeInfo = await getFileSize(currentPhoto);
+    const { bytes, kb, mb } = sizeInfo;
+    console.log(`处理前文件大小：${bytes}字节，${kb}KB，${mb}MB`);
+    if (sizeInfo?.kb > 200) {
+      wx.compressImage({
+        src: currentPhoto,
+        quality: 80, // 质量压缩
+        compressedWidth: compressedWidth,
+        success: async (res) => {
+          const tempFilePath = res.tempFilePath;
+          const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
+          console.log('imgInfo', imgInfo);
+          this.setData({ currentPhoto: tempFilePath, currentStep: 1 });
+          const sizeInfo = await getFileSize(tempFilePath);
+          const { bytes, kb, mb } = sizeInfo;
+          console.log(`处理后文件大小：${bytes}字节，${kb}KB，${mb}MB`);
+        },
+        fail() {
+          showToast('压缩失败');
+        },
+      });
+    } else {
+      console.log('小于200kb,不处理');
+      this.setData({ currentPhoto: currentPhoto, currentStep: 1 });
+    }
   },
 
   /**

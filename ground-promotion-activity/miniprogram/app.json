@@ -1,10 +1,10 @@
 {
   "pages": [
     "pages/bubblyHome/bubblyHome",
-    "pages/cheersPage/cheersPage",
     "pages/shakePage/shakePage",
     "pages/game3Page/game3Page",
     "pages/guidePage/guidePage",
+    "pages/cheersPage/cheersPage",
     "pages/game1Page/game1Page",
     "pages/homePage/homePage",
     "pages/loginPage/loginPage",

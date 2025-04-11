@@ -210,22 +210,49 @@ export function readFileAsBase64(filePath: string): Promise<string> {
     });
   });
 }
+export function getFileSize(filePath: string): Promise<{
+  bytes: number,
+  kb: number,
+  mb: number
+}> {
+  return new Promise((resolve, reject) => {
+    const fs = wx.getFileSystemManager();
+    fs.stat({
+      path: filePath,
+      success: (res: any) => {
+        const fileSizeInBytes = res.stats.size; // 文件大小，单位字节
+        const fileSizeInKB = (fileSizeInBytes / 1024); // 转换为 KB 并保留两位小数
+        const fileSizeInMB = (fileSizeInKB / 1024); // 转换为 MB 并保留两位小数
+        // console.log(`文件大小：${fileSizeInBytes}字节，${fileSizeInKB.toFixed(2)}KB，${fileSizeInMB.toFixed(2)}MB`);
 
-export function getFileSize(filePath: string) {
-  const fs = wx.getFileSystemManager();
-  fs.stat({
-    path: filePath,
-    success: (res: any) => {
-      const fileSizeInBytes = res.stats.size; // 文件大小，单位字节
-      const fileSizeInKB = (fileSizeInBytes / 1024); // 转换为 KB 并保留两位小数
-      const fileSizeInMB = (fileSizeInKB / 1024).toFixed(2); // 转换为 MB 并保留两位小数
-      console.log(`文件大小：${fileSizeInBytes}字节，${fileSizeInKB.toFixed(2)}KB，${fileSizeInMB}MB`);
-    },
-    fail: (err) => {
-      console.error('获取文件大小失败：', err);
-    }
+        resolve({
+          bytes: fileSizeInBytes,
+          kb: parseFloat(fileSizeInKB.toFixed(2)),
+          mb: parseFloat(fileSizeInMB.toFixed(2))
+        });
+      },
+      fail: (err) => {
+        reject(new Error(`获取文件大小失败：${err}`));
+      }
+    });
   });
 }
+
+// export function getFileSize(filePath: string) {
+//   const fs = wx.getFileSystemManager();
+//   fs.stat({
+//     path: filePath,
+//     success: (res: any) => {
+//       const fileSizeInBytes = res.stats.size; // 文件大小，单位字节
+//       const fileSizeInKB = (fileSizeInBytes / 1024); // 转换为 KB 并保留两位小数
+//       const fileSizeInMB = (fileSizeInKB / 1024).toFixed(2); // 转换为 MB 并保留两位小数
+//       console.log(`文件大小：${fileSizeInBytes}字节，${fileSizeInKB.toFixed(2)}KB，${fileSizeInMB}MB`);
+//     },
+//     fail: (err) => {
+//       console.error('获取文件大小失败：', err);
+//     }
+//   });
+// }
 
 // 将在线地址转为文件
 export function savePosterToServer(posterPath: string): Promise<string> {
@@ -279,4 +306,11 @@ export function onDownload(imgUrl: string) {
       wx.hideLoading();
     },
   });
+}
+
+export function getPlatform() {
+  const systemInfo = wx.getSystemInfoSync();
+  const platform = systemInfo.platform; // 获取平台信息
+  console.log(platform);
+  return platform;
 }

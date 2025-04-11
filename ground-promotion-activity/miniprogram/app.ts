@@ -39,6 +39,11 @@ App<IAppOption>({
         expireDays: 1,
       },
       {
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/flowAudio.mp3',
+        cacheKey: 'flowAudio',
+        expireDays: 1,
+      },
+      {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png',
         cacheKey: 'bottleImg',
         expireDays: 1,

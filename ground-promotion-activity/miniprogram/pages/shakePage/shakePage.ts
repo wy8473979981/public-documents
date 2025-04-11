@@ -1,10 +1,11 @@
 
 import { postRequest } from '../../utils/request.js';
-import { showToast, delayFn } from '../../utils/index';
+import { showToast, delayFn, getPlatform } from '../../utils/index';
 Page({
   data: {
     showVideo: false,
     bubblyAudioSrc: '',
+    flowAudioSrc: '',
     bottleImgSrc: '',
     recordId: '',
 
@@ -31,8 +32,12 @@ Page({
     bottleStopAnimationFlag: false,
 
     progressNum: 0,
+    platform: '',
+    isPlaying: false
+
   },
   handleShakeAnimationTimer: 0,
+  audioContext: null as WechatMiniprogram.InnerAudioContext | null,
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad(options: any) {
@@ -44,22 +49,37 @@ Page({
     }
   },
   onReady() {
+    const platform = getPlatform();
     const lastTime = Date.now();
-    this.setData({ lastTime: lastTime });
+    this.setData({ lastTime: lastTime, platform: platform });
     this.videoContext = wx.createVideoContext('myVideo');
+
     this.startShakeListener();
     this.initCanvas();
     this.handleShakeAnimation();
+    this.initIosAudio();
+
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+    this.initAndroidAudio();
   },
   preloadSource() {
     const timer = setInterval(() => {
       const bubblyAudio = wx.getStorageSync('bubblyAudio');
+      const flowAudio = wx.getStorageSync('flowAudio');
       const bottleImg = wx.getStorageSync('bottleImg');
       let bubblyAudioSrc = '';
+      let flowAudioSrc = '';
       let bottleImgSrc = '';
 
       if (bubblyAudio) {
         bubblyAudioSrc = bubblyAudio.path;
+      }
+      if (flowAudio) {
+        flowAudioSrc = flowAudio.path;
       }
       if (bottleImg) {
         bottleImgSrc = bottleImg.path;
@@ -67,9 +87,9 @@ Page({
       if (bubblyAudioSrc && bottleImgSrc) {
         clearInterval(timer);
       }
-      console.log('bubblyAudioSrc', bubblyAudioSrc, bottleImgSrc);
-      this.setData({ bubblyAudioSrc: bubblyAudioSrc, bottleImgSrc: bottleImgSrc });
-    },40);
+      console.log('bubblyAudioSrc', bubblyAudioSrc, flowAudioSrc, bottleImgSrc);
+      this.setData({ bubblyAudioSrc: bubblyAudioSrc, flowAudioSrc: flowAudioSrc, bottleImgSrc: bottleImgSrc });
+    }, 40);
   },
   startShakeListener() {
     // 监听加速度计数据
@@ -84,6 +104,7 @@ Page({
       // 判断是否达到摇晃阈值
       if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
         this.bottleAnimation();
+        this.playMusic();
       }
       // 记录当前加速度值
       this.setData({
@@ -157,8 +178,12 @@ Page({
 
       await delayFn(1000);
       // 播放视频
-      this.setData({ showVideo: true });
-      this.videoContext?.play();
+      this.setData({ showVideo: true }, () => {
+        if (newCount === 10) {
+          this.pauseMusic();
+        }
+        this.videoContext?.play();
+      });
 
       // 调接口保存
       this.updateRecord();
@@ -239,7 +264,6 @@ Page({
         this.liquidCanvasAnimate();
       });
   },
-
   // 设置count值，每次+1都会触发高度变化
   setCount(count: any) {
 
@@ -253,7 +277,6 @@ Page({
       progressNum: count * 10
     });
   },
-
   liquidCanvasAnimate() {
     const now = Date.now();
     const deltaTime = now - this.data.lastTime;
@@ -295,6 +318,7 @@ Page({
           this.setData({ animationId });
           return;
         }
+
 
         // 底层波浪
         ctx.beginPath();
@@ -367,11 +391,89 @@ Page({
       }
     );
   },
+  initIosAudio() {
+    if (this.data.platform === 'ios') {
+      this.initAudio();
+    }
+  },
+  initAndroidAudio() {
+    if (this.data.platform !== 'ios') {
+      // 安卓系统小程序重新进入前台时，检查音频状态
+      if (!this.audioContext || this.audioContext.paused) {
+        console.log(`当前应用环境：${this.data.platform}，初始化音频`)
+        this.initAudio();
+      }
+    }
+  },
+  initAudio() {
+    // 创建音频上下文对象
+    this.audioContext = wx.createInnerAudioContext();
+    this.audioContext.src = 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/flowAudio.mp3'; // 音乐资源的路径
+    this.audioContext.loop = true; // 设置循环播放
 
+    // 设置音频播放选项
+    wx.setInnerAudioOption({
+      mixWithOther: false, // 不允许与其他音频混合播放
+      obeyMuteSwitch: false, // （仅在 iOS 生效）是否遵循静音开关，设置为 false 之后，即使是在静音模式下，也能播放声音
+      success: function () {
+        console.log("音频播放选项设置成功");
+      },
+      fail: function () {
+        console.log("音频播放选项设置失败");
+      }
+    });
+
+    // 音乐加载完毕后
+    this.audioContext.onCanplay(() => {
+      this.audioContext?.offCanplay(); // 防止多次触发
+    });
+
+    // 监听音频播放结束
+    this.audioContext.onEnded(() => {
+      console.log('音频播放结束');
+    });
+
+    // 监听音频播放错误
+    this.audioContext.onError((res) => {
+      console.error('音频播放错误:', res);
+    });
+  },
+  playMusic() {
+    // 播放音乐
+    if (this.audioContext && !this.data.isPlaying) {
+      this.audioContext?.play();
+      // 更新播放状态
+      this.setData({
+        isPlaying: true,
+      });
+    }
+  },
+  pauseMusic() {
+    // 暂停音乐
+    if (this.audioContext && this.data.isPlaying) {
+      this.audioContext?.stop() // 停止
+      this.audioContext?.destroy() // 释放音频资源
+      // 更新播放状态
+      this.setData({
+        isPlaying: false,
+      });
+    } else {
+      console.log('AudioContext is not available or already paused'); // 添加调试信息
+    }
+  },
+  destroyMusic() {
+    if (this.audioContext) {
+      this.audioContext.stop();
+      this.audioContext.destroy(); // 销毁音频上下文，释放资源
+      this.setData({ isPlaying: false });
+    }
+  },
   onUnload() {
     wx.stopAccelerometer(); // 退出页面时停止监听
     if (this.data.animationId) {
       clearTimeout(this.data.animationId);
     }
+    // 页面卸载时销毁音频对象
+    this.destroyMusic();
   },
 });
