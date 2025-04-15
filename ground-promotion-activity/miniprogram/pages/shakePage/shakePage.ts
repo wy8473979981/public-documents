@@ -364,25 +364,28 @@ Page({
     this.animate(
       '.handle-shake',
       [
-        { top: '117.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '107.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '127.19rpx', rotateZ: 40, ease: 'ease-in-out' },
-        { top: '117.19rpx', rotateZ: 0, ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '117.19rpx', left: '133.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '111.19rpx', left: '139.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '123.19rpx', left: '127.27rpx', ease: 'ease-in-out' },
+        { transformOrigin: 'center', top: '117.19rpx', left: '133.27rpx', ease: 'ease-in-out' },
       ],
       300,
       () => {
+        this.clearAnimation('.handle-shake', function () {
+          console.log("清除了.handle-shake上的所有动画属性")
+        })
         this.handleShakeAnimationTimer = setTimeout(() => {
           this.handleShakeAnimation();
           clearTimeout(this.handleShakeAnimationTimer);

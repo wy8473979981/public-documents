@@ -40,9 +40,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-    const openId = wx.getStorageSync('openId');
-    this.setData({ openId: openId });
-    this.init();
+    this.initPageData();
   },
 
   /**
@@ -51,17 +49,17 @@ Page({
   onReady() {
 
   },
-  init() {
-    const data = wx.getStorageSync('dict');
-    const dict = JSON.parse(data);
+  initPageData() {
+    const openId = wx.getStorageSync('openId');
+    const dict = wx.getStorageSync('dict');
     const { bu_question } = dict;
     const order = ['A', 'B', 'C', 'D'];
 
     if (Array.isArray(bu_question) && bu_question.length > 0) {
       const list = bu_question.map((item: any, index: number): Question => {
         const qna = JSON.parse(item.enumvalue);
-        const rightAnswerIndex = qna.options.findIndex((n: any) => n.correct)
-        const rightAnswer = `${order[rightAnswerIndex]}.${qna.options[rightAnswerIndex]?.answer}`;
+        const rightAnswerIndex = qna.options.findIndex((n: any) => n.correct); // 正确答案下标
+        const rightAnswer = `${order[rightAnswerIndex]}.${qna.options[rightAnswerIndex]?.answer}`; // 正确答案
         return {
           num: index + 1,
           isAnswered: false,
@@ -85,6 +83,7 @@ Page({
         allQuestionList: list,
         currentQuestionList,
         currentQuestion: currentQuestionList[0],
+        openId: openId
       });
       console.log('currentQuestionList', currentQuestionList);
     }
@@ -212,7 +211,7 @@ Page({
       currentIndex: 0,
       allAnswersCompleted: false
     });
-    this.init();
+    this.initPageData();
     this.onClickHide();
   },
   onClickHide() {

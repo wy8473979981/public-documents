@@ -13,6 +13,7 @@ import {
 
 interface TabItem {
   algoType: string;
+  modelType: string;
   options: ImgItem[]; // 明确 options 是 ImgItem 数组
 }
 
@@ -27,6 +28,7 @@ interface PageOptions {
   tarImage?: string;
   taskId?: string;
   algoType?: string;
+  modelType?: string;
   templateId?: string;
 }
 
@@ -50,26 +52,21 @@ Page({
     openId: '',
     templId: '', // 模板编码
     algoType: '', // 漫画类型
+    modelType: '', // 模型类型
     taskCode: '', // 海报合成任务编码
     countDownText: '0', // 倒计时
     showCountDownText: false, // 是否显示倒计时
     createPosterId: '',
     compoundGif: '', // 倒计时gif
-    errorImg:
-      'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
-    matting: false,// 是否抠图模版
+    errorImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
+    matting: 3,
   },
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options: PageOptions) {
     const { id, status, tarImage, taskId, algoType, templateId } = options;
-    const token = wx.getStorageSync('token');
-    const openId = wx.getStorageSync('openId');
-    const compoundGif = wx.getStorageSync('compoundGif');
-    this.setData({ token, openId, compoundGif: compoundGif?.path });
-
-    this.initDict();
+    this.initPageData();
 
     if (status === '1') {
       // 闯关成功，再次进入页面时，直接展示海报图片
@@ -98,14 +95,27 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() { },
-  initDict() {
+  initPageData() {
     try {
       const { matting } = this.data;
       const dict = wx.getStorageSync('dict');
-      const parseData = JSON.parse(dict);
-      const { un_matting_template, matting_template } = parseData;
-      const tabList = matting ? matting_template : un_matting_template;
-      this.setData({ tabList: tabList });
+      const token = wx.getStorageSync('token');
+      const openId = wx.getStorageSync('openId');
+      const compoundGif = wx.getStorageSync('compoundGif');
+      const { buAlgoType0, buAlgoType1, buAlgoType2, buAlgoType3 } = dict;
+      let tabList = []
+
+      if (matting === 0) {
+        tabList = buAlgoType0;
+      } else if (matting === 1) {
+        tabList = buAlgoType1;
+      } else if (matting === 2) {
+        tabList = buAlgoType2;
+      } else if (matting === 3) {
+        tabList = buAlgoType3;
+      }
+
+      this.setData({ tabList: tabList, token, openId, compoundGif: compoundGif?.path });
     } catch (error) {
       showToast(`获取存储失败:${error}`);
     }
@@ -116,6 +126,7 @@ Page({
     const currentImgList = item?.options || [];
     this.setData({
       algoType: algoType || item?.algoType || 'original',
+      modelType: item?.modelType,
       templId: templId || currentImgList[0]?.templateId || '',
       currentImgList: currentImgList,
     });
@@ -126,6 +137,7 @@ Page({
     const currentImgList = tab?.options;
     this.setData({
       algoType: tab?.algoType,
+      modelType: tab?.modelType,
       templId: currentImgList[0]?.templateId,
       currentImgList: currentImgList, // 同步更新 currentImgList
     });
@@ -144,12 +156,13 @@ Page({
       currentPhoto: '',
       currentImgList: currentImgList,
       algoType: tabList[0]?.algoType || '',
+      modelType: tabList[0]?.modelType || '',
       templId: currentImgList[0]?.templateId || '',
       showCountDownText: false,
     });
     refreshPage();
   },
-  onToGenerate() {
+  async onToGenerate() {
     // 去生成
     const { currentPhoto } = this.data;
     if (currentPhoto) {
@@ -158,6 +171,8 @@ Page({
         mask: true // 添加遮罩层，防止触摸穿透
       });
       this.verifyResizeFunc(currentPhoto);
+      // const base64 = await readFileAsBase64(currentPhoto);
+      // this.compositePoster(base64);
     } else {
       showToast('请选择图片');
     }
@@ -270,15 +285,16 @@ Page({
   },
   async compositePoster(base64Data: string) {
     try {
-      const { algoType, templId, token } = this.data;
+      const { algoType, templId, token, modelType } = this.data;
 
       // 调用海报合成接口
       const params = {
         data: {
           imageBase64: base64Data,
           algoType: algoType === 'original' ? null : algoType,
+          modelType: modelType,
           templId: templId,
-          isMtting: false,
+          isMtting: false, // 使用了verifyResize 接口，这个参数要传false
         },
         header: { Authorization: token, type: 2 },
       };
@@ -361,14 +377,16 @@ Page({
     } else if (status === 3) {
       const failMsg = result?.failMsg;
       this.setData({ showCountDownText: false });
-      this.updatePosterImageF(errorImg, failMsg, 3);
       wx.showModal({
         title: '提示',
         content: failMsg,
         showCancel: false,
         confirmText: '确定',
         success: (res) => {
-          if (res.confirm) this.onReselectImg();
+          if (res.confirm) {
+            this.updatePosterImageF(errorImg, failMsg, 3);
+            this.onReselectImg();
+          }
         },
       });
     }
@@ -397,13 +415,9 @@ Page({
       showToast(msg);
     }
   },
-  async updatePosterImageF(
-    posterPath: string,
-    failMsg: string,
-    status: number
-  ) {
+  async updatePosterImageF(posterPath: string, failMsg: string, status: number) {
     const { createPosterId } = this.data;
-    const tempFilePath = await savePosterToServer(posterPath);
+    const tempFilePath = await savePosterToServer(posterPath); // 将路径转为文件
     const params = {
       data: {
         status: status === 2 ? 1 : -1,
@@ -520,7 +534,9 @@ Page({
         success: async (res) => {
           const tempFilePath = res.tempFilePath;
           this.setData({ currentPhoto: tempFilePath, currentStep: 1 });
-          
+
+
+          saveImage(tempFilePath);
           const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
           console.log('imgInfo', imgInfo);
           const sizeInfo = await getFileSize(tempFilePath);

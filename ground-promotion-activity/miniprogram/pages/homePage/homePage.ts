@@ -1,6 +1,6 @@
 // pages/homePage/homePage.ts
 import { postRequest } from '../../utils/request.js';
-import { showToast } from '../../utils/index';
+import { showToast, getElementPosition } from '../../utils/index';
 interface Game {
   count: number;
   gameNum: string;
@@ -16,6 +16,7 @@ Page({
    */
   data: {
     show: false,
+    showCross: false,
     currentStep: 1,
     x: 5, // rpx
     y: 1000, // rpx
@@ -207,11 +208,56 @@ Page({
     }
     return baseClass;
   },
-  onClickShow() {
-    this.setData({ show: true });
+  async onClickShow() {
+    this.setData({ show: true, showCross: true });
+    this.giftBoxAnimation();
   },
-  onClickHide() {
-    this.setData({ show: false });
+  async onClickHide() {
+    this.setData({ showCross: false });
+    const rect: any = await getElementPosition('overlay-container');
+    const giftRect: any = await getElementPosition('gift-box');
+    const startPoint = {
+      left: `${rect.left}px`,
+      top: `${rect.top}px`
+    }
+
+    const endPoint = {
+      left: `${giftRect.left + giftRect.width / 2}px`,
+      top: `${giftRect.top + giftRect.height / 2}px`
+    }
+
+    this.animate(
+      '.overlay-container',
+      [
+        { transformOrigin: 'left top', left: startPoint.left, top: startPoint.top, scale: [1], offset: 0 },
+        { transformOrigin: 'left top', left: endPoint.left, top: endPoint.top, scale: [0.02], offset: 1 },
+      ],
+      300,
+      async () => {
+        this.setData({ show: false });
+        this.giftBoxAnimation();
+      }
+    );
+  },
+  giftBoxAnimation() {
+    this.animate(
+      '.gift-box',
+      [
+        { scale: [0], ease: 'ease', offset: 0 },
+        { scale3d: [0.9, 0.9, 0.9], ease: 'ease', offset: 0.1 },
+        { scale3d: [0.9, 0.9, 0.9], ease: 'ease', offset: 0.2 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.3 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.4 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.5 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.6 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.7 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.8 },
+        { scale3d: [1.1, 1.1, 1.1], ease: 'ease', offset: 0.9 },
+        { scaleX: 1, ease: 'ease', offset: 1 },
+      ],
+      100,
+      () => { }
+    );
   },
   onTouchStart(e: any) {
     this.setData({
@@ -244,7 +290,6 @@ Page({
 
     newX = Math.max(0, Math.min(newX, maxXRpx));
     newY = Math.max(0, Math.min(newY, maxYRpx));
-    console.log(newX, newY, currentX, currentY);
 
     this.setData({
       x: newX,
