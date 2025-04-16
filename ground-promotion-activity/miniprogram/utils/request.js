@@ -8,13 +8,15 @@ function getBaseUrl(envVersion, type = 1) {
   const urlMap = {
     develop: 'https://tdauat.aia.com.cn/uat/fan-sail',
     trial: 'https://tdauat.aia.com.cn/uat/fan-sail',
-    release: 'https://tda.aia.com.cn/p/fan-sail',
+    release: 'https://tdauat.aia.com.cn/uat/fan-sail',
+    // release: 'https://tda.aia.com.cn/p/fan-sail',
   };
 
   const gatewayUrlMap = {
     develop: 'https://gateway-test.nuanwa.net',
     trial: 'https://gateway-test.nuanwa.net',
-    release: 'https://gateway.nuanwa.net',
+    release: 'https://gateway-test.nuanwa.net',
+    // release: 'https://gateway.nuanwa.net',
   };
 
   return type === 1 ? urlMap[envVersion] : gatewayUrlMap[envVersion];

@@ -13,7 +13,7 @@
       <image class="gif-{{index+1}}" src="{{currentStep === index + 1 ? game.gameGif : game.gameImg}}" mode="aspectFit"></image>
     </view>
   </view>
-  <view class="gift-box draggable" id="gift-box" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" style="left:{{x}}rpx; top:{{y}}rpx;">
+  <view wx:if="{{currentStep === 4}}" class="gift-box draggable" id="gift-box" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" style="left:{{x}}rpx; top:{{y}}rpx;">
     <image bindtap="onClickShow" class="gift-box-1" src="https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/gift-box-1.png" mode="aspectFit"></image>
   </view>
   <view class="overlay-wrapper" wx:if="{{show}}">
