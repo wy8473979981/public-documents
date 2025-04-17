@@ -534,9 +534,6 @@ Page({
         success: async (res) => {
           const tempFilePath = res.tempFilePath;
           this.setData({ currentPhoto: tempFilePath, currentStep: 1 });
-
-
-          saveImage(tempFilePath);
           const imgInfo: any = await wx.getImageInfo({ src: tempFilePath });
           console.log('imgInfo', imgInfo);
           const sizeInfo = await getFileSize(tempFilePath);
