@@ -190,12 +190,18 @@ export const getDict = async () => {
         const sort = labels[1];
         const modelType = labels[2];
         const options = JSON.parse(n?.enumvalue);
+
         return {
           sort: sort,
           algoType: algoType,
           modelType: modelType,
           remark: n?.remark,
-          options: options
+          options: options.map((item)=>{
+            return {
+              ...item,
+              src:`${item.src}?v=`+ new Date().getTime()
+            }
+          })
         }
       }).sort((a, b) => a.sort - b.sort);
 

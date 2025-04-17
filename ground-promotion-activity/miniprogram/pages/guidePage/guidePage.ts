@@ -127,7 +127,7 @@ Page({
     this.discussGirl2Animate(); // 500
     await delayFn(550);
     this.swiperLabelAnimate('swiper-label-3'); // 1000
-    await delayFn(1500);
+    await delayFn(500);
     this.startBtnAnimate();
   },
   guideTitleAnmate() {
