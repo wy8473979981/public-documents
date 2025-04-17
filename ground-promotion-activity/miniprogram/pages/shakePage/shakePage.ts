@@ -22,19 +22,21 @@ Page({
     fillSpeed: 0,
 
     shakeCount: 0,
-    shakeThreshold: 4, // 摇晃阈值（敏感度）
+    shakeThreshold: 2, // 摇晃阈值（敏感度）
+    curShakeThreshold: 0,
     lastX: 0,
     lastY: 0,
     lastZ: 0,
 
     firstReady: true,
     bottleAnimationFlag: false,
-    bottleStopAnimationFlag: false,
+    lastShakeTime: 0, // 新增：记录上次摇晃的时间戳
 
     platform: '',
     isPlaying: false,
     initMusicStatus: false,
   },
+  shakeResetTimer: 0,
   handleShakeAnimationTimer: 0,
   audioContext: null as WechatMiniprogram.InnerAudioContext | null,
   videoContext: null as WechatMiniprogram.VideoContext | null,
@@ -101,9 +103,18 @@ Page({
       const deltaY = Math.abs(y - this.data.lastY);
       const deltaZ = Math.abs(z - this.data.lastZ);
 
+      const curShakeThreshold = deltaX + deltaY + deltaZ;
+
+      this.setData({ curShakeThreshold: curShakeThreshold });
       // 判断是否达到摇晃阈值
-      if (deltaX + deltaY + deltaZ > this.data.shakeThreshold) {
+      if (curShakeThreshold > this.data.shakeThreshold) {
+
+        // 更新摇晃时间
+        const now = Date.now();
+        this.setData({ lastShakeTime: now });
+        this.resetShakeState(); // 每次检测到摇晃时重置计时器
         this.bottleAnimation();
+
       }
       // 记录当前加速度值
       this.setData({
@@ -113,9 +124,24 @@ Page({
       });
     });
   },
+  // 添加一个方法来重置摇晃状态
+  resetShakeState() {
+    if (this.shakeResetTimer) {
+      clearInterval(this.shakeResetTimer);
+    }
+    this.shakeResetTimer = setInterval(() => {
+      // 如果摇晃状态已经结束，清除定时器并重置摇晃状态 
+      if (!this.data.bottleAnimationFlag && this.data.curShakeThreshold < this.data.shakeThreshold) {
+        const now = Date.now();
+        if (now - this.data.lastShakeTime > 1000) {
+          clearInterval(this.shakeResetTimer);
+          this.bottleStopAnimation();
+        }
+      }
+    }, 100);
+  },
   bottleAnimation() {
-    const { bottleAnimationFlag } = this.data;
-    if (!bottleAnimationFlag) {
+    if (!this.data.bottleAnimationFlag) {
       wx.vibrateLong();
       this.triggerShake();
       this.setData({ bottleAnimationFlag: true });
@@ -150,12 +176,12 @@ Page({
         100,
         () => {
           this.setData({ bottleAnimationFlag: false });
-          this.bottleStopAnimation();
         }
       );
     }
   },
   bottleStopAnimation() {
+    console.log('bottleStopAnimation');
     this.animate(
       '.bottle',
       [
@@ -168,27 +194,29 @@ Page({
   },
   async triggerShake() {
     const { shakeCount, recordId } = this.data;
-    const newCount = shakeCount + 1;
-    this.setCount(newCount);
+    if (!this.data.isPlaying) {
+      const newCount = shakeCount + 1;
+      this.setCount(newCount);
 
-    if (newCount === 1 && !recordId) {
-      this.createRecord();
-    } else if (newCount >= 10) {
+      if (newCount === 1 && !recordId) {
+        this.createRecord();
+      } else if (newCount >= 10) {
 
-      await delayFn(1000);
-      // 播放视频
-      this.setData({ showVideo: true }, () => {
-        this.videoContext?.play();
-      });
+        await delayFn(1000);
+        // 播放视频
+        this.setData({ showVideo: true }, () => {
+          this.videoContext?.play();
+        });
 
-      // 调接口保存
-      this.updateRecord();
+        // 调接口保存
+        this.updateRecord();
 
-      // 退出页面时停止监听
-      wx.stopAccelerometer();
+        // 退出页面时停止监听
+        wx.stopAccelerometer();
+      }
+      console.log('triggerShake', newCount);
+      this.setData({ shakeCount: newCount });
     }
-    console.log('triggerShake', newCount);
-    this.setData({ shakeCount: newCount });
   },
   videoPlayed() {
     console.log('播放完毕');
@@ -264,10 +292,11 @@ Page({
   setCount(count: any) {
     const maxHeight = this.data.maxHeight;
     const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
-    this.playMusic(); // 播放音频
     this.setData({
       count,
       targetHeight
+    }, () => {
+      this.playMusic(); // 播放音频
     });
   },
   liquidCanvasAnimate() {
@@ -297,9 +326,10 @@ Page({
           currentHeight = Math.min(currentHeight + fillSpeed, targetHeight);
           this.setData({ currentHeight });
         } else if (currentHeight >= targetHeight) {
-          this.pauseMusic(); // 停止音频
           currentHeight = Math.max(currentHeight - fillSpeed, targetHeight);
-          this.setData({ currentHeight });
+          this.setData({ currentHeight }, () => {
+            this.pauseMusic(); // 停止音频
+          });
         }
 
         ctx.clearRect(0, 0, width, height);
@@ -384,7 +414,7 @@ Page({
       300,
       () => {
         this.clearAnimation('.handle-shake', function () {
-          console.log("清除了.handle-shake上的所有动画属性")
+          // console.log("清除了.handle-shake上的所有动画属性")
         })
         this.handleShakeAnimationTimer = setTimeout(() => {
           this.handleShakeAnimation();
@@ -476,6 +506,9 @@ Page({
     wx.stopAccelerometer(); // 退出页面时停止监听
     if (this.data.animationId) {
       clearTimeout(this.data.animationId);
+    }
+    if (this.shakeResetTimer) {
+      clearInterval(this.shakeResetTimer);
     }
     // 页面卸载时销毁音频对象
     this.destroyMusic();

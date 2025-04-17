@@ -131,9 +131,6 @@ export const getDict = async () => {
     if (result.code === "200") {
       const {
         bu_question,
-        bu_algo_type,
-        bu_algo_type1,
-        bu_algo_type2,
         bu_algo_type3
       } = result.data;
 
@@ -143,46 +140,6 @@ export const getDict = async () => {
           enumvalue: n.enumvalue.replace(/“|”/g, '"')
         }
       })
-      const buAlgoType0 = bu_algo_type.map((n, i) => {
-        const labels = n?.label?.split("-")
-        const algoType = labels[0];
-        const sort = labels[1];
-        const options = JSON.parse(n?.enumvalue);
-        return {
-          sort: sort,
-          algoType: algoType,
-          remark: n?.remark,
-          options: options
-        }
-      }).sort((a, b) => a.sort - b.sort);
-
-      const buAlgoType1 = bu_algo_type1.map((n, i) => {
-        const labels = n?.label?.split("-")
-        const algoType = labels[0];
-        const sort = labels[1];
-        const options = JSON.parse(n?.enumvalue);
-        return {
-          sort: sort,
-          algoType: algoType,
-          remark: n?.remark,
-          options: options
-        }
-      }).sort((a, b) => a.sort - b.sort);
-
-      const buAlgoType2 = bu_algo_type2.map((n, i) => {
-        const labels = n?.label?.split("-")
-        const algoType = labels[0];
-        const sort = labels[1];
-        const modelType = labels[2];
-        const options = JSON.parse(n?.enumvalue);
-        return {
-          sort: sort,
-          algoType: algoType,
-          modelType: modelType,
-          remark: n?.remark,
-          options: options
-        }
-      }).sort((a, b) => a.sort - b.sort);
 
       const buAlgoType3 = bu_algo_type3.map((n, i) => {
         const labels = n?.label?.split("-")
@@ -209,9 +166,6 @@ export const getDict = async () => {
         key: "dict",
         data: {
           bu_question: buQuestion,
-          buAlgoType0: buAlgoType0,
-          buAlgoType1: buAlgoType1,
-          buAlgoType2: buAlgoType2,
           buAlgoType3: buAlgoType3
         }
       })

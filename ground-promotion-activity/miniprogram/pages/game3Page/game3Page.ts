@@ -59,7 +59,6 @@ Page({
     createPosterId: '',
     compoundGif: '', // 倒计时gif
     errorImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-1.png',
-    matting: 3,
   },
   /**
    * 生命周期函数--监听页面加载
@@ -97,25 +96,12 @@ Page({
   onReady() { },
   initPageData() {
     try {
-      const { matting } = this.data;
       const dict = wx.getStorageSync('dict');
       const token = wx.getStorageSync('token');
       const openId = wx.getStorageSync('openId');
       const compoundGif = wx.getStorageSync('compoundGif');
-      const { buAlgoType0, buAlgoType1, buAlgoType2, buAlgoType3 } = dict;
-      let tabList = []
-
-      if (matting === 0) {
-        tabList = buAlgoType0;
-      } else if (matting === 1) {
-        tabList = buAlgoType1;
-      } else if (matting === 2) {
-        tabList = buAlgoType2;
-      } else if (matting === 3) {
-        tabList = buAlgoType3;
-      }
-
-      this.setData({ tabList: tabList, token, openId, compoundGif: compoundGif?.path });
+      const { buAlgoType3 } = dict;
+      this.setData({ tabList: buAlgoType3, token, openId, compoundGif: compoundGif?.path });
     } catch (error) {
       showToast(`获取存储失败:${error}`);
     }
