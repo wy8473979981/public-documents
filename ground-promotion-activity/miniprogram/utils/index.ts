@@ -276,6 +276,7 @@ export function savePosterToServer(posterPath: string): Promise<string> {
 }
 
 export function onDownload(imgUrl: string) {
+  // 根据在线图片地址下载图片并保存到相册中
   wx.showLoading({
     title: '下载中...',
     mask: true // 添加遮罩层，防止触摸穿透
@@ -290,8 +291,14 @@ export function onDownload(imgUrl: string) {
             showToast('保存成功', 'success', 2000);
           },
           fail: (err) => {
-            if (err.errMsg.includes('auth denied')) {
-              showToast('请授权保存图片到相册');
+            // 检查是否是权限问题
+            if (
+              err.errMsg.includes('auth') ||
+              err.errMsg.includes('auth denied')
+            ) {
+              promptAuthorization();
+            } else {
+              showToast(`保存失败：${res}`);
             }
           },
         });
