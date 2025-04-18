@@ -1,6 +1,7 @@
 
 import { postRequest } from '../../utils/request.js';
 import { showToast, delayFn, getPlatform } from '../../utils/index';
+const COUNT = 6;
 Page({
   data: {
     showVideo: false,
@@ -43,7 +44,6 @@ Page({
 
   async onLoad(options: any) {
     console.log('香槟摇一摇！', options);
-
     this.preloadSource();
     if (options?.recordId) {
       this.setData({ recordId: options?.recordId })
@@ -58,15 +58,11 @@ Page({
     this.startShakeListener();
     this.initCanvas();
     this.handleShakeAnimation();
-    // this.initIosAudio();
-
   },
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
-    // this.initAndroidAudio();
-  },
+  onShow() { },
   preloadSource() {
     const timer = setInterval(() => {
       const bubblyAudio = wx.getStorageSync('bubblyAudio');
@@ -89,7 +85,6 @@ Page({
       if (bubblyAudioSrc && bottleImgSrc) {
         clearInterval(timer);
       }
-      console.log('bubblyAudioSrc', bubblyAudioSrc, flowAudioSrc, bottleImgSrc);
       this.setData({ bubblyAudioSrc: bubblyAudioSrc, flowAudioSrc: flowAudioSrc, bottleImgSrc: bottleImgSrc });
     }, 40);
   },
@@ -181,7 +176,6 @@ Page({
     }
   },
   bottleStopAnimation() {
-    console.log('bottleStopAnimation');
     this.animate(
       '.bottle',
       [
@@ -200,7 +194,7 @@ Page({
 
       if (newCount === 1 && !recordId) {
         this.createRecord();
-      } else if (newCount >= 10) {
+      } else if (newCount >= COUNT) {
 
         await delayFn(1000);
         // 播放视频
@@ -283,7 +277,7 @@ Page({
           canvasWidth: res[0].width,
           canvasHeight: res[0].height,
           maxHeight: res[0].height, // 最大高度为画布的高度
-          fillSpeed: 0.8, // 填充速度
+          fillSpeed: 1.2, // 填充速度
         });
         this.liquidCanvasAnimate();
       });
@@ -291,7 +285,7 @@ Page({
   // 设置count值，每次+1都会触发高度变化
   setCount(count: any) {
     const maxHeight = this.data.maxHeight;
-    const targetHeight = Math.min((count / 10) * maxHeight, maxHeight);
+    const targetHeight = Math.min((count / COUNT) * maxHeight, maxHeight);
     this.setData({
       count,
       targetHeight
@@ -321,8 +315,11 @@ Page({
         let currentHeight = this.data.currentHeight;
         const targetHeight = this.data.targetHeight;
         const fillSpeed = this.data.fillSpeed * (deltaTime / 16);
+        
+        
 
         if (currentHeight < targetHeight) {
+          console.log('fillSpeed', fillSpeed);
           currentHeight = Math.min(currentHeight + fillSpeed, targetHeight);
           this.setData({ currentHeight });
         } else if (currentHeight >= targetHeight) {
@@ -423,20 +420,6 @@ Page({
       }
     );
   },
-  // initIosAudio() {
-  //   if (this.data.platform === 'ios') {
-  //     this.initAudio();
-  //   }
-  // },
-  // initAndroidAudio() {
-  //   if (this.data.platform !== 'ios') {
-  //     // 安卓系统小程序重新进入前台时，检查音频状态
-  //     if (!this.audioContext || this.audioContext.paused) {
-  //       console.log(`当前应用环境：${this.data.platform}，初始化音频`)
-  //       this.initAudio();
-  //     }
-  //   }
-  // },
   initAudio(flowAudioSrc: string) {
     if (!this.data.initMusicStatus) {
       this.setData({ initMusicStatus: true });

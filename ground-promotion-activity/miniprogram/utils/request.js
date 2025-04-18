@@ -96,34 +96,44 @@ export async function uploadFile(url, options = {}) {
 }
 
 export function getOpenId() {
-  wx.login({
-    success: async (res) => {
-      if (res.code) {
-        const result = await getRequest('/wx/user/login', {
-          data: {
-            code: res.code
-          }
-        })
-        const {
-          code,
-          data
-        } = result;
-        // console.log('/wx/user/login', result);
-        if (code === "200") {
-          wx.setStorage({
-            key: "openId",
-            data: data?.openId ? data?.openId : ''
-          });
-          wx.setStorage({
-            key: "ntCode",
-            data: data?.ntCode ? data?.ntCode : ''
-          })
-        }
-      } else {
-        console.log('登录失败！' + res.errMsg)
-      }
+  try {
+    const openId = wx.getStorageSync('openId');
+    const ntCode = wx.getStorageSync('ntCode');
+    if (openId && ntCode) {
+      console.log('使用缓存openId、ntCode');
+      return;
     }
-  })
+    wx.login({
+      success: async (res) => {
+        if (res.code) {
+          const result = await getRequest('/wx/user/login', {
+            data: {
+              code: res.code
+            }
+          })
+          const {
+            code,
+            data
+          } = result;
+          // console.log('/wx/user/login', result);
+          if (code === "200") {
+            wx.setStorage({
+              key: "openId",
+              data: data?.openId ? data?.openId : ''
+            });
+            wx.setStorage({
+              key: "ntCode",
+              data: data?.ntCode ? data?.ntCode : ''
+            })
+          }
+        } else {
+          console.log('登录失败！' + res.errMsg)
+        }
+      }
+    })
+  } catch (error) {
+    console.error('getOpenId', error)
+  }
 }
 export const getDict = async () => {
   try {
@@ -153,10 +163,10 @@ export const getDict = async () => {
           algoType: algoType,
           modelType: modelType,
           remark: n?.remark,
-          options: options.map((item)=>{
+          options: options.map((item) => {
             return {
               ...item,
-              src:`${item.src}?v=`+ new Date().getTime()
+              src: `${item.src}?v=` + new Date().getTime()
             }
           })
         }
@@ -177,6 +187,11 @@ export const getDict = async () => {
 
 export const getToken = async () => {
   try {
+    const token = wx.getStorageSync('token');
+    if (token) {
+      console.log('使用缓存token');
+      return;
+    }
     const result = await postRequest('/poster/getToken');
     if (result.code === "200") {
       wx.setStorage({
