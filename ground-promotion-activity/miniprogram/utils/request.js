@@ -1,7 +1,8 @@
-export function getEnvVersion() {
-  // 获取当前是什么版本；develop:开发版；trial：体验版；release：正式版
-  const accountInfo = wx.getAccountInfoSync();
-  return accountInfo?.miniProgram?.envVersion;
+export async function getEnvVersion() {
+  return new Promise((resolve) => {
+    const accountInfo = wx.getAccountInfoSync();
+    resolve(accountInfo?.miniProgram?.envVersion);
+  });
 }
 
 function getBaseUrl(envVersion, type = 1) {
@@ -21,7 +22,7 @@ function getBaseUrl(envVersion, type = 1) {
 }
 
 export async function getRequest(url, options = {}) {
-  const envVersion = getEnvVersion();
+  const envVersion = await getEnvVersion(); // 修改: 使用 await 调用异步函数
   const type = options?.header?.type;
   const requestUrl = getBaseUrl(envVersion, type) + url;
   return new Promise((resolve, reject) => {
@@ -44,7 +45,7 @@ export async function getRequest(url, options = {}) {
 }
 
 export async function postRequest(url, options = {}) {
-  const envVersion = getEnvVersion();
+  const envVersion = await getEnvVersion(); // 修改: 使用 await 调用异步函数
   const type = options?.header?.type;
   const requestUrl = getBaseUrl(envVersion, type) + url;
   return new Promise((resolve, reject) => {
@@ -67,7 +68,7 @@ export async function postRequest(url, options = {}) {
 }
 
 export async function uploadFile(url, options = {}) {
-  const envVersion = getEnvVersion();
+  const envVersion = await getEnvVersion(); // 修改: 使用 await 调用异步函数
   const type = options?.header?.type;
   const requestUrl = getBaseUrl(envVersion, type) + url;
 
