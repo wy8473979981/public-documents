@@ -2,7 +2,7 @@
 <view class="game-3-wrapper game-3-wrapper-{{currentStep}}">
   <view class="header-wrapper">
     <view class="text-1">第三关</view>
-    <view class="text-2">福利破驿站</view>
+    <view class="text-2">福气拍立得</view>
   </view>
   <view class="game-title"></view>
   <view class="flow-wrapper flow-wrapper-1" wx:if="{{currentStep===0}}">

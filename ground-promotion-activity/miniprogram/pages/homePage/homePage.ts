@@ -44,7 +44,7 @@ Page({
         count: 2,
         gameNum: '第二关',
         gameTitle: '福利破译站',
-        gameExplain: '穿越弹福只是迷宫，破译弹福星系运作秘笈！',
+        gameExplain: '穿越弹福知识迷宫，破译弹福星系运作秘笈！',
         gameGif: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.gif',
         gameImg: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/game-2.png',
         isPassed: false,

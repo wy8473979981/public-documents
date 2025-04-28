@@ -1,14 +1,14 @@
 {
   "pages": [
     "pages/guidePage/guidePage",
-    "pages/shakePage/shakePage",
     "pages/game3Page/game3Page",
-    "pages/homePage/homePage",
-    "pages/game2Page/game2Page",
     "pages/bubblyHome/bubblyHome",
+    "pages/homePage/homePage",
+    "pages/loginPage/loginPage",
+    "pages/shakePage/shakePage",
+    "pages/game2Page/game2Page",
     "pages/cheersPage/cheersPage",
-    "pages/game1Page/game1Page",
-    "pages/loginPage/loginPage"
+    "pages/game1Page/game1Page"
   ],
   "window": {
     "navigationBarTextStyle": "black",
