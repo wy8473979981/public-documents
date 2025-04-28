@@ -50,7 +50,7 @@ Page({
 
   },
   initPageData() {
-    const openId = wx.getStorageSync('openId');
+    const loginCache = wx.getStorageSync('loginCache');
     const dict = wx.getStorageSync('dict');
     const { bu_question } = dict;
     const order = ['A', 'B', 'C', 'D'];
@@ -83,7 +83,7 @@ Page({
         allQuestionList: list,
         currentQuestionList,
         currentQuestion: currentQuestionList[0],
-        openId: openId
+        openId: loginCache.openId,
       });
       console.log('currentQuestionList', currentQuestionList);
     }

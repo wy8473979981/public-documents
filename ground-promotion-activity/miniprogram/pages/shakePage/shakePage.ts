@@ -39,11 +39,11 @@ Page({
   },
   shakeResetTimer: 0,
   handleShakeAnimationTimer: 0,
+  animationIdTimer: 0,
   audioContext: null as WechatMiniprogram.InnerAudioContext | null,
   videoContext: null as WechatMiniprogram.VideoContext | null,
 
   async onLoad(options: any) {
-    console.log('香槟摇一摇！', options);
     this.preloadSource();
     if (options?.recordId) {
       this.setData({ recordId: options?.recordId })
@@ -169,9 +169,7 @@ Page({
           { translateX: '-50%', top: '469.61rpx', rotateZ: 10, ease: 'ease-out' },
         ],
         100,
-        () => {
-          this.setData({ bottleAnimationFlag: false });
-        }
+        () => {}
       );
     }
   },
@@ -205,22 +203,20 @@ Page({
         // 调接口保存
         this.updateRecord();
 
-        // 退出页面时停止监听
+        // 停止监听
         wx.stopAccelerometer();
       }
-      console.log('triggerShake', newCount);
       this.setData({ shakeCount: newCount });
     }
   },
   videoPlayed() {
-    console.log('播放完毕');
     wx.redirectTo({ url: '/pages/cheersPage/cheersPage' });
   },
   async createRecord() {
-    const openId = wx.getStorageSync('openId');
+    const loginCache = wx.getStorageSync('loginCache');
     const params = {
       data: {
-        openId: openId,
+        openId: loginCache.openId,
         type: 1,
         status: 0,
         score: 0,
@@ -230,17 +226,16 @@ Page({
     const result = await postRequest('/activity/record', params);
     const { code, msg, data } = result;
     if (code === '200') {
-      console.log('createRecord', data);
       this.setData({ recordId: data.id });
     } else {
       showToast(msg);
     }
   },
   async updateRecord() {
-    const openId = wx.getStorageSync('openId');
+    const loginCache = wx.getStorageSync('loginCache');
     const params = {
       data: {
-        openId: openId,
+        openId: loginCache.openId,
         type: 1,
         status: 1,
         score: 10,
@@ -277,7 +272,7 @@ Page({
           canvasWidth: res[0].width,
           canvasHeight: res[0].height,
           maxHeight: res[0].height, // 最大高度为画布的高度
-          fillSpeed: 1.2, // 填充速度
+          fillSpeed: 1.5, // 填充速度
         });
         this.liquidCanvasAnimate();
       });
@@ -319,7 +314,6 @@ Page({
         
 
         if (currentHeight < targetHeight) {
-          console.log('fillSpeed', fillSpeed);
           currentHeight = Math.min(currentHeight + fillSpeed, targetHeight);
           this.setData({ currentHeight });
         } else if (currentHeight >= targetHeight) {
@@ -333,10 +327,9 @@ Page({
 
         // 如果count为0，则不绘制任何内容
         if (this.data.count === 0) {
-          const animationId = setTimeout(() => {
+          this.animationIdTimer = setTimeout(() => {
             this.liquidCanvasAnimate();
           }, 16);
-          this.setData({ animationId });
           return;
         }
 
@@ -380,11 +373,9 @@ Page({
         time += 0.08;
         this.setData({ time });
 
-        const animationId = setTimeout(() => {
+        this.animationIdTimer = setTimeout(() => {
           this.liquidCanvasAnimate();
         }, 16);
-
-        this.setData({ animationId });
       });
   },
   handleShakeAnimation() {
@@ -470,11 +461,11 @@ Page({
   pauseMusic() {
     // 暂停音乐
     if (this.audioContext && this.data.isPlaying) {
-      console.log('pauseMusic');
       this.audioContext?.stop() // 停止
       // 更新播放状态
       this.setData({
         isPlaying: false,
+        bottleAnimationFlag: false
       });
     }
   },
@@ -487,8 +478,8 @@ Page({
   },
   onUnload() {
     wx.stopAccelerometer(); // 退出页面时停止监听
-    if (this.data.animationId) {
-      clearTimeout(this.data.animationId);
+    if (this.animationIdTimer) {
+      clearTimeout(this.animationIdTimer);
     }
     if (this.shakeResetTimer) {
       clearInterval(this.shakeResetTimer);

@@ -66,10 +66,10 @@ Page({
     this.updateRecord();
   },
   async updateRecord() {
-    const openId = wx.getStorageSync('openId');
+    const loginCache = wx.getStorageSync('loginCache');
     const params = {
       data: {
-        openId: openId,
+        openId: loginCache.openId,
         type: 4,
         status: 1,
       },

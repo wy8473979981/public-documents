@@ -97,11 +97,16 @@ Page({
   initPageData() {
     try {
       const dict = wx.getStorageSync('dict');
-      const token = wx.getStorageSync('token');
-      const openId = wx.getStorageSync('openId');
+      const tokenCache = wx.getStorageSync('tokenCache');
+      const loginCache = wx.getStorageSync('loginCache');
       const compoundGif = wx.getStorageSync('compoundGif');
       const { buAlgoType3 } = dict;
-      this.setData({ tabList: buAlgoType3, token, openId, compoundGif: compoundGif?.path });
+      this.setData({
+        tabList: buAlgoType3,
+        token: tokenCache.token,
+        openId: loginCache.openId,
+        compoundGif: compoundGif?.path,
+      });
     } catch (error) {
       showToast(`获取存储失败:${error}`);
     }

@@ -91,14 +91,15 @@ Page({
       mask: true, // 是否显示透明蒙层，防止触摸穿透
     });
     wx.getStorage({
-      key: 'openId',
+      key: 'loginCache',
       success: (res) => {
-        const openId = res.data;
+        const loginCache = res.data;
+        const openId = loginCache.openId;
         if (openId) {
           Promise.all([
             this.getGameResult(1, openId),
             this.getGame2Result(2, openId),
-            this.getGameResult(2, openId)
+            this.getGameResult(2, openId),
           ])
             .then((results) => {
               if (results.every((n) => n?.data && n?.data?.status === 1)) {
@@ -138,6 +139,9 @@ Page({
             });
         }
       },
+      fail (res) {
+        console.log('fail', res)
+      }
     });
   },
   async getGameResult(type: number, openId: string) {
@@ -316,16 +320,16 @@ Page({
     if (alreadyReceived) {
       return;
     }
-    const openId = wx.getStorageSync('openId');
-    const token = wx.getStorageSync('token');
+    const loginCache = wx.getStorageSync('loginCache');
+    const tokenCache = wx.getStorageSync('tokenCache');
     const params = {
       data: {
         status: 1,
         type: 3,
-        openId: openId,
-        token: token
+        openId: loginCache.openId,
+        token: tokenCache.token,
       },
-    }
+    };
     const result = await postRequest('/activity/record', params);
     if (result.code === '200') {
       this.setData({ alreadyReceived: true });
@@ -336,8 +340,8 @@ Page({
   },
   async queryPrize() {
     // 查询奖品是否已经领取
-    const openId = wx.getStorageSync('openId');
-    const result = await this.getGame2Result(3, openId);
+    const loginCache = wx.getStorageSync('loginCache');
+    const result = await this.getGame2Result(3, loginCache.openId);
     if (result.code === "200" && result?.data?.status === 1) {
       this.setData({ alreadyReceived: true });
     } else {

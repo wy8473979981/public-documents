@@ -44,13 +44,13 @@ Page({
           success: () => { }
         });
       } else {
-        const openId = wx.getStorageSync('openId');
+        const loginCache = wx.getStorageSync('loginCache');
         const params = {
           data: {
-            openId: openId,
-            ntCode: userInfo.username
-          }
-        }
+            openId: loginCache.openId,
+            ntCode: userInfo.username,
+          },
+        };
         const result = await postRequest('/wx/user/bind', params);
         const { code, msg } = result;
         if (code === "200") {

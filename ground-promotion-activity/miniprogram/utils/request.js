@@ -1,7 +1,7 @@
 export function getEnvVersion() {
   // 获取当前是什么版本；develop:开发版；trial：体验版；release：正式版
   const accountInfo = wx.getAccountInfoSync();
-  return accountInfo?.miniProgram?.envVersion || 'develop';
+  return accountInfo?.miniProgram?.envVersion;
 }
 
 function getBaseUrl(envVersion, type = 1) {
@@ -22,8 +22,8 @@ function getBaseUrl(envVersion, type = 1) {
 
 export async function getRequest(url, options = {}) {
   const envVersion = getEnvVersion();
-  const type = options?.header?.type
-  const requestUrl = getBaseUrl(envVersion, type) + url
+  const type = options?.header?.type;
+  const requestUrl = getBaseUrl(envVersion, type) + url;
   return new Promise((resolve, reject) => {
     wx.request({
       url: requestUrl,
@@ -45,8 +45,8 @@ export async function getRequest(url, options = {}) {
 
 export async function postRequest(url, options = {}) {
   const envVersion = getEnvVersion();
-  const type = options?.header?.type
-  const requestUrl = getBaseUrl(envVersion, type) + url
+  const type = options?.header?.type;
+  const requestUrl = getBaseUrl(envVersion, type) + url;
   return new Promise((resolve, reject) => {
     wx.request({
       url: requestUrl,
@@ -67,7 +67,6 @@ export async function postRequest(url, options = {}) {
 }
 
 export async function uploadFile(url, options = {}) {
-
   const envVersion = getEnvVersion();
   const type = options?.header?.type;
   const requestUrl = getBaseUrl(envVersion, type) + url;
@@ -93,111 +92,133 @@ export async function uploadFile(url, options = {}) {
   });
 }
 
-export function getOpenId() {
+export function getOpenId(expireDays = 2) {
   try {
-    const openId = wx.getStorageSync('openId');
-    const ntCode = wx.getStorageSync('ntCode');
-    if (openId && ntCode) {
-      console.log('使用缓存openId、ntCode');
+
+    const loginCache = wx.getStorageSync('loginCache');
+    const now = Date.now();
+    const expireTime = expireDays * 24 * 60 * 60 * 1000;
+
+    if (
+      loginCache &&
+      loginCache.openId &&
+      loginCache.ntCode &&
+      loginCache.savedAt &&
+      now - loginCache.savedAt < expireTime
+    ) {
+      console.log(`[cache] 使用已有缓存(loginCache)`, );
       return;
     }
+
     wx.login({
       success: async (res) => {
         if (res.code) {
           const result = await getRequest('/wx/user/login', {
             data: {
-              code: res.code
-            }
-          })
-          const {
-            code,
-            data
-          } = result;
-          // console.log('/wx/user/login', result);
-          if (code === "200") {
+              code: res.code,
+            },
+          });
+          const { code, data } = result;
+
+          if (code === '200') {
+            const newCache = {
+              openId: data?.openId ? data?.openId : '',
+              ntCode: data?.ntCode ? data?.ntCode : '',
+              savedAt: now,
+            };
             wx.setStorage({
-              key: "openId",
-              data: data?.openId ? data?.openId : ''
+              key: 'loginCache',
+              data: newCache,
             });
-            wx.setStorage({
-              key: "ntCode",
-              data: data?.ntCode ? data?.ntCode : ''
-            })
+            console.log(`[cache] 缓存更新成功(loginCache)`, );
           }
         } else {
-          console.log('登录失败！' + res.errMsg)
+          console.log('登录失败！' + res.errMsg);
         }
-      }
-    })
+      },
+    });
   } catch (error) {
-    console.error('getOpenId', error)
+    console.error('getOpenId', error);
   }
 }
 export const getDict = async () => {
   try {
     const result = await postRequest('/sys/dict/list');
-    if (result.code === "200") {
-      const {
-        bu_question,
-        bu_algo_type3
-      } = result.data;
+    if (result.code === '200') {
+      const { bu_question, bu_algo_type3 } = result.data;
 
       const buQuestion = bu_question.map((n, i) => {
         return {
           ...n,
-          enumvalue: n.enumvalue.replace(/“|”/g, '"')
-        }
-      })
+          enumvalue: n.enumvalue.replace(/“|”/g, '"'),
+        };
+      });
 
-      const buAlgoType3 = bu_algo_type3.map((n, i) => {
-        const labels = n?.label?.split("-")
-        const algoType = labels[0];
-        const sort = labels[1];
-        const modelType = labels[2];
-        const options = JSON.parse(n?.enumvalue);
+      const buAlgoType3 = bu_algo_type3
+        .map((n, i) => {
+          const labels = n?.label?.split('-');
+          const algoType = labels[0];
+          const sort = labels[1];
+          const modelType = labels[2];
+          const options = JSON.parse(n?.enumvalue);
 
-        return {
-          sort: sort,
-          algoType: algoType,
-          modelType: modelType,
-          remark: n?.remark,
-          options: options.map((item) => {
-            return {
-              ...item,
-              src: `${item.src}?v=` + new Date().getTime()
-            }
-          })
-        }
-      }).sort((a, b) => a.sort - b.sort);
+          return {
+            sort: sort,
+            algoType: algoType,
+            modelType: modelType,
+            remark: n?.remark,
+            options: options.map((item) => {
+              return {
+                ...item,
+                src: `${item.src}?v=` + new Date().getTime(),
+              };
+            }),
+          };
+        })
+        .sort((a, b) => a.sort - b.sort);
 
       wx.setStorage({
-        key: "dict",
+        key: 'dict',
         data: {
           bu_question: buQuestion,
-          buAlgoType3: buAlgoType3
-        }
-      })
+          buAlgoType3: buAlgoType3,
+        },
+      });
     }
   } catch (error) {
     console.error('getDict', error);
   }
-}
+};
 
-export const getToken = async () => {
+export const getToken = async (expireDays = 2) => {
   try {
-    const token = wx.getStorageSync('token');
-    if (token) {
-      console.log('使用缓存token');
+    const tokenCache = wx.getStorageSync('tokenCache');
+    const now = Date.now();
+    const expireTime = expireDays * 24 * 60 * 60 * 1000;
+
+    if (
+      tokenCache &&
+      tokenCache.token &&
+      tokenCache.savedAt &&
+      now - tokenCache.savedAt < expireTime
+    ) {
+      console.log(`[cache] 使用已有缓存(tokenCache)`,);
       return;
     }
+
     const result = await postRequest('/poster/getToken');
-    if (result.code === "200") {
+    if (result.code === '200') {
+      const newCache = {
+        token: `Bearer ${result.data}`,
+        savedAt: now,
+      };
       wx.setStorage({
-        key: "token",
-        data: `Bearer ${result.data}`
+        key: 'tokenCache',
+        data: newCache,
       });
+      console.log(`[cache] 缓存更新成功(tokenCache)`,);
     }
   } catch (error) {
     console.error('getToken', error);
   }
-}
+};

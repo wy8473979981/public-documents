@@ -17,8 +17,8 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-    const openId = wx.getStorageSync('openId');
-    this.setData({ openId: openId });
+    const loginCache = wx.getStorageSync('loginCache');
+    this.setData({ openId: loginCache.openId });
   },
 
   /**

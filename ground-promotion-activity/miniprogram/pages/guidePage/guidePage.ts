@@ -509,11 +509,10 @@ Page({
   },
   goLogin() {
     
-    const openId = wx.getStorageSync('openId');
-    const ntCode = wx.getStorageSync('ntCode');
-    console.log(openId, ntCode);
+    const loginCache = wx.getStorageSync('loginCache');
+    console.log(loginCache.openId, loginCache.ntCode);
 
-    if (openId && ntCode) {
+    if (loginCache.openId && loginCache.ntCode) {
       wx.redirectTo({ url: '/pages/homePage/homePage' });
     } else {
       wx.redirectTo({ url: '/pages/loginPage/loginPage' });

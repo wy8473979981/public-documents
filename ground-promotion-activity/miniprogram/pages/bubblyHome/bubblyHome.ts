@@ -36,18 +36,18 @@ Page({
     clearInterval(this.pollingTimer);
   },
   async pollingInterface() {
-    const openId = wx.getStorageSync('openId');
+    const loginCache = wx.getStorageSync('loginCache');
     const params1 = {
       data: {
-        openId: openId,
+        openId: loginCache.openId,
         type: 1, // 1：有没有摇  4：有没有点击cheers
-      }
+      },
     };
     const params2 = {
       data: {
-        openId: openId,
+        openId: loginCache.openId,
         type: 4, // 1：有没有摇  4：有没有点击cheers
-      }
+      },
     };
 
     const [result1, result2] = await Promise.all([
