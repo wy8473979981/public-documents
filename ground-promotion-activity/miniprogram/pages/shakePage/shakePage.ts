@@ -210,6 +210,7 @@ Page({
     }
   },
   videoPlayed() {
+    console.log('videoPlayed');
     wx.redirectTo({ url: '/pages/cheersPage/cheersPage' });
   },
   async createRecord() {

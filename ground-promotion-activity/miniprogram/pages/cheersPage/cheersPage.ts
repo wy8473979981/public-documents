@@ -2,7 +2,7 @@
 import { postRequest } from '../../utils/request.js';
 import { showToast } from '../../utils/index';
 interface PageOptions {
-  type?: number;
+  status?: number;
 }
 Page({
 
@@ -23,7 +23,7 @@ Page({
    */
   onLoad(options: PageOptions) {
     this.preloadSource();
-    if (options?.type == 4) {
+    if (options?.status == 1) {
       // 播放过cheers视频显示最后一个画面
       this.setData({ showCheers: false });
     }

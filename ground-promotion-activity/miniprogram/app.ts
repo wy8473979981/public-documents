@@ -31,37 +31,37 @@ App<IAppOption>({
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly.mp4',
         cacheKey: 'bubblyAudio',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
         cacheKey: 'cheersAudio',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/flowAudio.mp3',
         cacheKey: 'flowAudio',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bottle.png',
         cacheKey: 'bottleImg',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/glass.png',
         cacheKey: 'glassImg',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-last.jpg',
         cacheKey: 'cheersLastImg',
-        expireDays: 7,
+        expireDays: 2,
       },
       {
         url: 'https://nav-uat.aia.com.cn/fan/sail/resource/hrActivity/images/compound.gif',
         cacheKey: 'compoundGif',
-        expireDays: 7,
+        expireDays: 2,
       },
     ];
     preloadSourceList.forEach((item) => {
