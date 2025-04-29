@@ -3,28 +3,42 @@
  * @Author: wangyang
  * @Date: 2025-03-18 13:46:04
  * @LastEditors: wangyang
- * @LastEditTime: 2025-04-11 10:43:57
+ * @LastEditTime: 2025-04-29 15:13:34
  */
 // app.ts
 import { compareVersion, printVersion } from './utils/index';
-import { getOpenId, getDict, getToken } from './utils/request';
+import { getDict, getToken } from './utils/request';
 
 import { getCachedFile } from './utils/dataCache';
-
+// 定义全局的 eventBus
+const eventBus = {
+  listeners: {} as Record<string, Function[]>,
+  on(event: string, callback: Function) {
+    if (!this.listeners[event]) this.listeners[event] = [];
+    this.listeners[event].push(callback);
+  },
+  emit(event: string, data?: any) {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach((cb) => cb(data));
+    }
+  },
+};
 App<IAppOption>({
   globalData: {
     isVersionLow: false, // 初始化为 false
+    eventBus, // 将 eventBus 挂载到 globalData 中
   },
-  onShow() {
-    console.log('App onShow');
+  onLaunch(){
+    console.log('App onLaunch');
+    printVersion();
     this.preloadSource();
     this.checkForUpdates();
     this.checkWeChatVersion('3.7.3');
-
-    getOpenId();
     getDict();
     getToken();
-    printVersion();
+  },
+  async onShow() {
+    console.log('App onShow');
   },
   preloadSource() {
     const preloadSourceList = [

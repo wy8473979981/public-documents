@@ -1,5 +1,6 @@
 // pages/guidePage/guidePage.ts
 import { showToast, delayFn } from '../../utils/index';
+import { getRequest } from '../../utils/request.js';
 
 Page({
   /**
@@ -23,6 +24,7 @@ Page({
    */
   onLoad: function () {
     this.loaderFn();
+    this.getOpenId();
   },
 
   /**
@@ -541,6 +543,65 @@ Page({
     return new Promise((resolve: any) => {
       this.setData(data, resolve); // 利用 setData 的回调
     });
+  },
+  async getOpenId(expireDays = 2) {
+    try {
+      const loginCache = wx.getStorageSync('loginCache');
+      const now = Date.now();
+      const expireTime = expireDays * 24 * 60 * 60 * 1000;
+  
+      if ( loginCache && loginCache.openId && loginCache.ntCode && loginCache.savedAt && now - loginCache.savedAt < expireTime) {
+        console.log(`[cache] 使用已有缓存(loginCache)`);
+        return loginCache; // 返回缓存数据
+      }
+  
+      // 用 Promise 封装 wx.login
+      const loginRes: any = await new Promise((resolve, reject) => {
+        wx.login({
+          success: resolve,
+          fail: reject,
+        });
+      });
+  
+      if (!loginRes.code) {
+        console.error('登录失败！', loginRes.errMsg);
+        return null;
+      }
+  
+      // 发起后端请求
+      const result = await getRequest('/wx/user/login', {
+        data: {
+          code: loginRes.code,
+        },
+      });
+  
+      const { code, data } = result;
+  
+      if (code === '200') {
+        const newCache = {
+          openId: data?.openId || '',
+          ntCode: data?.ntCode || '',
+          savedAt: now,
+        };
+  
+        await new Promise((resolve) => {
+          wx.setStorage({
+            key: 'loginCache',
+            data: newCache,
+            success: resolve,
+            fail: resolve, // 即使失败也继续
+          });
+        });
+        console.log(`[cache] 缓存更新成功(loginCache)`);
+        return newCache; // 返回新数据
+      } else {
+        console.error('获取 openId 接口失败', result);
+        return null;
+      }
+    } catch (error) {
+      console.error('getOpenId error', error);
+      return null;
+    }
   },
   /**
    * 生命周期函数--监听页面显示

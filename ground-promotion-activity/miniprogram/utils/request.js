@@ -92,56 +92,6 @@ export async function uploadFile(url, options = {}) {
     });
   });
 }
-
-export function getOpenId(expireDays = 2) {
-  try {
-
-    const loginCache = wx.getStorageSync('loginCache');
-    const now = Date.now();
-    const expireTime = expireDays * 24 * 60 * 60 * 1000;
-
-    if (
-      loginCache &&
-      loginCache.openId &&
-      loginCache.ntCode &&
-      loginCache.savedAt &&
-      now - loginCache.savedAt < expireTime
-    ) {
-      console.log(`[cache] 使用已有缓存(loginCache)`, );
-      return;
-    }
-
-    wx.login({
-      success: async (res) => {
-        if (res.code) {
-          const result = await getRequest('/wx/user/login', {
-            data: {
-              code: res.code,
-            },
-          });
-          const { code, data } = result;
-
-          if (code === '200') {
-            const newCache = {
-              openId: data?.openId ? data?.openId : '',
-              ntCode: data?.ntCode ? data?.ntCode : '',
-              savedAt: now,
-            };
-            wx.setStorage({
-              key: 'loginCache',
-              data: newCache,
-            });
-            console.log(`[cache] 缓存更新成功(loginCache)`, );
-          }
-        } else {
-          console.log('登录失败！' + res.errMsg);
-        }
-      },
-    });
-  } catch (error) {
-    console.error('getOpenId', error);
-  }
-}
 export const getDict = async () => {
   try {
     const result = await postRequest('/sys/dict/list');
