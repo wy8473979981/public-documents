@@ -43,12 +43,12 @@ App<IAppOption>({
   preloadSource() {
     const preloadSourceList = [
       {
-        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly.mp4',
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/bubbly-v1.mp4',
         cacheKey: 'bubblyAudio',
         expireDays: 2,
       },
       {
-        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers.mp4',
+        url: 'https://nav-uat.aia.com.cn/fan/sail/resource/bubblyActivity/images/cheers-v1.mp4',
         cacheKey: 'cheersAudio',
         expireDays: 2,
       },
