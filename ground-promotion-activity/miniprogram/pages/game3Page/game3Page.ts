@@ -207,33 +207,36 @@ Page({
   },
   startCountdown(currentIndex: any) {
     clearInterval(countdownInterval);
-    const timePerTask = 60 / 100; // 60秒内完成100个任务
+    const timePerTask = 60 / 150; // 60秒内完成150个任务
     let countdown = Math.ceil(timePerTask * currentIndex); // 计算倒计时时间
+    console.log('startCountdown', currentIndex, countdown);
 
     if (currentIndex < 0) {
       countdown = 10;
-    } else {
-      // 限制 countdown 最大值为 180 秒
-      countdown = countdown > 180 ? 180 : countdown;
     }
 
-    countdownInterval = setInterval(() => {
-      const minutes = Math.floor(countdown / 60);
-      const seconds = countdown % 60;
+    if (countdown > 300) {
+      // 倒计时最大时间设置为 300 秒，当任务队列返回的下标计算后大于300秒，显示 超过5分钟
+      this.setData({ showCountDownText: true, countDownText: '超过5分钟' });
+    } else {
+      countdownInterval = setInterval(() => {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
 
-      if (countdown > 60) {
-        this.setData({ countDownText: `${minutes}分${seconds}秒` });
-      } else {
-        this.setData({ countDownText: `${countdown}秒` });
-      }
-      this.setData({ showCountDownText: true });
-      countdown--;
+        if (countdown > 60) {
+          this.setData({ countDownText: `${minutes}分${seconds}秒` });
+        } else {
+          this.setData({ countDownText: `${countdown}秒` });
+        }
+        this.setData({ showCountDownText: true });
+        countdown--;
 
-      if (countdown <= 0) {
-        this.setData({ showCountDownText: false });
-        clearInterval(countdownInterval);
-      }
-    }, 1000);
+        if (countdown <= 0) {
+          this.setData({ showCountDownText: false });
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+    }
   },
   async verifyResizeFunc(currentPhoto: string) {
     try {
