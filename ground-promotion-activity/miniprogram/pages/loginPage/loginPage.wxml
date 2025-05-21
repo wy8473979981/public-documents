@@ -4,5 +4,5 @@
   <view class="input-wrapper">
     <input class="login-input" bindinput="loginInput" type="text" placeholder="请输入NT账号名，如：NCHR001" />
   </view>
-  <view class="login-btn" bindtap="login">登陆</view>
+  <view class="login-btn" bindtap="login">登录</view>
 </view>

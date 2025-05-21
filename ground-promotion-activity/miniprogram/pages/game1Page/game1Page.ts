@@ -74,7 +74,7 @@ Page({
       } else {
         wx.showModal({
           title: '提示',
-          content: '弹福平台登陆截图不正确',
+          content: '弹福平台登录截图不正确',
           showCancel: false, // 禁用取消按钮
           confirmText: '确定',
           success: (res) => {
