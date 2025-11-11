@@ -1,0 +1,113 @@
+{
+  "baidu.comate.username": "世界因你0",
+  "baidu.comate.license": "53d2fe50-89ae-45c9-8b70-07b8881cfa4b",
+  "workbench.colorTheme": "One Dark Pro",
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "typescript.format.insertSpaceAfterConstructor": true,
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "javascript.format.insertSpaceAfterConstructor": true,
+  "prettier.singleQuote": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "explorer.confirmDelete": false,
+  "editor.formatOnSave": false,
+  "fileheader.customMade": {
+    "Description": "Description",
+    "Author": "wangyang",
+    "Date": "Do not edit", // 文件创建时间(不变)
+    "LastEditors": "wangyang", // 文件最后编辑者
+    "LastEditTime": "Do not edit" // 文件最后编辑时间
+  },
+  "explorer.confirmDragAndDrop": false,
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "http.proxyAuthorization": null,
+  "editor.formatOnPaste": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "vetur.format.defaultFormatterOptions": {
+    "js-beautify-html": {
+      "wrap attributes": "force-expand-multiline"
+    },
+    "prettyhtml": {
+      "printwidth": 100,
+      "singleQuote": false,
+      "wrapAttributes": false,
+      "sortAttributes": false
+    }
+  },
+  "prettier.bracketSameLine": true,
+  "vsicons.dontShowNewVersionMessage": true,
+  "editor.fontWeight": "normal",
+  "baidu.comate.enableSecurityEnhancement": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "workbench.iconTheme": "vscode-icons",
+  "baidu.comate.privateService": "",
+  "workbench.editor.wrapTabs": true,
+  "files.autoGuessEncoding": true,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "baidu.comate.completionLength": "auto",
+  "git.openRepositoryInParentFolders": "always",
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-http-request-post-response.instructions.md": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-http-request-pre-request.instructions.md": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-collections-post-response.instructions.md": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-collections-pre-request.instructions.md": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-folder-post-response.instructions.md": true,
+    "C:\\Users\\admin\\AppData\\Local\\Temp\\postman-folder-pre-request.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-collections-post-response.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-collections-pre-request.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-folder-post-response.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-folder-pre-request.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-http-request-post-response.instructions.md": true,
+    "/var/folders/7z/rrs1smkn6pdcljrwc8l1mr7w0000gn/T/postman-http-request-pre-request.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-collections-post-response.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-collections-pre-request.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-folder-post-response.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-folder-pre-request.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-http-request-post-response.instructions.md": true,
+    "C:\\Users\\E142769\\AppData\\Local\\Temp\\postman-http-request-pre-request.instructions.md": true
+  },
+  "baidu.comate.superCompletion": {
+    "superCompletion": true,
+    "autoImport": false
+  },
+  "terminal.explorerKind": "external",
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "baidu.comate.enableCodelens": {
+    "enableInlineUnitTest": true,
+    "enableInlineExplain": true,
+    "enableInlineDocstring": true,
+    "enableInlineSplit": true,
+    "enableInlineComment": true,
+    "enableInlineOptimize": true,
+    "enableInlineLog": true
+  }
+}
