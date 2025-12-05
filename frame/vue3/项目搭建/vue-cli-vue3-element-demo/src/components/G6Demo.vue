@@ -21,46 +21,65 @@ export default {
         container: container.value,
         width: 800,
         height: 500,
-        autoFit: 'view', // 推荐开启
+        autoFit: 'view',
         modes: {
           default: ['drag-canvas', 'zoom-canvas', 'drag-node']
         },
         layout: {
-          type: 'force',
-          preventOverlap: true,
-          linkDistance: 150
+          type: 'dendrogram',
+          direction: 'TB', // 从上到下
+          nodeSep: 40,
+          rankSep: 100
         },
         node: {
           style: {
             fill: '#DEE9FF',
-            stroke: '#5B8FF9'
+            stroke: '#5B8FF9',
+            lineWidth: 2
           },
           label: {
             style: {
               fill: '#000',
-              fontSize: 12
+              fontSize: 12,
+              textAlign: 'center'
             }
           },
           size: 40
         },
         edge: {
           style: {
-            stroke: '#e2e2e2'
+            stroke: '#A3B1BF',
+            lineWidth: 2
           }
         }
       });
 
+      // 树形结构数据示例
       const data = {
-        nodes: [
-          { id: 'node1', label: '开始' },
-          { id: 'node2', label: '处理' },
-          { id: 'node3', label: '决策' },
-          { id: 'node4', label: '结束' }
-        ],
-        edges: [
-          { source: 'node1', target: 'node2' },
-          { source: 'node2', target: 'node3' },
-          { source: 'node3', target: 'node4' }
+        id: 'root',
+        label: '根节点',
+        children: [
+          {
+            id: 'child1',
+            label: '子节点1',
+            children: [
+              { id: 'child1-1', label: '孙节点1-1' },
+              { id: 'child1-2', label: '孙节点1-2' }
+            ]
+          },
+          {
+            id: 'child2',
+            label: '子节点2',
+            children: [
+              { id: 'child2-1', label: '孙节点2-1' },
+              { id: 'child2-2', label: '孙节点2-2' },
+              { id: 'child2-3', label: '孙节点2-3' }
+            ]
+          },
+          {
+            id: 'child3',
+            label: '子节点3'
+          }
         ]
       };
 
