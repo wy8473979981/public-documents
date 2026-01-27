@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120px" height="36px" viewBox="0 0 120 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>椭圆形</title>
+    <defs>
+        <linearGradient x1="0%" y1="45.5%" x2="100%" y2="54.5%" id="linearGradient-1">
+            <stop stop-color="#7E8CB6" offset="0%"></stop>
+            <stop stop-color="#727B95" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="120" height="36" rx="4"></rect>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="5_1-4产业链图谱" transform="translate(-547.000000, -298.000000)">
+            <g id="编组-6" transform="translate(262.000000, 235.000000)">
+                <g id="编组-6备份-3" transform="translate(285.000000, 63.000000)">
+                    <g id="椭圆形">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <use id="蒙版" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                        <ellipse fill-opacity="0.379507212" fill="#727B95" style="mix-blend-mode: screen;" mask="url(#mask-3)" cx="115.5" cy="6.75" rx="26.5" ry="23.85"></ellipse>
+                        <ellipse id="椭圆形备份" fill-opacity="0.402599" fill="#727B95" style="mix-blend-mode: screen;" mask="url(#mask-3)" cx="89" cy="68.4" rx="60" ry="54"></ellipse>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
