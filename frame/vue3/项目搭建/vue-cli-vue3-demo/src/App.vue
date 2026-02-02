@@ -228,12 +228,24 @@ const initTree = () => {
   });
 
   const getColor = (d) => {
-    // 根据节点深度返回颜色
     if (d.depth === 0) return '#333';
-    // 获取对应深度的配色方案，默认使用深度1的方案
-    const scheme = colorSchemes[d.depth] || colorSchemes[1];
-    // 根据节点在兄弟节点中的位置循环选择颜色
-    return scheme[(d.parent?.children.indexOf(d) || 0) % scheme.length];
+
+    // 1. 获取当前节点在兄弟中的索引
+    const index = d.parent?.children.indexOf(d) || 0;
+
+    // 2. 获取父节点在它那一辈中的索引（增加偏移量）
+    // 如果父节点是根节点，偏移量为0；否则取父节点的索引
+    const parentIndex =
+      d.parent && d.parent.parent
+        ? d.parent.parent.children.indexOf(d.parent)
+        : 0;
+
+    // 3. 将父节点索引作为种子，影响子节点的取色起始点
+    // 这里的 0.2 是一个偏移因子，可以根据需要调整
+    const colorSeed =
+      index / (d.parent?.children.length || 1) + parentIndex * 0.2;
+
+    return d3.interpolateRainbow(colorSeed % 1);
   };
 
   const underlineData = new Map();
