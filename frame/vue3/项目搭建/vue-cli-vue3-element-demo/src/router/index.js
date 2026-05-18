@@ -106,6 +106,11 @@ const routes = [
     path: '/g6-demo',
     name: 'g6-demo',
     component: () => import(/* webpackChunkName: "g6-demo" */ '../components/G6Demo.vue')
+  },
+  {
+    path: '/mindmap-demo',
+    name: 'mindmap-demo',
+    component: () => import(/* webpackChunkName: "mindmap-demo" */ '../components/MindMapDemo.vue')
   }
 ];
 

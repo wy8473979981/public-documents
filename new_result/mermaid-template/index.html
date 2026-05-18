@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+    flowchart TD
+            subgraph "用户与终端"
+                user_web["🌐 Web Browser"]
+                user_mobile["📱 iOS/Android App"]
+                user_cli["💻 CLI Tool"]
+                user_third["🔗 Third-party Integrations"]
+            end
+
+            subgraph "接入与网关"
+                api_gateway["🛡️ API Gateway<br/>(Kong/Ory Hydra)"]
+                ingress["☁️ K8s Ingress<br/>(Nginx/ALB)"]
+                auth_service["🔐 Auth Service<br/>(OAuth2/OIDC/JWT)"]
+                rate_limiter["⏱️ Rate Limiter<br/(Redis-backed)"]
+            end
+
+            subgraph "核心业务域服务"
+                user_domain["👥 User Domain<br/(FastAPI + SQLAlchemy)"]
+                order_domain["📦 Order Domain<br/(FastAPI + PostgreSQL)"]
+                product_domain["🏷️ Product Domain<br/(FastAPI + Elasticsearch)"]
+                payment_domain["💳 Payment Domain<br/(gRPC + Stripe/PayPal)"]
+                notification_domain["🔔 Notification Domain<br/(Celery + SMTP/SMS)"]
+            end
+
+            subgraph "基础设施与中间件"
+                postgres["🗄️ PostgreSQL Cluster<br/(Primary + Replicas)"]
+                redis_cache["⚡ Redis Cluster<br/(Cache + Session + Lock)"]
+                kafka["📡 Kafka Cluster<br/(Topics: orders, events, logs)"]
+                minio["📁 MinIO S3-compatible<br/(Assets/Uploads)"]
+                celery_broker["🧩 Celery Broker<br/(RabbitMQ/Redis)"]
+                celery_worker["👷 Celery Workers<br/(Async Tasks)"]
+            end
+
+            subgraph "外部系统"
+                stripe["💳 Stripe API"]
+                twilio["📞 Twilio SMS"]
+                sendgrid["📧 SendGrid Email"]
+                aws_s3["☁️ AWS S3 (Fallback)"]
+                legacy_erp["🏭 Legacy ERP System<br/(SOAP/REST)"]
+            end
+
+            subgraph "可观测性与平台工程"
+                jaeger["🔍 Jaeger Tracing"]
+                prometheus["📈 Prometheus Metrics"]
+                loki["📝 Loki Logging"]
+                grafana["📊 Grafana Dashboards"]
+                alertmanager["🚨 AlertManager"]
+                k8s_cluster["☸️ Kubernetes Cluster<br/(EKS/GKE/AKS)"]
+            end
+
+            subgraph "安全与治理"
+                vault["🔒 HashiCorp Vault<br/(Secrets Management)"]
+                opa["⚖️ OPA/Gatekeeper<br/(Policy-as-Code)"]
+                audit_log["📜 Audit Log Service<br/(Writes to Kafka)"]
+            end
+
+            user_web -->|https| api_gateway
+            user_mobile -->|https| api_gateway
+            user_cli -->|https| api_gateway
+            user_third -->|webhook| api_gateway
+            api_gateway -->|http| auth_service
+            api_gateway -->|http| rate_limiter
+            api_gateway -->|http| user_domain
+            api_gateway -->|http| order_domain
+            api_gateway -->|http| product_domain
+            api_gateway -->|grpc| payment_domain
+            api_gateway -->|http| notification_domain
+            user_domain -->|sql| postgres
+            user_domain -->|cache| redis_cache
+            order_domain -->|sql| postgres
+            order_domain -->|cache| redis_cache
+            order_domain -->|event| kafka
+            product_domain -->|es| elasticsearch
+            product_domain -->|cache| redis_cache
+            payment_domain -->|grpc| stripe
+            notification_domain -->|task| celery_broker
+            notification_domain -->|smtp| sendgrid
+            notification_domain -->|sms| twilio
+            celery_broker -->|consume| celery_worker
+            celery_worker -->|write| postgres
+            celery_worker -->|publish| kafka
+            kafka -->|orders.created| order_domain
+            kafka -->|users.updated| user_domain
+            kafka -->|notifications.sent| notification_domain
+            kafka -->|audit.log| audit_log
+            stripe -->|webhook| payment_domain
+            twilio -->|callback| notification_domain
+            aws_s3 -->|backup| minio
+            user_domain -.->|opentelemetry| jaeger
+            order_domain -.->|opentelemetry| jaeger
+            postgres -.->|pg_exporter| prometheus
+            redis_cache -.->|redis_exporter| prometheus
+            kafka -.->|kafka_exporter| prometheus
+            jaeger -->|trace data| grafana
+            prometheus -->|metrics| grafana
+            loki -->|logs| grafana
+            alertmanager -->|alerts| grafana
+            user_domain -->|vault.read| vault
+            order_domain -->|vault.read| vault
+            k8s_cluster -->|opa.enforce| opa
+            audit_log -->|kafka| kafka
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+</body>
+
+</html>

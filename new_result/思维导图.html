@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 学习计划</title>
+    <link rel="stylesheet" href="./statics/markmap/view.mindmap.css">
+    <script src="./statics/markmap/d3.v3.min.js"></script>
+    <script src="./statics/markmap/markmap.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #mindmap {
+            width: 100%;
+            height: 95vh;
+        }
+        .export-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #dc416a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .export-btn:hover {
+            background-color: #dc416a;
+        }
+    </style>
+</head>
+<body>
+<button class="export-btn">导出图片</button>
+<svg id="mindmap"></svg>
+<script id="mindmap-markdown" type="text/markdown">
+# Python 学习计划
+## 基础筑基
+### 语法核心
+- 变量与数据类型（int/str/list/dict/set/tuple）
+- 运算符与表达式
+- 输入输出（input/print/f-string）
+- 条件分支（if/elif/else）
+- 循环结构（for/while/break/continue）
+### 函数编程
+- 定义与调用
+- 参数传递（位置/关键字/默认/可变参数）
+- 返回值与作用域（local/global/nonlocal）
+- Lambda 表达式
+### 模块与包
+- import 机制（as/from...import）
+- 标准库精选：os, sys, math, datetime, json
+- 创建自定义模块与 __init__.py
+## 进阶提升
+### 面向对象编程（OOP）
+- 类与对象（class/instance）
+- 属性与方法（实例/类/静态）
+- 封装、继承、多态
+- 特殊方法（__init__/__str__/__len__/__iter__等）
+### 异常处理
+- try/except/else/finally
+- 自定义异常（raise/Exception subclass）
+### 文件与数据操作
+- 文本文件读写（open()/with/as）
+- CSV（csv模块）
+- JSON 序列化（json.load/dump）
+### 正则表达式
+- re.match/search/findall/sub
+- 常用模式（邮箱/手机号/URL）
+## 实战应用
+### Web 开发入门
+- Flask 轻量框架（路由/模板/Jinja2/表单）
+- requests 库调用 API
+### 数据分析基础
+- NumPy（数组操作/广播）
+- Pandas（DataFrame/Series/读写CSV/分组聚合）
+- Matplotlib/Seaborn（折线图/柱状图/散点图）
+### 自动化脚本
+- 批量重命名/文件分类
+- 自动发送邮件（smtplib）
+- 爬虫初探（requests + BeautifulSoup）
+## 工程实践
+### 版本控制
+- Git 基础（clone/add/commit/push/branch）
+- GitHub 协作（PR/Issues/README.md）
+### 虚拟环境
+- venv / pipenv / conda 环境隔离
+- requirements.txt 管理依赖
+### 代码质量
+- PEP 8 规范
+- 类型提示（type hints）
+- 单元测试（unittest / pytest）
+### 项目构建
+- Python 包发布（pyproject.toml / setuptools）
+- CLI 工具开发（argparse / click）
+## 拓展方向
+### 人工智能入门
+- Scikit-learn（KNN/决策树/线性回归）
+- PyTorch/TensorFlow 基础张量操作
+### Web 进阶
+- Django（MTV架构/ORM/Admin）
+- FastAPI（异步/自动文档/OpenAPI）
+### 其他领域
+- 网络编程（socket / asyncio）
+- GUI 开发（tkinter / PyQt）
+- 嵌入式/物联网（MicroPython）
+## 学习资源
+- 官方文档（docs.python.org）
+- 经典书籍：《流畅的Python》《Effective Python》
+- 在线平台：Real Python / freeCodeCamp / Codecademy
+- 社区：Stack Overflow / Reddit r/learnpython / 中文 Python 文档
+</script>
+<script src="./statics/markmap/mindmap.js"></script>
+</body>
+</html>

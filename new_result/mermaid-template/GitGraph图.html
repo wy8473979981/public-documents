@@ -1,0 +1,90 @@
+<!--
+ * @Description: Description
+ * @Author: wangyang
+ * @Date: 2026-05-07 14:01:10
+ * @LastEditors: wangyang
+ * @LastEditTime: 2026-05-07 18:38:22
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+    gitGraph
+commit id:"init" tag:"v0.1.0"
+checkout main
+commit id:"setup-dev-env"
+branch develop
+checkout develop
+commit id:"feat(api): add auth middleware"
+commit id:"feat(ml): train v2 model"
+branch feature/backend-auth
+checkout feature/backend-auth
+commit id:"refactor(auth): jwt validation"
+checkout develop
+merge feature/backend-auth
+commit id:"merged#1"
+branch feature/ml-pipeline
+checkout feature/ml-pipeline
+commit id:"chore(pipeline): upgrade prefect"
+commit id:"feat(ml): batch inference endpoint"
+checkout develop
+merge feature/ml-pipeline
+commit id:"merged#2"
+branch release/v1.2
+checkout release/v1.2
+commit id:"fix(api): cors header"
+commit id:"docs: update openapi spec"
+checkout main
+merge release/v1.2
+commit id:"release v1.2.0" tag:"v1.2.0"
+checkout main
+commit id:"hotfix(security): jwt key rotation" tag:"v1.2.1"
+checkout develop
+merge main
+commit id:"sync-to-dev"
+branch infra/terraform-aws
+checkout infra/terraform-aws
+commit id:"infra(aws): eks cluster v1.28"
+commit id:"chore(infra): enable monitoring"
+checkout develop
+merge infra/terraform-aws
+commit id:"infra-sync"
+commit id:"ci: run pytest + mypy + bandit"
+commit id:"cd: build & push docker image"
+commit id:"pypi: publish wheel to test.pypi.org"
+checkout main
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

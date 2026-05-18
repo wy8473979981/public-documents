@@ -24,7 +24,8 @@
     <router-link to="/cascader-demo11">Cascader Demo 11</router-link> |
     <router-link to="/cascader-demo12">Cascader Demo 12</router-link> |
     <router-link to="/mermaid-demo">Mermaid Demo</router-link> |
-    <router-link to="/g6-demo">G6 Demo</router-link>
+    <router-link to="/g6-demo">G6 Demo</router-link> |
+    <router-link to="/mindmap-demo">MindMap Demo</router-link>
   </nav>
   <router-view />
 </template>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+    flowchart LR
+        subgraph "客户端"
+        cli[HTTPS请求
+TLS 1.3握手
+ClientHello/ServerHello]
+        end
+        subgraph "网络层"
+        lb[负载均衡器
+TCP/443
+SNI路由]
+        end
+        subgraph "应用层"
+        api[API网关
+HTTP/2
+Host: api.example.com]
+        auth[认证服务
+JWT校验
+HS256签名验证]
+        order[订单服务
+RESTful API
+JSON Schema校验]
+        redis[Redis缓存
+RESP协议
+GET/SET指令]
+        db[MySQL数据库
+MySQL Protocol v10
+COM_QUERY帧]
+        end
+        subgraph "安全层"
+        tls[TLS 1.3
+0-RTT/1-RTT
+AEAD加密]
+        end
+        cli -->|443端口| lb
+        lb -->|443端口| api
+        api -->|8080端口| auth
+        auth -->|8080端口| order
+        order -->|6379端口| redis
+        redis -->|3306端口| db
+        order <-->|response| auth
+        auth <-->|response| api
+        api <-->|response| lb
+        lb <-->|response| cli
+        tls -.->|密钥交换| cli
+        tls -.->|密钥交换| lb
+        tls -.->|密钥交换| api
+        tls -.->|密钥交换| auth
+        tls -.->|密钥交换| order
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/architecture.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

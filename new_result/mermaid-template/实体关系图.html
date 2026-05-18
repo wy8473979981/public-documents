@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+   erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ ORDER_ITEM : contains
+        PRODUCT ||--o{ ORDER_ITEM : includes
+        CUSTOMER {
+        string id
+        string name
+        string email
+        }
+        ORDER {
+        string id
+        date orderDate
+        string status
+        }
+        PRODUCT {
+        string id
+        string name
+        float price
+        }
+        ORDER_ITEM {
+        int quantity
+        float price
+        }
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

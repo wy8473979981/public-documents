@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+    stateDiagram-v2
+    [*] --> Initializing
+
+    state Initializing {
+        [*] --> LoadingConfig
+        LoadingConfig --> ValidatingConfig : on success
+        LoadingConfig --> Failing : on error
+        ValidatingConfig --> ResolvingDependencies
+        ResolvingDependencies --> StartingServices
+        StartingServices --> Ready
+        Ready --> [*]
+        Failing --> [*]
+    }
+
+    state Ready {
+        [*] --> Idle
+
+        state "Background Services" as BG {
+            [*] --> HealthChecker
+            HealthChecker --> HealthChecker : / check() [every 30s]
+
+            [*] --> ConfigWatcher
+            ConfigWatcher --> ConfigWatcher : / watch() [inotify]
+            ConfigWatcher --> ReloadingConfig : config_changed
+            ReloadingConfig --> Idle : / reload_config() / notify_plugins()
+
+            [*] --> MetricsExporter
+            MetricsExporter --> MetricsExporter : / export() [every 15s]
+        }
+
+        state "Plugin System" as Plugins {
+            [*] --> PluginManager
+            PluginManager --> PluginManager : / scan_plugins()
+            PluginManager --> LoadingPlugin : plugin_discovered
+            LoadingPlugin --> PluginActive : on load_success
+            PluginActive --> PluginInactive : on unload_request
+            PluginInactive --> PluginManager : / cleanup()
+            PluginActive --> PluginError : on runtime_error
+            PluginError --> PluginActive : on auto_recovery [max_retries < 3]
+            PluginError --> PluginManager : on persistent_failure
+        }
+
+        state "Async Task Orchestrator" as Tasks {
+            [*] --> Scheduler
+            Scheduler --> Queued : task_scheduled
+            Queued --> Running : worker_assigned
+            Running --> Completed : on success / log_result()
+            Running --> Failed : on exception / log_error()
+            Failed --> Retrying : [retry_after_delay && retries_left > 0]
+            Retrying --> Queued : / backoff()
+            Failed --> DeadLetter : [retries_exhausted]
+            Completed --> Scheduler
+            DeadLetter --> Alerting : / send_alert("DLQ overflow")
+        }
+    }
+
+    state Recovering {
+        [*] --> BackingOff
+        BackingOff --> WaitingForRecovery : / wait_backoff()
+        WaitingForRecovery --> Idle : recovery_check_passed
+        WaitingForRecovery --> Failing : recovery_check_failed [attempts > 5]
+    }
+
+    state Degraded {
+        [*] --> ServingDegraded
+        ServingDegraded --> ServingDegraded : / fallback_mode()
+        ServingDegraded --> Ready : health_restored
+        ServingDegraded --> Failing : critical_dependency_lost
+    }
+
+    state Failing {
+        [*] --> Terminating
+        Terminating --> CleanupResources
+        CleanupResources --> Exiting
+        Exiting --> [*]
+        Terminating --> EmergencyDump : sigterm_received
+        EmergencyDump --> Exiting : / dump_state()
+    }
+
+    HealthChecker --> Degraded : unhealthy_concurrent
+    ConfigWatcher --> ReloadingConfig : config_changed_concurrent
+    PluginError --> Degraded : plugin_critical_failure
+    Failed --> Degraded : task_failure_burst [failures_per_min > 10]
+
+    Idle --> [H] : on suspend
+    [H] --> Idle : on resume
+    [H'] --> Recovering : on resume_after_failure
+
+    Ready --> Failing : SIGINT or SIGTERM
+    Recovering --> Failing : SIGKILL
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

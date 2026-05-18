@@ -1,0 +1,301 @@
+// 初始化 Mermaid
+mermaid.initialize({
+    startOnLoad: false,
+    theme: 'default',
+    securityLevel: 'loose',
+    flowchart: { useMaxWidth: false },
+    fontFamily: '"Segoe UI", sans-serif',
+    // 添加sankey配置
+    sankey: {
+        nodeAlignment: 'left',
+        margin: 20,
+        nodeWidth: 20,
+        nodePadding: 10,
+        nodeLabelPadding: 10,
+        linkOpacity: 0.4,
+        linkShortening: true,
+        linkColor: 'gradient',
+        iterations: 32
+    }
+});
+
+const chartContainer = document.getElementById('mermaid-chart');
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+const fitViewBtn = document.getElementById('fit-view-btn');
+const zoomInBtn = document.getElementById('zoom-in-btn');
+const zoomOutBtn = document.getElementById('zoom-out-btn');
+const chartTitle = document.getElementById('chart-title');
+
+let currentSvg = null;
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+let initialScale = 1;
+let initialTranslateX = 0;
+let initialTranslateY = 0;
+
+// 从HTML中读取labelMap数据
+function getLabelMap() {
+    const dataElement = document.getElementById('label-map-data');
+    if (dataElement) {
+        try {
+            return JSON.parse(dataElement.textContent);
+        } catch (e) {
+            console.error('解析labelMap数据失败:', e);
+        }
+    }
+    return {};
+}
+
+// 替换SVG中的英文标签为中文（支持 "Label" 或 "Label 123" 格式）
+function replaceLabels() {
+    if (!currentSvg) return;
+
+    const labelMap = getLabelMap();
+    const textElements = currentSvg.querySelectorAll('text.nodeLabel, text');
+    textElements.forEach(text => {
+        const originalText = text.textContent.trim();
+        let newText = null;
+
+        // 完全匹配
+        if (labelMap[originalText] !== undefined) {
+            newText = labelMap[originalText];
+        } else {
+            // 匹配 "Label 数值" 格式，保留数字
+            for (const [en, zh] of Object.entries(labelMap)) {
+                const regex = new RegExp('^' + en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+(\\d+)$');
+                const match = originalText.match(regex);
+                if (match) {
+                    newText = zh + ' ' + match[1];
+                    break;
+                }
+            }
+        }
+
+        if (newText !== null) {
+            text.textContent = newText;
+        }
+    });
+}
+
+// 等待桑基图渲染完成并替换标签
+function processSankeyAfterRender() {
+    // 先立即尝试替换标签
+    replaceLabels();
+
+    // 然后设置一个短延时以确保所有内容都已渲染
+    setTimeout(() => {
+        replaceLabels();
+
+        // 设置 MutationObserver 来监听可能的后续变化
+        const observer = new MutationObserver((mutations) => {
+            replaceLabels();
+        });
+
+        if (currentSvg) {
+            observer.observe(currentSvg, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }, 100); // 减少延时时间
+}
+
+// 获取 Mermaid 代码和标题
+const mermaidDataElement = document.getElementById('mermaid-data');
+const defaultCode = mermaidDataElement ? mermaidDataElement.textContent.trim() : '';
+const chartTitleText = mermaidDataElement ? mermaidDataElement.getAttribute('data-title') || '' : '';
+
+if (chartTitleText) {
+    chartTitle.textContent = chartTitleText;
+} else {
+    chartTitle.style.display = 'none';
+}
+
+// 渲染函数
+function renderMermaid() {
+    const code = defaultCode.trim();
+    if (!code) {
+        chartContainer.innerHTML = '';
+        currentSvg = null;
+        return;
+    }
+
+    chartContainer.innerHTML = '<p style="padding:12px;color:#666;">渲染中...</p>';
+    mermaid.render('mermaid-svg', code).then(({ svg }) => {
+        chartContainer.innerHTML = svg;
+        currentSvg = chartContainer.querySelector('svg');
+        if (currentSvg) {
+            setupZoomAndPan();
+            fitView();
+            saveInitialView();
+
+            // 检查是否是桑基图，如果是则立即处理标签替换
+            if (defaultCode.includes('sankey-beta')) {
+                processSankeyAfterRender();
+            } else {
+                // 对于其他类型的图表，仍然使用标签替换功能（如果提供了label-map-data）
+                if (document.getElementById('label-map-data')) {
+                    processSankeyAfterRender();
+                }
+            }
+        }
+    }).catch(err => {
+        console.error('Mermaid 渲染错误:', err);
+        console.error('错误堆栈:', err.stack || '无堆栈信息');
+        console.error('Mermaid 代码:', code);
+
+        chartContainer.innerHTML = `      <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div style="font-size: 20px; color: #333; font-weight: 500;">图表渲染失败</div>
+        <div class="error-message">Mermaid 语法可能存在错误，请检查代码格式</div>
+        <div class="error-hint">💡 提示：详细错误信息已输出到浏览器控制台 (F12)</div>
+      </div>
+    `;
+        currentSvg = null;
+    });
+}
+
+// 绑定缩放和平移
+function setupZoomAndPan() {
+    if (!currentSvg) return;
+
+    let isDragging = false;
+    let startX, startY;
+
+    chartContainer.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        const rect = chartContainer.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const newScale = Math.max(0.1, Math.min(scale * delta, 5));
+        const zoomFactor = newScale / scale;
+
+        translateX = mouseX - (mouseX - translateX) * zoomFactor;
+        translateY = mouseY - (mouseY - translateY) * zoomFactor;
+        scale = newScale;
+
+        applyTransform();
+    }, { passive: false });
+
+    chartContainer.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        chartContainer.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        chartContainer.style.cursor = 'grab';
+    });
+
+    function applyTransform() {
+        if (!currentSvg) return;
+        currentSvg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        currentSvg.style.transformOrigin = '0 0';
+    }
+
+    chartContainer.style.cursor = 'grab';
+    applyTransform();
+}
+
+// 适应屏幕
+function fitView() {
+    if (!currentSvg) return;
+
+    const containerRect = chartContainer.getBoundingClientRect();
+    const svgRect = currentSvg.getBoundingClientRect();
+
+    const scaleX = containerRect.width / svgRect.width;
+    const scaleY = containerRect.height / svgRect.height;
+    scale = Math.min(scaleX, scaleY) * 0.9;
+
+    translateX = (containerRect.width - svgRect.width * scale) / 2;
+    translateY = (containerRect.height - svgRect.height * scale) / 2;
+
+    applyTransform();
+}
+
+function applyTransform() {
+    if (!currentSvg) return;
+    currentSvg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    currentSvg.style.transformOrigin = '0 0';
+}
+
+// 保存初始视图状态
+function saveInitialView() {
+    initialScale = scale;
+    initialTranslateX = translateX;
+    initialTranslateY = translateY;
+}
+
+// 重置视图
+function resetView() {
+    scale = initialScale;
+    translateX = initialTranslateX;
+    translateY = initialTranslateY;
+    applyTransform();
+}
+
+// 放大
+function zoomIn() {
+    const rect = chartContainer.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const newScale = Math.min(scale * 1.2, 5);
+    const zoomFactor = newScale / scale;
+
+    translateX = centerX - (centerX - translateX) * zoomFactor;
+    translateY = centerY - (centerY - translateY) * zoomFactor;
+    scale = newScale;
+
+    applyTransform();
+}
+
+// 缩小
+function zoomOut() {
+    const rect = chartContainer.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const newScale = Math.max(scale * 0.8, 0.1);
+    const zoomFactor = newScale / scale;
+
+    translateX = centerX - (centerX - translateX) * zoomFactor;
+    translateY = centerY - (centerY - translateY) * zoomFactor;
+    scale = newScale;
+
+    applyTransform();
+}
+
+// 全屏切换
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        chartContainer.requestFullscreen().catch(err => {
+            alert('全屏失败：' + err.message);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// 绑定事件
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+fitViewBtn.addEventListener('click', resetView);
+zoomInBtn.addEventListener('click', zoomIn);
+zoomOutBtn.addEventListener('click', zoomOut);
+
+// 初始渲染
+renderMermaid();

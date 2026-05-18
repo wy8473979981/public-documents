@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitGraph导出功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-result {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .success {
+            border-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        .error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>GitGraph导出功能测试</h1>
+        <p>本页面用于测试GitGraph图的导出功能是否正常工作。</p>
+        
+        <div class="test-result" id="test-result">
+            <p>点击下面的按钮开始测试</p>
+        </div>
+        
+        <button onclick="runTest()">运行测试</button>
+    </div>
+
+    <script>
+        function runTest() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.className = 'test-result';
+            resultDiv.innerHTML = '<p>正在测试导出功能...</p>';
+            
+            // 检查必要的文件是否已加载
+            const checks = [
+                { name: 'html2canvas', check: () => typeof html2canvas !== 'undefined' },
+                { name: 'GitGraphExporter', check: () => typeof GitGraphExporter !== 'undefined' },
+                { name: 'fitView函数', check: () => typeof window.fitView !== 'undefined' },
+                { name: 'applyTransform函数', check: () => typeof window.applyTransform !== 'undefined' }
+            ];
+            
+            let allPassed = true;
+            let results = '<h3>测试结果:</h3><ul>';
+            
+            checks.forEach(item => {
+                const passed = item.check();
+                results += `<li>${item.name}: ${passed ? '✓ 通过' : '✗ 失败'}</li>`;
+                if (!passed) allPassed = false;
+            });
+            
+            results += '</ul>';
+            
+            if (allPassed) {
+                resultDiv.className = 'test-result success';
+                results += '<p><strong>✓ 所有检查项通过！导出功能应该可以正常工作。</strong></p>';
+                results += '<p>请打开 <a href="./GitGraph图.html" target="_blank">GitGraph图.html</a> 页面测试实际导出功能。</p>';
+            } else {
+                resultDiv.className = 'test-result error';
+                results += '<p><strong>✗ 部分检查项失败，请检查文件引入是否正确。</strong></p>';
+            }
+            
+            resultDiv.innerHTML = results;
+        }
+    </script>
+</body>
+</html>

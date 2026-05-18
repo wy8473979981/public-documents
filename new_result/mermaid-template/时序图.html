@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+     sequenceDiagram
+    participant User as 用户
+    participant IoT as IoT设备
+    participant CDN as CDN节点
+    participant Edge as 边缘计算节点
+    participant GW as API网关
+    participant Auth as 认证中心
+    participant Limit as 限流组件
+    participant Circuit as 熔断器
+    participant GraphQL as GraphQL网关
+    participant WS as WebSocket服务器
+    participant Front as 前端模块
+    participant Order as 订单服务
+    participant Pay as 支付接口
+    participant Risk as 风控系统
+    participant Search as 搜索服务
+    participant Rec as 推荐引擎
+    participant NLP as NLP处理器
+    participant OCR as OCR引擎
+    participant Img as 图像处理服务
+    participant Video as 视频转码服务
+    participant AR as AR渲染器
+    participant VR as VR会话管理器
+    participant Digital as 数字人引擎
+    participant KG as 知识图谱服务
+    participant FL as 联邦学习协调器
+    participant Priv as 隐私计算节点
+    participant Voice as 语音识别服务
+    participant SMS as 短信平台
+    participant Email as 邮件服务
+    participant Push as 推送服务
+    participant MQ as 消息队列
+    participant Cache as 缓存
+    participant DB as 数据库
+    participant ES as ES索引
+    participant File as 文件存储
+    participant Log as 日志服务
+    participant Monitor as 监控代理
+    participant Config as 配置中心
+    participant Chain as 区块链节点
+
+    User->>IoT: 发起设备连接请求<br/><small>TCP Handshake</small>
+    IoT->>CDN: 请求静态资源<br/><small>HTTPS GET</small>
+    CDN-->>IoT: 返回缓存资源<br/><small>200 OK</small>
+    IoT->>Edge: 发送传感器数据<br/><small>MQTT Publish</small>
+    Edge->>GW: 转发业务请求<br/><small>REST API</small>
+    GW->>Auth: 验证访问令牌<br/><small>JWT Verify</small>
+    Auth-->>GW: 返回用户身份<br/><small>UID: 10086</small>
+    GW->>Limit: 检查频率限制<br/><small>Redis Incr</small>
+    Limit-->>GW: 允许通过<br/><small>Rate OK</small>
+    GW->>Circuit: 检查服务状态<br/><small>Health Check</small>
+    Circuit-->>GW: 服务正常<br/><small>Closed</small>
+    GW->>GraphQL: 解析查询语句<br/><small>GraphQL Parse</small>
+    GraphQL->>Front: 渲染页面数据<br/><small>JSON Response</small>
+    Front->>WS: 建立实时通道<br/><small>WebSocket Upgrade</small>
+    WS-->>Front: 连接已建立<br/><small>101 Switching</small>
+    Front->>Order: 提交订单创建<br/><small>POST /order</small>
+    Order->>Risk: 触发风控校验<br/><small>Sync Call</small>
+    Risk->>KG: 查询关联关系<br/><small>Graph Query</small>
+    KG-->>Risk: 返回风险评分<br/><small>Score: 0.05</small>
+    Risk-->>Order: 校验通过<br/><small>Pass</small>
+    Order->>Pay: 发起支付请求<br/><small>Pre-auth</small>
+    Pay->>SMS: 发送验证码<br/><small>Async Msg</small>
+    SMS-->>User: 推送验证码<br/><small>SMS Notify</small>
+    User->>Front: 输入验证码<br/><small>Input</small>
+    Front->>Pay: 确认支付<br/><small>Confirm</small>
+    Pay->>Chain: 记录交易哈希<br/><small>Blockchain Tx</small>
+    Chain-->>Pay: 交易确认<br/><small>Block Height</small>
+    Pay-->>Order: 支付成功<br/><small>Success</small>
+    Order->>MQ: 发送订单事件<br/><small>Event Sourcing</small>
+    MQ-->>Order: 消息已接收<br/><small>Ack</small>
+    Order-->>Front: 返回订单号<br/><small>Order ID</small>
+    MQ->>Log: 异步写入日志<br/><small>Batch Insert</small>
+    MQ->>ES: 同步更新索引<br/><small>Index Update</small>
+    MQ->>Cache: 失效缓存数据<br/><small>Del Key</small>
+    MQ->>Push: 推送实时通知<br/><small>FCM/APNs</small>
+    Push-->>User: 显示通知<br/><small>Notification</small>
+    Note over Order, DB: 最终一致性补偿事务
+    Order->>DB: 持久化订单数据<br/><small>SQL Insert</small>
+    DB-->>Order: 插入成功<br/><small>Row Affected</small>
+    Front->>Rec: 请求推荐列表<br/><small>Get Recommendations</small>
+    Rec->>FL: 获取模型参数<br/><small>Federated Learn</small>
+    FL->>Priv: 隐私计算聚合<br/><small>Secure Agg</small>
+    Priv-->>FL: 返回梯度更新<br/><small>Gradients</small>
+    FL-->>Rec: 更新本地模型<br/><small>Model Update</small>
+    Rec->>Search: 执行向量检索<br/><small>Vector Search</small>
+    Search-->>Rec: 返回候选集<br/><small>Top K</small>
+    Rec-->>Front: 返回推荐结果<br/><small>Item List</small>
+    User->>Front: 上传身份证图片<br/><small>Image Upload</small>
+    Front->>OCR: 识别文字信息<br/><small>OCR Process</small>
+    OCR->>Img: 图像预处理<br/><small>Enhance</small>
+    Img-->>OCR: 处理完成<br/><small>Processed</small>
+    OCR-->>Front: 返回识别文本<br/><small>Text Data</small>
+    Front->>NLP: 语义分析<br/><small>NLP Analyze</small>
+    NLP-->>Front: 返回意图标签<br/><small>Intent: KYC</small>
+    User->>Front: 启动视频通话<br/><small>WebRTC Start</small>
+    Front->>Video: 请求转码服务<br/><small>Transcode Req</small>
+    Video->>AR: 加载AR特效<br/><small>Load Assets</small>
+    AR-->>Video: 资源就绪<br/><small>Ready</small>
+    Video-->>Front: 返回流地址<br/><small>RTMP URL</small>
+    Front->>VR: 加入VR房间<br/><small>Join Session</small>
+    VR->>Digital: 初始化数字人<br/><small>Init Avatar</small>
+    Digital-->>VR: 数字人就绪<br/><small>Avatar Ready</small>
+    VR-->>Front: 进入VR环境<br/><small>Enter VR</small>
+    Front->>Voice: 发送语音流<br/><small>Audio Stream</small>
+    Voice-->>Front: 返回转录文本<br/><small>STT Text</small>
+    Note over GW, Monitor: 链路追踪与监控
+    GW->>Monitor: 上报性能指标<br/><small>Prometheus</small>
+    Monitor->>Config: 拉取配置规则<br/><small>Config Pull</small>
+    Config-->>Monitor: 返回最新配置<br/><small>YAML Config</small>
+    Monitor->>Log: 写入监控日志<br/><small>Write Log</small>
+    par 并行处理
+        Order->>Email: 发送电子发票<br/><small>SMTP Send</small>
+        Email-->>User: 邮件送达<br/><small>Email Received</small>
+    and
+        Order->>File: 生成PDF发票<br/><small>Gen PDF</small>
+        File-->>Order: 文件URL<br/><small>S3 Link</small>
+    end
+    Order->>Circuit: 上报调用结果<br/><small>Metric Report</small>
+    Circuit->>GW: 更新熔断状态<br/><small>State Update</small>
+    GW-->>User: 请求处理完成<br/><small>200 OK</small>
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+    <style>
+        .grid .tick line {
+            stroke: #C3C3C3 !important;
+        }
+        .task {
+            rx: 10px !important;
+            ry: 10px !important;
+            stroke: #ACA9FF !important;
+        }
+    </style>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+    gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %m/%d
+
+    section 🌐 项目启动与规划
+    需求深度对齐 : a1, 2024-03-01, 2024-03-05
+    架构评审与技术选型 : a2, 2024-03-06, 2024-03-12
+    微服务边界定义 : a3, 2024-03-13, 2024-03-16
+    CI/CD 流水线设计 : a4, 2024-03-06, 2024-03-11
+
+    section ⚙️ 核心服务开发（Python）
+    用户服务（FastAPI + SQLAlchemy） : b1, 2024-03-10, 2024-03-21
+    订单服务（Saga 模式） : b2, 2024-03-22, 2024-04-04
+    库存服务（分布式锁 + Redis） : b3, 2024-03-22, 2024-04-01
+    支付网关适配（Alipay/WeChat） : b4, 2024-04-05, 2024-04-12
+    商品中心（Elasticsearch 搜索） : b5, 2024-04-02, 2024-04-13
+    优惠券引擎（规则引擎 PyKE） : b6, 2024-04-13, 2024-04-22
+
+    section 🧩 公共能力与中间件
+    统一认证中心（OAuth2 + JWT） : c1, 2024-03-17, 2024-03-25
+    异步任务平台（Celery + Redis） : c2, 2024-03-26, 2024-04-01
+    分布式日志（ELK + StructLog） : c3, 2024-03-26, 2024-04-02
+    指标监控（Prometheus + FastAPI Exporter） : c4, 2024-04-02, 2024-04-07
+
+    section 🌐 系统集成与外部对接
+    对接用户服务（gRPC） : d1, 2024-04-08, 2024-04-12
+    对接库存服务（REST + Webhook） : d2, 2024-04-03, 2024-04-06
+    支付网关沙箱联调 : d3, 2024-04-13, 2024-04-18
+
+    section 🛠️ DevOps 与质量保障
+    GitOps 流水线搭建（Argo CD） : e1, 2024-03-12, 2024-03-19
+    单元测试覆盖率 ≥85%（pytest + coverage） : e2, 2024-04-08, 2024-04-17
+    集成测试（Pytest-BDD + Docker Compose） : e3, 2024-04-19, 2024-04-25
+    性能压测（Locust + Grafana） : e4, 2024-04-26, 2024-04-30
+
+    section 🚀 发布与运维
+    UAT 环境部署与验收 : f1, 2024-04-26, 2024-04-29
+    生产灰度发布（Flask + Nginx + Canary） : f2, 2024-05-01, 2024-05-03
+    全量上线 & SLO 监控看板上线 : f3, 2024-05-04, 2024-05-05
+    里程碑：MVP 上线 : m1, 2024-05-20, 1d
+    里程碑：SLA 99.95% 达标 : m2, 2024-05-27, 1d
+</script>
+
+<script id="gantt-data" type="application/json">
+    {
+        "a1": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "a2": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "a3": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "a4": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "b1": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "b2": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "b3": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "b4": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "b5": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "b6": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "c1": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "c2": {
+            "backgroundColor": "#E8F5E9",
+            "textColor": "#1B5E20"
+        },
+        "c3": {
+            "backgroundColor": "#E3F2FD",
+            "textColor": "#0D47A1"
+        },
+        "c4": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "d1": {
+            "backgroundColor": "#FFF3CD",
+            "textColor": "#826400"
+        },
+        "d2": {
+            "backgroundColor": "#FCE4EC",
+            "textColor": "#880E4F"
+        },
+        "d3": {
+            "backgroundColor": "#E1F5FE",
+            "textColor": "#01579B"
+        },
+        "e1": {
+            "backgroundColor": "#E0F2F1",
+            "textColor": "#004D40"
+        },
+        "e2": {
+            "backgroundColor": "#E8F5E9",
+            "textColor": "#1B5E20"
+        },
+        "e3": {
+            "backgroundColor": "#F3E5F5",
+            "textColor": "#4A148C"
+        },
+        "e4": {
+            "backgroundColor": "#E3F2FD",
+            "textColor": "#0D47A1"
+        },
+        "f1": {
+            "backgroundColor": "#FFF8E1",
+            "textColor": "#E65100"
+        },
+        "f2": {
+            "backgroundColor": "#E0F7FA",
+            "textColor": "#006064"
+        },
+        "f3": {
+            "backgroundColor": "#E8F5E9",
+            "textColor": "#1B5E20"
+        },
+        "m1": {
+            "backgroundColor": "#CE93D8",
+            "textColor": "#4A148C"
+        },
+        "m2": {
+            "backgroundColor": "#AB47BC",
+            "textColor": "#4A148C"
+        }
+    }
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/gantt.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+</body>
+
+</html>

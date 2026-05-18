@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather-cli Python 项目时间线</title>
+    <link rel="stylesheet" href="./statics/timechart/index.css">
+    <script src="./statics/timechart/html2canvas.min.js"></script>
+    <script src="./statics/timechart/index.js"></script>
+</head>
+<body>
+    <h1>weather-cli Python 项目时间线</h1>
+    <button id="export-btn">导出图片</button>
+    <div class="timeline">
+        <!-- 中心线 -->
+        <div class="timeline-center-line"></div>
+        
+        <div class="timeline-item">
+            <!-- 圆点 -->
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-01</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">项目启动</h3>
+                <p>确定需求：查询城市天气、支持 CLI 参数</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-05</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">初始化仓库</h3>
+                <p>创建 README.md 和 .gitignore</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-10</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">实现核心模块</h3>
+                <p>编写 weather.py（调用 OpenWeather API）</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-15</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">添加命令行接口</h3>
+                <p>使用 argparse，支持 --city 参数</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-20</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">编写单元测试</h3>
+                <p>使用 pytest，覆盖 API 调用与错误处理</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-03-25</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">集成 GitHub Actions</h3>
+                <p>自动运行测试 + 代码格式检查（black/flake8）</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <time class="timeline-time">2024-04-01</time>
+            <div class="timeline-content">
+                <h3 class="timeline-title">发布 v0.1.0</h3>
+                <p>发布到 PyPI（使用 build & twine）</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
