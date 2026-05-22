@@ -1,6 +1,6 @@
 <template>
   <div class="mindmap-demo">
-    <h3>G6 思维导图示例</h3>
+    <h3>G6 思维导图示例 (无动画 + 隐藏根节点折叠)</h3>
     <div ref="container" class="mindmap-container"></div>
   </div>
 </template>
@@ -17,14 +17,30 @@ import {
   CubicHorizontal,
   ExtensionCategory,
   Graph,
-  GraphEvent,
-  iconfont,
   idOf,
-  NodeEvent,
   positionOf,
   register,
   treeToGraphData
 } from '@antv/g6';
+
+// 测试数据
+const algorithmData = {
+  id: '算法核心',
+  children: [
+    {
+      id: '数据结构',
+      children: [{ id: '数组' }, { id: '链表' }, { id: '树结构' }, { id: '图结构' }]
+    },
+    {
+      id: '基础算法',
+      children: [{ id: '排序算法' }, { id: '搜索算法' }]
+    },
+    {
+      id: '进阶思想',
+      children: [{ id: '动态规划' }, { id: '贪心算法' }, { id: '回溯法' }]
+    }
+  ]
+};
 
 export default {
   name: 'MindMapDemo',
@@ -34,11 +50,6 @@ export default {
 
     onMounted(() => {
       if (!container.value) return;
-
-      // 添加 iconfont 样式
-      const style = document.createElement('style');
-      style.innerHTML = `@import url('${iconfont.css}');`;
-      document.head.appendChild(style);
 
       const RootNodeStyle = {
         fill: '#EFF0F0',
@@ -59,14 +70,13 @@ export default {
       };
 
       const TreeEvent = {
-        COLLAPSE_EXPAND: 'collapse-expand',
-        ADD_CHILD: 'add-child'
+        COLLAPSE_EXPAND: 'collapse-expand'
       };
 
       let textShape;
-      const measureText = (text) => {
-        if (!textShape) textShape = new Text({ style: text });
-        textShape.attr(text);
+      const measureText = (textObj) => {
+        if (!textShape) textShape = new Text({ style: textObj });
+        textShape.attr(textObj);
         return textShape.getBBox().width;
       };
 
@@ -89,46 +99,39 @@ export default {
       };
 
       class MindmapNode extends BaseNode {
-        static defaultStyleProps = {
-          showIcon: false
-        };
-
         constructor(options) {
-          Object.assign(options.style, MindmapNode.defaultStyleProps);
           super(options);
         }
 
         get childrenData() {
-          return this.context.model.getChildrenData(this.id);
+          return this.context.model.getChildrenData(this.id) || [];
         }
 
         get rootId() {
           return idOf(this.context.model.getRootsData()[0]);
         }
 
-        isShowCollapse(attributes) {
-          const { collapsed, showIcon } = attributes;
-          return !collapsed && showIcon && this.childrenData.length > 0;
-        }
-
         getCollapseStyle(attributes) {
-          const { showIcon, color, direction } = attributes;
-          if (!this.isShowCollapse(attributes)) return false;
+          // 修改点 2: 如果是根节点，或者没有子节点，直接不渲染折叠按钮
+          if (this.id === this.rootId || this.childrenData.length === 0) return false;
+
+          const { color, direction, collapsed } = attributes;
           const [width, height] = this.getSize(attributes);
 
           return {
-            backgroundFill: color,
-            backgroundHeight: 12,
-            backgroundWidth: 12,
+            backgroundFill: '#fff',
+            backgroundStroke: color,
+            backgroundLineWidth: 1.5,
+            backgroundHeight: 14,
+            backgroundWidth: 14,
+            backgroundRadius: 7,
             cursor: 'pointer',
-            fill: '#fff',
-            fontFamily: 'iconfont',
-            fontSize: 8,
-            text: '\ue6e4',
+            fill: color,
+            fontSize: 12,
+            text: collapsed ? '+' : '-',
             textAlign: 'center',
-            transform: direction === 'left' ? [['rotate', 90]] : [['rotate', -90]],
-            visibility: showIcon ? 'visible' : 'hidden',
-            x: direction === 'left' ? -6 : width + 6,
+            textBaseline: 'middle',
+            x: direction === 'left' ? -7 : width + 7,
             y: height
           };
         }
@@ -137,111 +140,15 @@ export default {
           const iconStyle = this.getCollapseStyle(attributes);
           const btn = this.upsert('collapse-expand', Badge, iconStyle, container);
 
-          this.forwardEvent(btn, CommonEvent.CLICK, (event) => {
-            event.stopPropagation();
-            this.context.graph.emit(TreeEvent.COLLAPSE_EXPAND, {
-              id: this.id,
-              collapsed: !attributes.collapsed
+          if (btn) {
+            this.forwardEvent(btn, CommonEvent.CLICK, (event) => {
+              event.stopPropagation();
+              this.context.graph.emit(TreeEvent.COLLAPSE_EXPAND, {
+                id: this.id,
+                collapsed: !attributes.collapsed
+              });
             });
-          });
-        }
-
-        getCountStyle(attributes) {
-          const { collapsed, color, direction } = attributes;
-          const count = this.context.model.getDescendantsData(this.id).length;
-          if (!collapsed || count === 0) return false;
-          const [width, height] = this.getSize(attributes);
-          return {
-            backgroundFill: color,
-            backgroundHeight: 12,
-            backgroundWidth: 12,
-            cursor: 'pointer',
-            fill: '#fff',
-            fontSize: 8,
-            text: count.toString(),
-            textAlign: 'center',
-            x: direction === 'left' ? -6 : width + 6,
-            y: height
-          };
-        }
-
-        drawCountShape(attributes, container) {
-          const countStyle = this.getCountStyle(attributes);
-          const btn = this.upsert('count', Badge, countStyle, container);
-
-          this.forwardEvent(btn, CommonEvent.CLICK, (event) => {
-            event.stopPropagation();
-            this.context.graph.emit(TreeEvent.COLLAPSE_EXPAND, {
-              id: this.id,
-              collapsed: false
-            });
-          });
-        }
-
-        getAddStyle(attributes) {
-          const { collapsed, showIcon, direction } = attributes;
-          if (collapsed || !showIcon) return false;
-          const [width, height] = this.getSize(attributes);
-          const color = '#ddd';
-
-          const offsetX = this.isShowCollapse(attributes) ? 24 : 12;
-          const isRoot = this.id === this.rootId;
-
-          return {
-            backgroundFill: '#fff',
-            backgroundHeight: 12,
-            backgroundLineWidth: 1,
-            backgroundStroke: color,
-            backgroundWidth: 12,
-            cursor: 'pointer',
-            fill: color,
-            fontFamily: 'iconfont',
-            fontSize: 8,
-            text: '\ue664',
-            textAlign: 'center',
-            x: isRoot ? width + 12 : direction === 'left' ? -offsetX : width + offsetX,
-            y: isRoot ? height / 2 : height
-          };
-        }
-
-        getAddBarStyle(attributes) {
-          const { collapsed, showIcon, direction, color = '#1783FF' } = attributes;
-          if (collapsed || !showIcon) return false;
-          const [width, height] = this.getSize(attributes);
-
-          const offsetX = this.isShowCollapse(attributes) ? 12 : 0;
-          const isRoot = this.id === this.rootId;
-
-          const HEIGHT = 2;
-          const WIDTH = 6;
-
-          return {
-            cursor: 'pointer',
-            fill:
-              direction === 'left'
-                ? `linear-gradient(180deg, #fff 20%, ${color})`
-                : `linear-gradient(0deg, #fff 20%, ${color})`,
-            height: HEIGHT,
-            width: WIDTH,
-            x: isRoot ? width : direction === 'left' ? -offsetX - WIDTH : width + offsetX,
-            y: isRoot ? height / 2 - HEIGHT / 2 : height - HEIGHT / 2,
-            zIndex: -1
-          };
-        }
-
-        drawAddShape(attributes, container) {
-          const addStyle = this.getAddStyle(attributes);
-          const addBarStyle = this.getAddBarStyle(attributes);
-          this.upsert('add-bar', Rect, addBarStyle, container);
-          const btn = this.upsert('add', Badge, addStyle, container);
-
-          this.forwardEvent(btn, CommonEvent.CLICK, (event) => {
-            event.stopPropagation();
-            this.context.graph.emit(TreeEvent.ADD_CHILD, {
-              id: this.id,
-              direction: attributes.direction
-            });
-          });
+          }
         }
 
         forwardEvent(target, type, listener) {
@@ -264,11 +171,7 @@ export default {
 
         render(attributes = this.parsedAttributes, container = this) {
           super.render(attributes, container);
-
           this.drawCollapseShape(attributes, container);
-          this.drawAddShape(attributes, container);
-
-          this.drawCountShape(attributes, container);
         }
       }
 
@@ -302,74 +205,29 @@ export default {
 
         bindEvents() {
           const { graph } = this.context;
-
-          graph.on(NodeEvent.POINTER_ENTER, this.showIcon);
-          graph.on(NodeEvent.POINTER_LEAVE, this.hideIcon);
           graph.on(TreeEvent.COLLAPSE_EXPAND, this.onCollapseExpand);
-          graph.on(TreeEvent.ADD_CHILD, this.addChild);
         }
 
         unbindEvents() {
           const { graph } = this.context;
-
-          graph.off(NodeEvent.POINTER_ENTER, this.showIcon);
-          graph.off(NodeEvent.POINTER_LEAVE, this.hideIcon);
           graph.off(TreeEvent.COLLAPSE_EXPAND, this.onCollapseExpand);
-          graph.off(TreeEvent.ADD_CHILD, this.addChild);
         }
 
         status = 'idle';
 
-        showIcon = (event) => {
-          this.setIcon(event, true);
-        };
-
-        hideIcon = (event) => {
-          this.setIcon(event, false);
-        };
-
-        setIcon = (event, show) => {
-          if (this.status !== 'idle') return;
-          const { target } = event;
-          const id = target.id;
-          const { graph, element } = this.context;
-          graph.updateNodeData([{ id, style: { showIcon: show } }]);
-          element.draw({ animation: false, silence: true });
-        };
-
         onCollapseExpand = async (event) => {
+          if (this.status !== 'idle') return;
           this.status = 'busy';
           const { id, collapsed } = event;
           const { graph } = this.context;
           await graph.frontElement(id);
-          if (collapsed) await graph.collapseElement(id);
-          else await graph.expandElement(id);
-          this.status = 'idle';
-        };
 
-        addChild = async (event) => {
-          this.status = 'busy';
-          const {
-            onCreateChild = () => {
-              const currentTime = new Date(Date.now()).toLocaleString();
-              return { id: `New Node in ${currentTime}` };
-            }
-          } = this.options;
-          const { graph } = this.context;
-          const datum = onCreateChild(event.id);
-          const parent = graph.getNodeData(event.id);
-
-          graph.addNodeData([datum]);
-          graph.addEdgeData([{ source: event.id, target: datum.id }]);
-          graph.updateNodeData([
-            {
-              id: event.id,
-              children: [...(parent.children || []), datum.id],
-              style: { collapsed: false, showIcon: false }
-            }
-          ]);
-          await graph.render();
-          await graph.focusElement(datum.id);
+          // 修改点 1: 在这里通过第二个参数开启/关闭过渡动画
+          if (collapsed) {
+            await graph.collapseElement(id, { animation: false });
+          } else {
+            await graph.expandElement(id, { animation: false });
+          }
           this.status = 'idle';
         };
       }
@@ -384,9 +242,7 @@ export default {
             '#7863FF',
             '#DB9D0D',
             '#60C42D',
-            '#FF80CA',
-            '#2491B3',
-            '#17C76F'
+            '#FF80CA'
           ]
         };
 
@@ -396,21 +252,33 @@ export default {
 
         beforeDraw(input) {
           const nodes = this.context.model.getNodeData();
-
+          const edges = this.context.model.getEdgeData();
           if (nodes.length === 0) return input;
 
           let colorIndex = 0;
+          const nodeColorMap = new Map();
+
           const dfs = (nodeId, color) => {
-            const node = nodes.find((datum) => datum.id == nodeId);
+            const node = nodes.find((datum) => datum.id === nodeId);
             if (!node) return;
 
             node.style ||= {};
-            node.style.color =
+            const nodeColor =
               color || this.options.colors[colorIndex++ % this.options.colors.length];
-            node.children?.forEach((childId) => dfs(childId, node.style?.color));
+            node.style.color = nodeColor;
+            nodeColorMap.set(nodeId, nodeColor);
+            node.children?.forEach((childId) => dfs(childId, nodeColor));
           };
 
-          nodes.filter((node) => node.depth === 1).forEach((rootNode) => dfs(rootNode.id));
+          const roots = this.context.model.getRootsData();
+          if (roots && roots.length > 0) {
+            roots[0].children?.forEach((childId) => dfs(childId));
+          }
+
+          edges.forEach((edge) => {
+            edge.style ||= {};
+            edge.style.stroke = nodeColorMap.get(edge.target) || '#1783FF';
+          });
 
           return input;
         }
@@ -423,73 +291,52 @@ export default {
 
       const getNodeSide = (nodeData, parentData) => {
         if (!parentData) return 'center';
-
-        const nodePositionX = positionOf(nodeData)[0];
-        const parentPositionX = positionOf(parentData)[0];
+        const nodePositionX = positionOf(nodeData)?.[0] || 0;
+        const parentPositionX = positionOf(parentData)?.[0] || 0;
         return parentPositionX > nodePositionX ? 'left' : 'right';
       };
 
-      // 获取数据并初始化图形
-      fetch('https://assets.antv.antgroup.com/g6/algorithm-category.json')
-        .then((res) => res.json())
-        .then((data) => {
-          const rootId = data.id;
+      const data = algorithmData;
+      const rootId = data.id;
 
-          graph = new Graph({
-            container: container.value,
-            autoFit: 'view',
-            data: treeToGraphData(data),
-            node: {
-              type: 'mindmap',
-              style: function (d) {
-                const direction = getNodeSide(d, this.getParentData(idOf(d), 'tree'));
-                const isRoot = idOf(d) === rootId;
-                const style = isRoot ? RootNodeStyle : NodeStyle;
-                return {
-                  ...style,
-                  size: getNodeSize(idOf(d), isRoot),
-                  direction,
-                  color: d.style?.color || '#1783FF'
-                };
-              }
-            },
-            edge: {
-              type: 'mindmap',
-              style: {
-                stroke: (d) => {
-                  const targetNode = this.getNodeData(d.target);
-                  return targetNode?.style?.color || '#1783FF';
-                },
-                lineWidth: 2
-              }
-            },
-            behaviors: [
-              'drag-canvas',
-              'zoom-canvas',
-              {
-                type: 'collapse-expand-tree',
-                onCreateChild: (id) => {
-                  const currentTime = new Date(Date.now()).toLocaleString();
-                  return { id: `New Node in ${currentTime}` };
-                }
-              }
-            ],
-            transforms: ['assign-color-by-branch'],
-            layout: {
-              type: 'indented',
-              direction: 'LR',
-              dropCap: false,
-              indent: 30,
-              getHeight: () => 32,
-              getVGap: () => 10
-            }
-          });
+      graph = new Graph({
+        container: container.value,
+        autoFit: 'view',
+        data: treeToGraphData(data),
+        node: {
+          type: 'mindmap',
+          style: function (d) {
+            const direction = getNodeSide(d, this.getParentData(idOf(d), 'tree'));
+            const isRoot = idOf(d) === rootId;
+            const style = isRoot ? RootNodeStyle : NodeStyle;
+            return {
+              ...style,
+              labelText: idOf(d),
+              size: getNodeSize(idOf(d), isRoot),
+              direction,
+              color: d.style?.color || '#1783FF'
+            };
+          }
+        },
+        edge: {
+          type: 'mindmap',
+          style: {
+            lineWidth: 2
+          }
+        },
+        behaviors: ['drag-canvas', 'zoom-canvas', { type: 'collapse-expand-tree' }],
+        transforms: ['assign-color-by-branch'],
+        layout: {
+          type: 'mindmap',
+          direction: 'H',
+          getHeight: () => 32,
+          getWidth: (node) => getNodeWidth(node.id, node.id === rootId),
+          getVGap: () => 16,
+          getHGap: () => 60
+        }
+      });
 
-          graph.render();
-        })
-        .catch((error) => {
-          console.error('加载数据失败:', error);
-        });
+      graph.render();
     });
 
     onBeforeUnmount(() => {
@@ -513,5 +360,6 @@ export default {
   border: 1px solid #e2e2e2;
   border-radius: 4px;
   background: #fff;
+  overflow: hidden;
 }
 </style>

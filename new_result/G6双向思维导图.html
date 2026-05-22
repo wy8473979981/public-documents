@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G6 双向思维导图</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .mindmap-demo {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .mindmap-container {
+            height: 95vh;
+            border: 1px solid #e2e2e2;
+            border-radius: 4px;
+            background: #fff;
+            overflow: hidden; 
+        }
+        h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .export-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #dc416a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .export-btn:hover {
+            background-color: #c7365b;
+        }
+    </style>
+
+    <!-- G6库 -->
+    <script src="./statics/g6/index.umd.min.js"></script>
+    <script src="./statics/g6/g6.min.js"></script>
+</head>
+<body>
+    <button class="export-btn">导出图片</button>
+    
+    <div class="mindmap-demo">
+        <h3>G6 双向思维导图（根节点居中，子节点左右分布）</h3>
+        <div id="mindmap-container" class="mindmap-container"></div>
+    </div>
+
+    <script>
+        // 初始化G6思维导图
+        function initGraph() {
+            if (typeof G6 === 'undefined' || typeof G === 'undefined') {
+                console.error("AntV G6 库尚未加载成功，请检查网络或更换 CDN");
+                return;
+            }
+
+            // 解构G6相关组件
+            const { Graph, ExtensionCategory, idOf, positionOf, treeToGraphData, CommonEvent } = G6;
+            const { Rect, Text } = G;
+
+            // 1. 定义思维导图数据（使用Python学习计划作为示例）
+            const mindmapData = {
+                id: 'Python 学习计划',
+                children: [
+                    {
+                        id: '基础筑基',
+                        children: [
+                            {
+                                id: '语法核心',
+                                children: [
+                                    { id: '变量与数据类型' },
+                                    { id: '运算符与表达式' },
+                                    { id: '输入输出' },
+                                    { id: '条件分支' },
+                                    { id: '循环结构' }
+                                ]
+                            },
+                            {
+                                id: '函数编程',
+                                children: [
+                                    { id: '定义与调用' },
+                                    { id: '参数传递' },
+                                    { id: '返回值与作用域' },
+                                    { id: 'Lambda 表达式' }
+                                ]
+                            },
+                            {
+                                id: '模块与包',
+                                children: [
+                                    { id: 'import 机制' },
+                                    { id: '标准库精选' },
+                                    { id: '自定义模块' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '进阶提升',
+                        children: [
+                            {
+                                id: '面向对象编程',
+                                children: [
+                                    { id: '类与对象' },
+                                    { id: '属性与方法' },
+                                    { id: '封装继承多态' },
+                                    { id: '特殊方法' }
+                                ]
+                            },
+                            {
+                                id: '异常处理',
+                                children: [
+                                    { id: 'try/except' },
+                                    { id: '自定义异常' }
+                                ]
+                            },
+                            {
+                                id: '文件与数据操作',
+                                children: [
+                                    { id: '文本文件读写' },
+                                    { id: 'CSV操作' },
+                                    { id: 'JSON序列化' }
+                                ]
+                            },
+                            {
+                                id: '正则表达式',
+                                children: [
+                                    { id: 're模块方法' },
+                                    { id: '常用模式' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '实战应用',
+                        children: [
+                            {
+                                id: 'Web开发入门',
+                                children: [
+                                    { id: 'Flask框架' },
+                                    { id: 'requests库' }
+                                ]
+                            },
+                            {
+                                id: '数据分析基础',
+                                children: [
+                                    { id: 'NumPy' },
+                                    { id: 'Pandas' },
+                                    { id: 'Matplotlib/Seaborn' }
+                                ]
+                            },
+                            {
+                                id: '自动化脚本',
+                                children: [
+                                    { id: '批量文件操作' },
+                                    { id: '自动发送邮件' },
+                                    { id: '爬虫初探' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '工程实践',
+                        children: [
+                            {
+                                id: '版本控制',
+                                children: [
+                                    { id: 'Git基础' },
+                                    { id: 'GitHub协作' }
+                                ]
+                            },
+                            {
+                                id: '虚拟环境',
+                                children: [
+                                    { id: 'venv/pipenv' },
+                                    { id: '依赖管理' }
+                                ]
+                            },
+                            {
+                                id: '代码质量',
+                                children: [
+                                    { id: 'PEP 8规范' },
+                                    { id: '类型提示' },
+                                    { id: '单元测试' }
+                                ]
+                            },
+                            {
+                                id: '项目构建',
+                                children: [
+                                    { id: '包发布' },
+                                    { id: 'CLI工具开发' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '拓展方向',
+                        children: [
+                            {
+                                id: '人工智能入门',
+                                children: [
+                                    { id: 'Scikit-learn' },
+                                    { id: 'PyTorch/TensorFlow' }
+                                ]
+                            },
+                            {
+                                id: 'Web进阶',
+                                children: [
+                                    { id: 'Django' },
+                                    { id: 'FastAPI' }
+                                ]
+                            },
+                            {
+                                id: '其他领域',
+                                children: [
+                                    { id: '网络编程' },
+                                    { id: 'GUI开发' },
+                                    { id: '嵌入式/物联网' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: '学习资源',
+                        children: [
+                            { id: '官方文档' },
+                            { id: '经典书籍' },
+                            { id: '在线平台' },
+                            { id: '社区论坛' }
+                        ]
+                    }
+                ]
+            };
+
+            // 2. 统一样式配置
+            const RootNodeStyle = {
+                fill: '#EFF0F0',
+                labelFill: '#262626',
+                labelFontSize: 24,
+                labelFontWeight: 600,
+                labelOffsetY: 8,
+                labelPlacement: 'center',
+                ports: [{ placement: 'right' }, { placement: 'left' }],
+                radius: 8
+            };
+
+            const NodeStyle = {
+                fill: 'transparent',
+                labelPlacement: 'center',
+                labelFontSize: 16,
+                ports: [{ placement: 'right-bottom' }, { placement: 'left-bottom' }]
+            };
+
+            const TreeEvent = { COLLAPSE_EXPAND: 'collapse-expand' };
+
+            // 3. 辅助工具函数
+            let textShape;
+            const measureText = (textObj) => {
+                if (!textShape) textShape = new Text({ style: textObj });
+                textShape.attr(textObj);
+                return textShape.getBBox().width;
+            };
+
+            const getNodeWidth = (nodeId, isRoot) => {
+                const padding = isRoot ? 40 : 30;
+                const nodeStyle = isRoot ? RootNodeStyle : NodeStyle;
+                return measureText({
+                    text: nodeId,
+                    fontSize: nodeStyle.labelFontSize,
+                    fontFamily: 'Gill Sans'
+                }) + padding;
+            };
+
+            const getNodeSize = (nodeId, isRoot) => {
+                const width = getNodeWidth(nodeId, isRoot);
+                const height = isRoot ? 48 : 32;
+                return [width, height];
+            };
+
+            const getNodeDirection = (d, parentData) => {
+                if (!parentData) return 'center';
+                const nodePositionX = positionOf(d)?.[0] || 0;
+                const parentPositionX = positionOf(parentData)?.[0] || 0;
+                return parentPositionX > nodePositionX ? 'left' : 'right';
+            };
+
+            // 4. 注册自定义节点
+            G6.register(ExtensionCategory.NODE, 'mindmap', {
+                type: 'rect',
+                drawCollapseShape(attributes, container) {
+                    const roots = this.context.model.getRootsData();
+                    const rootId = roots.length > 0 ? idOf(roots[0]) : '';
+                    const childrenData = this.context.model.getChildrenData(this.id) || [];
+
+                    // 根节点，或者没有子节点，不渲染折叠按钮
+                    if (this.id === rootId || childrenData.length === 0) return;
+
+                    const { color, direction, collapsed } = attributes;
+                    const [width, height] = this.getSize(attributes);
+
+                    const btn = this.upsert('collapse-expand', G6.Badge, {
+                        backgroundFill: '#fff',
+                        backgroundStroke: color,
+                        backgroundLineWidth: 1.5,
+                        backgroundHeight: 14,
+                        backgroundWidth: 14,
+                        backgroundRadius: 7,
+                        cursor: 'pointer',
+                        fill: color,
+                        fontSize: 12,
+                        text: collapsed ? '+' : '-',
+                        textAlign: 'center',
+                        textBaseline: 'middle',
+                        x: direction === 'left' ? -7 : width + 7,
+                        y: height
+                    }, container);
+
+                    if (btn && !btn.__bind__) {
+                        btn.__bind__ = true;
+                        btn.addEventListener(CommonEvent.CLICK, (event) => {
+                            event.stopPropagation();
+                            this.context.graph.emit(TreeEvent.COLLAPSE_EXPAND, {
+                                id: this.id,
+                                collapsed: !attributes.collapsed
+                            });
+                        });
+                    }
+                },
+                render(attributes, container) {
+                    G6.rect.render.call(this, attributes, container);
+                    this.drawCollapseShape(attributes, container);
+                }
+            });
+
+            // 5. 注册自定义连线
+            G6.register(ExtensionCategory.EDGE, 'mindmap', {
+                type: 'cubic-horizontal',
+                getKeyPath(attributes) {
+                    const path = G6['cubic-horizontal'].getKeyPath.call(this, attributes);
+                    const roots = this.context.model.getRootsData();
+                    const rootId = roots.length > 0 ? idOf(roots[0]) : '';
+                    
+                    const isRoot = this.targetNode.id === rootId;
+                    const labelWidth = getNodeWidth(this.targetNode.id, isRoot);
+
+                    const [, tp] = this.getEndpoints(attributes);
+                    const sign = this.sourceNode.getCenter()[0] < this.targetNode.getCenter()[0] ? 1 : -1;
+                    return [...path, ['L', tp[0] + labelWidth * sign, tp[1]]];
+                }
+            });
+
+            // 6. 注册交互行为
+            G6.register(ExtensionCategory.BEHAVIOR, 'collapse-expand-tree', {
+                onCreate() {
+                    this.status = 'idle';
+                    this.onCollapseExpand = async (event) => {
+                        if (this.status !== 'idle') return;
+                        this.status = 'busy';
+                        const { id, collapsed } = event;
+                        const { graph } = this.context;
+                        await graph.frontElement(id);
+                        
+                        if (collapsed) {
+                            await graph.collapseElement(id, { animation: false });
+                        } else {
+                            await graph.expandElement(id, { animation: false });
+                        }
+                        this.status = 'idle';
+                    };
+                },
+                bindEvents() {
+                    this.context.graph.on(TreeEvent.COLLAPSE_EXPAND, this.onCollapseExpand);
+                },
+                unbindEvents() {
+                    this.context.graph.off(TreeEvent.COLLAPSE_EXPAND, this.onCollapseExpand);
+                }
+            });
+
+            // 7. 注册分支自动色彩转换
+            G6.register(ExtensionCategory.TRANSFORM, 'assign-color-by-branch', {
+                colors: ['#1783FF', '#F08F56', '#D580FF', '#00C9C9', '#7863FF', '#DB9D0D', '#60C42D', '#FF80CA'],
+                beforeDraw(input) {
+                    const nodes = this.context.model.getNodeData();
+                    const edges = this.context.model.getEdgeData();
+                    if (nodes.length === 0) return input;
+
+                    let colorIndex = 0;
+                    const nodeColorMap = new Map();
+
+                    const dfs = (nodeId, color) => {
+                        const node = nodes.find((datum) => datum.id === nodeId);
+                        if (!node) return;
+
+                        node.style = node.style || {};
+                        const nodeColor = color || this.colors[colorIndex++ % this.colors.length];
+                        node.style.color = nodeColor;
+                        nodeColorMap.set(nodeId, nodeColor);
+                        node.children?.forEach((childId) => dfs(childId, nodeColor));
+                    };
+
+                    const roots = this.context.model.getRootsData();
+                    if (roots && roots.length > 0) {
+                        roots[0].children?.forEach((childId) => dfs(childId));
+                    }
+
+                    edges.forEach((edge) => {
+                        edge.style = edge.style || {};
+                        edge.style.stroke = nodeColorMap.get(edge.target) || '#1783FF';
+                    });
+
+                    return input;
+                }
+            });
+
+            // 8. 图表挂载和初始化
+            const container = document.getElementById('mindmap-container');
+            if (!container) return;
+
+            const data = mindmapData;
+            const rootId = data.id;
+
+            const graph = new Graph({
+                container: container,
+                autoFit: 'view',
+                data: treeToGraphData(data),
+                node: {
+                    type: 'mindmap',
+                    style: function (d) {
+                        const parentData = this.getParentData(idOf(d), 'tree');
+                        const direction = getNodeDirection(d, parentData);
+
+                        const isRoot = idOf(d) === rootId;
+                        const style = isRoot ? RootNodeStyle : NodeStyle;
+                        return {
+                            ...style,
+                            labelText: idOf(d),
+                            size: getNodeSize(idOf(d), isRoot),
+                            direction,
+                            color: d.style?.color || '#1783FF'
+                        };
+                    }
+                },
+                edge: {
+                    type: 'mindmap',
+                    style: { lineWidth: 2 }
+                },
+                behaviors: [
+                    'drag-canvas',
+                    'zoom-canvas',
+                    { type: 'collapse-expand-tree' }
+                ],
+                transforms: ['assign-color-by-branch'],
+                layout: {
+                    type: 'mindmap',
+                    direction: 'H',  // 水平方向，实现左右分布
+                    getHeight: () => 32,
+                    getWidth: (node) => getNodeWidth(node.id, node.id === rootId),
+                    getVGap: () => 16,
+                    getHGap: () => 60
+                }
+            });
+
+            graph.render();
+            
+            // 绑定导出按钮事件
+            bindExportButton(graph);
+        }
+
+        // 导出思维导图为PNG图片
+        function bindExportButton(graph) {
+            const exportBtn = document.querySelector('.export-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', () => {
+                    exportMindmapAsImage(graph);
+                });
+                console.log('导出按钮事件已绑定');
+            } else {
+                console.warn('未找到导出按钮元素 (.export-btn)');
+            }
+        }
+
+        // 导出思维导图为图片
+        function exportMindmapAsImage(graph) {
+            try {
+                console.log('开始导出思维导图...');
+                
+                // 获取容器尺寸
+                const container = document.getElementById('mindmap-container');
+                if (!container) {
+                    alert('思维导图容器不存在');
+                    return;
+                }
+                
+                const rect = container.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) {
+                    alert('思维导图尚未渲染完成,请稍后再试');
+                    return;
+                }
+                
+                // 使用G6内置的导出功能
+                graph.toDataURL({
+                    mode: 'viewport', // 导出视口内容
+                    backgroundColor: '#ffffff',
+                    padding: 20,
+                    quality: 1,
+                    type: 'image/png'
+                }).then(dataURL => {
+                    // 创建下载链接
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = dataURL;
+                    downloadLink.download = 'Python学习计划_' + new Date().getTime() + '.png';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    
+                    console.log('导出成功！');
+                }).catch(error => {
+                    console.error('导出失败:', error);
+                    alert('导出图片失败: ' + error.message);
+                });
+                
+            } catch (error) {
+                console.error('导出失败:', error);
+                alert('导出图片失败: ' + error.message);
+            }
+        }
+
+        // 确保网页所有外部资源加载完毕后，再触发初始化
+        window.addEventListener('load', initGraph);
+    </script>
+</body>
+</html>

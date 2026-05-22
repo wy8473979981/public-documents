@@ -1,0 +1,360 @@
+<!--
+ * @Description: Description
+ * @Author: wangyang
+ * @Date: 2026-05-18 17:40:58
+ * @LastEditors: wangyang
+ * @LastEditTime: 2026-05-18 17:46:26
+-->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+      .mindmap-demo {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .mindmap-container {
+        height: 600px;
+        border: 1px solid #e2e2e2;
+        border-radius: 4px;
+        background: #fff;
+        overflow: hidden;
+      }
+      h3 {
+        margin-top: 0;
+        color: #333;
+      }
+    </style>
+
+    <script src="./g6.min.js"></script>
+  </head>
+  <body>
+    <div class="mindmap-demo">
+      <h3>G6 思维导图示例 (纯原生 JS - 稳定版)</h3>
+      <div id="mindmap-container" class="mindmap-container"></div>
+    </div>
+
+    <script>
+      function initGraph() {
+        if (typeof G6 === 'undefined') {
+          console.error('AntV G6 库尚未加载成功，请检查网络或更换 CDN');
+          return;
+        }
+
+        const {
+          Graph,
+          ExtensionCategory,
+          idOf,
+          positionOf,
+          treeToGraphData,
+          CommonEvent,
+          Badge,
+          rect,
+        } = G6;
+
+        // 兼容可能存在的 G 引擎位置
+        const { Text } = G6.Canvas.G || G6.G || window.G || {};
+
+        // 1. 模拟数据
+        const algorithmData = {
+          id: '算法核心',
+          children: [
+            {
+              id: '数据结构',
+              children: [
+                { id: '数组' },
+                { id: '链表' },
+                { id: '树结构' },
+                { id: '图结构' },
+              ],
+            },
+            {
+              id: '基础算法',
+              children: [{ id: '排序算法' }, { id: '搜索算法' }],
+            },
+            {
+              id: '进阶思想',
+              children: [
+                { id: '动态规划' },
+                { id: '贪心算法' },
+                { id: '回溯法' },
+              ],
+            },
+          ],
+        };
+
+        // 2. 统一样式配置
+        const RootNodeStyle = {
+          fill: '#EFF0F0',
+          labelFill: '#262626',
+          labelFontSize: 24,
+          labelFontWeight: 600,
+          labelOffsetY: 8,
+          labelPlacement: 'center',
+          ports: [{ placement: 'right' }, { placement: 'left' }],
+          radius: 8,
+        };
+
+        const NodeStyle = {
+          fill: 'transparent',
+          labelPlacement: 'center',
+          labelFontSize: 16,
+          ports: [{ placement: 'right-bottom' }, { placement: 'left-bottom' }],
+        };
+
+        const TreeEvent = { COLLAPSE_EXPAND: 'collapse-expand' };
+
+        // 3. 辅助工具函数
+        let textShape;
+        const measureText = (textObj) => {
+          if (!textShape) textShape = new Text({ style: textObj });
+          textShape.attr(textObj);
+          return textShape.getBBox().width;
+        };
+
+        const getNodeWidth = (nodeId, isRoot) => {
+          const padding = isRoot ? 40 : 30;
+          const nodeStyle = isRoot ? RootNodeStyle : NodeStyle;
+          return (
+            measureText({
+              text: nodeId,
+              fontSize: nodeStyle.labelFontSize,
+              fontFamily: 'Gill Sans',
+            }) + padding
+          );
+        };
+
+        const getNodeSize = (nodeId, isRoot) => {
+          const width = getNodeWidth(nodeId, isRoot);
+          const height = isRoot ? 48 : 32;
+          return [width, height];
+        };
+
+        const getNodeDirection = (d, parentData) => {
+          if (!parentData) return 'center';
+          const nodePositionX = positionOf(d)?.[0] || 0;
+          const parentPositionX = positionOf(parentData)?.[0] || 0;
+          return parentPositionX > nodePositionX ? 'left' : 'right';
+        };
+
+        // 4. 定义自定义节点类
+        class CustomMindmapNode extends rect {
+          drawCollapseShape(attributes, container) {
+            const roots = this.context.model.getRootsData();
+            const rootId = roots.length > 0 ? idOf(roots[0]) : '';
+            const childrenData =
+              this.context.model.getChildrenData(this.id) || [];
+
+            if (this.id === rootId || childrenData.length === 0) return;
+
+            const { color, direction, collapsed } = attributes;
+            const [width, height] = this.getSize(attributes);
+
+            const btn = this.upsert(
+              'collapse-expand',
+              Badge,
+              {
+                backgroundFill: '#fff',
+                backgroundStroke: color,
+                backgroundLineWidth: 1.5,
+                backgroundHeight: 14,
+                backgroundWidth: 14,
+                backgroundRadius: 7,
+                cursor: 'pointer',
+                fill: color,
+                fontSize: 12,
+                text: collapsed ? '+' : '-',
+                textAlign: 'center',
+                textBaseline: 'middle',
+                x: direction === 'left' ? -7 : width + 7,
+                y: height,
+              },
+              container,
+            );
+
+            if (btn && !btn.__bind__) {
+              btn.__bind__ = true;
+              btn.addEventListener(CommonEvent.CLICK, (event) => {
+                event.stopPropagation();
+                this.context.graph.emit(TreeEvent.COLLAPSE_EXPAND, {
+                  id: this.id,
+                  collapsed: !attributes.collapsed,
+                });
+              });
+            }
+          }
+          render(attributes, container) {
+            super.render(attributes, container);
+            this.drawCollapseShape(attributes, container);
+          }
+        }
+
+        // 5. 图表挂载和初始化
+        const container = document.getElementById('mindmap-container');
+        if (!container) return;
+
+        const data = algorithmData;
+        const rootId = data.id;
+
+        const graph = new Graph({
+          container: container,
+          autoFit: 'view',
+          data: treeToGraphData(data),
+          // V5核心修正：在这里将自定义的组件作为拓展直接注册进当前实例
+          customExtension: [
+            {
+              category: ExtensionCategory.NODE,
+              type: 'mindmap-node',
+              class: CustomMindmapNode,
+            },
+            {
+              category: ExtensionCategory.EDGE,
+              type: 'mindmap-edge',
+              // 连线直接回退到标准横向贝塞尔曲线，防止 getKeyPath 覆盖报错
+              class: G6.CubicHorizontal,
+            },
+            {
+              category: ExtensionCategory.BEHAVIOR,
+              type: 'collapse-expand-tree',
+              class: class extends G6.BaseBehavior {
+                constructor(context, options) {
+                  super(context, options);
+                  this.status = 'idle';
+                }
+                bindEvents() {
+                  this.context.graph.on(
+                    TreeEvent.COLLAPSE_EXPAND,
+                    this.onCollapseExpand.bind(this),
+                  );
+                }
+                unbindEvents() {
+                  this.context.graph.off(
+                    TreeEvent.COLLAPSE_EXPAND,
+                    this.onCollapseExpand.bind(this),
+                  );
+                }
+                async onCollapseExpand(event) {
+                  if (this.status !== 'idle') return;
+                  this.status = 'busy';
+                  const { id, collapsed } = event;
+                  const { graph } = this.context;
+                  await graph.frontElement(id);
+
+                  if (collapsed) {
+                    await graph.collapseElement(id, { animation: false });
+                  } else {
+                    await graph.expandElement(id, { animation: false });
+                  }
+                  this.status = 'idle';
+                }
+              },
+            },
+            {
+              category: ExtensionCategory.TRANSFORM,
+              type: 'assign-color-by-branch',
+              class: class extends G6.BaseTransform {
+                beforeDraw(input) {
+                  const nodes = this.context.model.getNodeData();
+                  const edges = this.context.model.getEdgeData();
+                  if (nodes.length === 0) return input;
+
+                  const colors = [
+                    '#1783FF',
+                    '#F08F56',
+                    '#D580FF',
+                    '#00C9C9',
+                    '#7863FF',
+                    '#DB9D0D',
+                    '#60C42D',
+                    '#FF80CA',
+                  ];
+                  let colorIndex = 0;
+                  const nodeColorMap = new Map();
+
+                  const dfs = (nodeId, color) => {
+                    const node = nodes.find((datum) => datum.id === nodeId);
+                    if (!node) return;
+
+                    node.style = node.style || {};
+                    const nodeColor =
+                      color || colors[colorIndex++ % colors.length];
+                    node.style.color = nodeColor;
+                    nodeColorMap.set(nodeId, nodeColor);
+                    node.children?.forEach((childId) =>
+                      dfs(childId, nodeColor),
+                    );
+                  };
+
+                  const roots = this.context.model.getRootsData();
+                  if (roots && roots.length > 0) {
+                    roots[0].children?.forEach((childId) => dfs(childId));
+                  }
+
+                  edges.forEach((edge) => {
+                    edge.style = edge.style || {};
+                    edge.style.stroke =
+                      nodeColorMap.get(edge.target) || '#1783FF';
+                  });
+
+                  return input;
+                }
+              },
+            },
+          ],
+          node: {
+            type: 'mindmap-node', // 使用上面注册的 type
+            style: function (d) {
+              const parentData = this.getParentData(idOf(d), 'tree');
+              const direction = getNodeDirection(d, parentData);
+
+              const isRoot = idOf(d) === rootId;
+              const style = isRoot ? RootNodeStyle : NodeStyle;
+              return {
+                ...style,
+                labelText: idOf(d),
+                size: getNodeSize(idOf(d), isRoot),
+                direction,
+                color: d.style?.color || '#1783FF',
+              };
+            },
+          },
+          edge: {
+            type: 'mindmap-edge', // 使用上面注册的 type
+            style: { lineWidth: 2 },
+          },
+          behaviors: [
+            'drag-canvas',
+            'zoom-canvas',
+            { type: 'collapse-expand-tree' },
+          ],
+          transforms: ['assign-color-by-branch'],
+          layout: {
+            type: 'mindmap',
+            direction: 'H',
+            getHeight: () => 32,
+            getWidth: (node) => getNodeWidth(node.id, node.id === rootId),
+            getVGap: () => 16,
+            getHGap: () => 60,
+          },
+        });
+
+        graph.render();
+      }
+
+      window.addEventListener('load', initGraph);
+    </script>
+  </body>
+</html>
