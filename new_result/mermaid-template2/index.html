@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mermaid 流程图编辑器（带缩放/平移/全屏）</title>
+    <link rel="stylesheet" href="./statics/mermaid/style.css"/>
+</head>
+
+<body>
+<div class="chart-title" id="chart-title"></div>
+<div class="toolbar">
+    <button id="fit-view-btn" title="重置视图">重置</button>
+    <button id="zoom-out-btn" title="缩小">-</button>
+    <button id="zoom-in-btn" title="放大">+</button>
+    <div class="divider"></div>
+    <button id="fullscreen-btn" title="全屏">全屏</button>
+</div>
+<button id="export-btn" title="导出图片">导出图片</button>
+<button id="export-drawio-btn" title="导出为 Draw.io 格式">导出 DrawIO</button>
+<div class="editor-container">
+    <div class="preview-panel">
+        <div id="mermaid-chart"></div>
+    </div>
+</div>
+
+<!-- Mermaid 代码数据 -->
+<script type="text/mermaid" id="mermaid-data" data-title="电商购物时序图">
+
+flowchart TD
+A["用户提交订单"] --> B["订单信息校验"]
+B --> C{"校验通过?"}
+C -- "否" --> D["返回错误提示"]
+D --> E["流程结束"]
+C -- "是" --> F["创建订单记录"]
+F --> G["支付网关请求"]
+G --> H{"支付成功?"}
+H -- "否" --> I["支付失败处理"]
+I --> J["通知用户重试"]
+J --> K["等待用户操作"]
+K --> L{"超时或取消?"}
+L -- "是" --> M["关闭订单"]
+M --> E
+L -- "否" --> G
+H -- "是" --> N["并行处理启动"]
+N --> O["库存锁定服务"]
+N --> P["税务计算服务"]
+N --> Q["发票生成服务"]
+O --> R{"库存充足?"}
+R -- "否" --> S["触发补货流程"]
+S --> T["通知采购部门"]
+T --> U["等待入库"]
+U --> O
+R -- "是" --> V["扣减库存"]
+P --> W["计算关税与增值税"]
+Q --> X["生成电子发票"]
+V --> Y["合并税务与发票数据"]
+W --> Y
+X --> Y
+Y --> Z["准备海关申报数据"]
+Z --> AA["提交海关申报"]
+AA --> AB{"海关审核结果?"}
+AB -- "扣留/查验" --> AC["进入查验流程"]
+AC --> AD["补充申报材料"]
+AD --> AE["重新提交申报"]
+AE --> AA
+AB -- "放行" --> AF["获取放行指令"]
+AF --> AG["物流分拣中心接收"]
+AG --> AH["包裹打包与贴单"]
+AH --> AI["分配物流承运商"]
+AI --> AJ["出库扫描"]
+AJ --> AK["国际运输阶段"]
+AK --> AL{"物流状态监控"}
+AL -- "异常(丢失/破损)" --> AM["触发物流理赔"]
+AM --> AN["通知客服介入"]
+AN --> AO["协商解决方案"]
+AO --> AP{"用户接受方案?"}
+AP -- "否" --> AQ["升级投诉处理"]
+AQ --> AN
+AP -- "是" --> AR["执行赔偿或重发"]
+AR --> AS["更新订单状态"]
+AS --> AT["流程结束"]
+AL -- "正常运输" --> AU["到达目的国海关"]
+AU --> AV{"清关是否顺利?"}
+AV -- "否" --> AW["清关异常处理"]
+AW --> AX["联系当地代理"]
+AX --> AY["解决清关问题"]
+AY --> AU
+AV -- "是" --> AZ["转交本地物流"]
+AZ --> BA["最后一公里配送"]
+BA --> BB{"签收成功?"}
+BB -- "否" --> BC["尝试再次配送"]
+BC --> BD{"超过最大次数?"}
+BD -- "是" --> BE["退回仓库或自提点"]
+BE --> BF["通知用户取件或退款"]
+BF --> BG{"用户选择?"}
+BG -- "退款" --> BH["发起退款流程"]
+BG -- "取件" --> BI["更新为已取件"]
+BI --> BJ["流程结束"]
+BH --> BK["财务审核退款"]
+BK --> BL["原路退回资金"]
+BL --> BM["通知用户退款完成"]
+BM --> BN["流程结束"]
+BB -- "是" --> BO["确认签收"]
+BO --> BP["触发售后保障期"]
+BP --> BQ{"用户申请售后?"}
+BQ -- "否" --> BR["订单归档"]
+BR --> BS["流程结束"]
+BQ -- "是" --> BT["售后工单创建"]
+BT --> BU{"售后类型?"}
+BU -- "退货退款" --> BV["生成退货地址"]
+BV --> BW["用户寄回商品"]
+BW --> BX["仓库收货质检"]
+BX --> BY{"质检合格?"}
+BY -- "否" --> BZ["拒绝退款并说明"]
+BZ --> CA["争议处理流程"]
+CA --> CB["平台介入判定"]
+CB --> CC["执行判定结果"]
+CC --> BS
+BY -- "是" --> CD["批准退款"]
+CD --> BK
+BU -- "仅退款" --> CE["审核退款申请"]
+CE --> CF{"审核通过?"}
+CF -- "否" --> CG["拒绝申请"]
+CG --> CH["用户申诉"]
+CH --> CB
+CF -- "是" --> CD
+BU -- "换货" --> CI["创建换货订单"]
+CI --> CJ["发出新商品"]
+CJ --> CK["跟踪新物流"]
+CK --> AL
+
+</script>
+
+<!-- 引入 Mermaid 和自定义 JS -->
+<script src="./statics/mermaid/mermaid.min.js"></script>
+<script src="./statics/mermaid/html-to-image.min.js"></script>
+<script src="./statics/mermaid/script.js"></script>
+<script src="./statics/mermaid/export.js"></script>
+<script src="./statics/mermaid/mermaid-to-drawio.js"></script>
+</body>
+
+</html>
