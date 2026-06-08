@@ -1,0 +1,80 @@
+.lifecycle-page {
+  padding: 32px;
+}
+
+.lifecycle-page h2 {
+  margin-bottom: 24px;
+}
+
+.log-container {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+.log-content {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.log-item {
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+/* 基础概念页面样式 */
+.comparison-table-container {
+  overflow-x: auto;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.comparison-table thead tr {
+  background: #f5f5f5;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  text-align: left;
+}
+
+/* 复杂场景示例样式 */
+.code-pre {
+  font-size: 12px;
+  overflow: auto;
+  margin: 0;
+}
+
+.timer-display {
+  text-align: center;
+  padding: 20px;
+}
+
+.timer-count {
+  font-size: 24px;
+}
+
+.mouse-position-box {
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+}

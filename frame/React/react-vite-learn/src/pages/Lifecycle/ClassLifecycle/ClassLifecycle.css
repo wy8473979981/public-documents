@@ -1,0 +1,27 @@
+.lifecycle-page {
+  padding: 32px;
+}
+
+.lifecycle-page h2 {
+  margin-bottom: 24px;
+}
+
+.lifecycle-list {
+  padding-left: 20px;
+}
+
+.lifecycle-list li {
+  margin-bottom: 8px;
+}
+
+/* 步骤导航样式 */
+.steps-navigation {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 代码块容器样式 */
+.code-block-container {
+  margin: 16px 0;
+}

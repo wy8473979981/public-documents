@@ -1,0 +1,52 @@
+.about-page {
+  padding: 32px;
+}
+
+.about-container {
+  width: 100%;
+}
+
+.about-container h1 {
+  color: #2c3e50;
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.about-container > p {
+  color: #666;
+  font-size: 19px;
+  margin-bottom: 32px;
+}
+
+.about-content {
+  display: grid;
+  gap: 32px;
+}
+
+.about-section {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-section h2 {
+  color: #2c3e50;
+  font-size: 29px;
+  margin-bottom: 16px;
+}
+
+.about-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about-section li {
+  padding: 8px 0;
+  color: #555;
+  line-height: 1.6;
+}
+
+.about-section strong {
+  color: #61dafb;
+}

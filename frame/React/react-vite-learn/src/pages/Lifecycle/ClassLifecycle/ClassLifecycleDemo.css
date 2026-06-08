@@ -1,0 +1,45 @@
+.class-lifecycle-demo {
+  width: 100%;
+}
+
+.demo-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.log-container {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+.log-content {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.log-item {
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.lifecycle-list {
+  padding-left: 20px;
+}
+
+.lifecycle-list li {
+  margin-bottom: 8px;
+}
