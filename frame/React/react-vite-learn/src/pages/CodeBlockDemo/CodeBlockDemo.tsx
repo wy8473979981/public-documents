@@ -1,5 +1,5 @@
 import { Space, Typography } from 'antd'
-import CodeBlock from '../../components/CodeBlock'
+import CodeBlock from '@/components/CodeBlock/CodeBlock'
 import './CodeBlockDemo.css'
 
 const { Title, Paragraph } = Typography
@@ -65,11 +65,29 @@ export default function CodeBlockDemo() {
         />
 
         {/* 不同主题示例 */}
-        <CodeBlock code={reactExample} language="jsx" title="🎨 Atom Dark 主题" theme="atomDark" />
+        <CodeBlock
+          code={reactExample}
+          language="jsx"
+          title="🎨 Atom Dark 主题"
+          theme="atomDark"
+          showLineNumbers
+        />
 
-        <CodeBlock code={reactExample} language="jsx" title="🎨 Dracula 主题" theme="dracula" />
+        <CodeBlock
+          code={reactExample}
+          language="jsx"
+          title="🎨 Dracula 主题"
+          theme="dracula"
+          showLineNumbers
+        />
 
-        <CodeBlock code={reactExample} language="jsx" title="🎨 Prism 主题" theme="prism" />
+        <CodeBlock
+          code={reactExample}
+          language="jsx"
+          title="🎨 Prism 主题"
+          theme="prism"
+          showLineNumbers
+        />
       </Space>
     </div>
   )

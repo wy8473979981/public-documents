@@ -1,0 +1,349 @@
+/* Zustand 页面专属样式 */
+
+/* 场景卡片 */
+.zustand-scenarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.zustand-scenario {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+  text-align: center;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+
+.zustand-scenario:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.zustand-scenario-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.zustand-scenario-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.zustand-scenario-desc {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.5;
+}
+
+/* 演示区控件 */
+.zustand-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+/* 无障碍：屏幕阅读器专用 */
+.zustand-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== Todo Demo ===== */
+.zustand-todo-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.zustand-todo-input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.zustand-todo-input-row input:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.zustand-todo-filters {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.zustand-todo-filters button {
+  padding: 4px 12px;
+  border-radius: 14px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zustand-todo-filters button:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.zustand-todo-filters .zustand-filter-active {
+  background: #1890ff;
+  color: #fff;
+  border-color: #1890ff;
+}
+
+.zustand-todo-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: #999;
+}
+
+.zustand-todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.zustand-todo-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+
+.zustand-todo-list li:hover {
+  background: #fafafa;
+}
+
+.zustand-todo-list li label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.zustand-todo-list li label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zustand-todo-list li.zustand-todo-done label span {
+  text-decoration: line-through;
+  color: #bbb;
+}
+
+.zustand-todo-remove {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #ccc;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: all 0.2s;
+}
+
+.zustand-todo-remove:hover {
+  color: #ff4d4f !important;
+  background: #fff1f0 !important;
+}
+
+.zustand-todo-empty {
+  text-align: center;
+  color: #bbb;
+  font-size: 13px;
+  padding: 16px !important;
+}
+
+.zustand-todo-clear {
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #999;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zustand-todo-clear:hover {
+  color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+}
+
+/* ===== Cart Demo ===== */
+.zustand-cart-products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.zustand-cart-label {
+  font-size: 13px;
+  color: #666;
+  margin-right: 4px;
+}
+
+.zustand-cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.zustand-cart-table th {
+  background: #fafafa;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 2px solid #e8e8e8;
+  font-weight: 600;
+  color: #555;
+  font-size: 12px;
+}
+
+.zustand-cart-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+
+.zustand-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zustand-qty-controls button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: all 0.15s;
+}
+
+.zustand-qty-controls button:hover {
+  border-color: #1890ff !important;
+  color: #1890ff !important;
+}
+
+.zustand-qty-controls span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.zustand-cart-remove {
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+  color: #999;
+  border: 1px solid #e8e8e8 !important;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zustand-cart-remove:hover {
+  color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+}
+
+.zustand-cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.zustand-cart-total {
+  color: #ff4d4f;
+  font-size: 18px;
+  margin-left: 6px;
+}
+
+/* ===== Theme Demo ===== */
+.zustand-theme-preview {
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+
+.zustand-theme-preview p {
+  margin: 0 0 6px;
+  line-height: 1.6;
+}
+
+.zustand-theme-preview p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .zustand-scenarios {
+    grid-template-columns: 1fr;
+  }
+
+  .zustand-cart-table {
+    font-size: 12px;
+  }
+
+  .zustand-cart-table th,
+  .zustand-cart-table td {
+    padding: 6px 8px;
+  }
+}

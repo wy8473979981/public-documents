@@ -1,3 +1,4 @@
+import type React from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vs, atomDark, dracula, prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Card } from 'antd'
@@ -14,7 +15,7 @@ interface CodeBlockProps {
   customStyle?: React.CSSProperties
 }
 
-const themeMap: Record<CodeTheme, object> = {
+const themeMap: Record<CodeTheme, { [key: string]: React.CSSProperties }> = {
   vs,
   atomDark,
   dracula,
@@ -24,8 +25,8 @@ const themeMap: Record<CodeTheme, object> = {
 export default function CodeBlock({
   code,
   language = 'javascript',
-  theme = 'vs',
-  showLineNumbers = false,
+  theme = 'dracula',
+  showLineNumbers = true,
   wrapLines = true,
   title,
   customStyle,
@@ -33,8 +34,11 @@ export default function CodeBlock({
   return (
     <Card
       title={title || `${language.toUpperCase()} 代码`}
-      variant="borderless"
-      style={{ backgroundColor: '#f5f5f5', marginBottom: '16px' }}
+      styles={{
+        header: { color: '#f8f8f2', borderBottom: '1px solid #44475a' },
+        body: { padding: 0 },
+      }}
+      style={{ backgroundColor: '#282a36', marginBottom: '16px' }}
     >
       <SyntaxHighlighter
         language={language}

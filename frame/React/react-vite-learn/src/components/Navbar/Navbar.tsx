@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Menu } from 'antd'
 import type { MenuProps } from 'antd'
-import { routes } from '../types/routes'
+import { routes } from '@/types/routes'
 import './Navbar.css'
 
 function Navbar() {
@@ -37,6 +37,9 @@ function Navbar() {
       '/about': 'ℹ️',
       '/lifecycle': '⚛️',
       '/antd-demo': '🎨',
+      '/codeblock-demo': '📝',
+      '/library-usage': '📚',
+      '/interview': '🎯',
     }
     return iconMap[path]
   }

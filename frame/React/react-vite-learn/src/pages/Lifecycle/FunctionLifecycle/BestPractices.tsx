@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Space, Typography, Card, Alert, Button, Tag, Divider } from 'antd'
-import CodeBlock from '@/components/CodeBlock'
+import CodeBlock from '@/components/CodeBlock/CodeBlock'
 import './FunctionLifecycle.css'
 
 const { Paragraph, Text } = Typography

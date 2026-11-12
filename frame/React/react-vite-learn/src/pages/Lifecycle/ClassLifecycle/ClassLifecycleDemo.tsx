@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import { Card, Space, Typography, Button, Alert } from 'antd'
 import './ClassLifecycleDemo.css'
 

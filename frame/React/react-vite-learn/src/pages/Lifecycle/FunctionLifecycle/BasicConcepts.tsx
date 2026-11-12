@@ -1,5 +1,5 @@
 import { Space, Typography, Card, Alert } from 'antd'
-import CodeBlock from '@/components/CodeBlock'
+import CodeBlock from '@/components/CodeBlock/CodeBlock'
 import './FunctionLifecycle.css'
 
 const { Paragraph, Text } = Typography

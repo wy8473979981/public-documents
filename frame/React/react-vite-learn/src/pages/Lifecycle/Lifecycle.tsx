@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card, Space, Typography, Button, Tag, Alert, Divider, Tabs } from 'antd'
-import CodeBlock from '../../components/CodeBlock'
+import CodeBlock from '@/components/CodeBlock/CodeBlock'
 import './Lifecycle.css'
 
 const { Title, Paragraph, Text } = Typography

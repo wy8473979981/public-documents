@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Card, Space, Typography, Alert, Button, Steps } from 'antd'
-import CodeBlock from '@/components/CodeBlock'
+import CodeBlock from '@/components/CodeBlock/CodeBlock'
 import ClassLifecycleDemo from './ClassLifecycleDemo'
 import './ClassLifecycle.css'
 
